@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DC&M 동아리 사이트
 
-## Getting Started
+DC&M 미니 해커톤 1조 결과물입니다. 동아리 소개와 모집에 더해, 부원이 직접 프로젝트를 올려 사람을 모으고, 참여가 확정되면 개인 캘린더에 모임이 들어가며, 결과와 후기는 커뮤니티로 이어지는 **동아리 운영 허브**입니다.
 
-First, run the development server:
+- 화면: React 18 + Vite
+- 데이터·로그인: Supabase (연결 전에는 예시 데이터로 동작)
+- 배포: Vercel 또는 GitHub Pages
+- 디자인: Figma 시안과 같은 색(#362E2D 갈색, #E3311D 빨강, #AAACA1 회녹색)과 IBM Plex Sans KR
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 메뉴 구조
+
+```
+멤버
+프로젝트 ▾  ─ 프로젝트 목록 (진행 중 / 모집 중 탭)
+           ─ 완료 프로젝트
+           ─ 프로젝트 신청 (모집글 쓰기, 화면 오른쪽 아래 버튼으로도 이동)
+공지사항
+일정
+커뮤니티   ─ 프로젝트 후기 · 결과물 · 자유 · 질문 · 건의
+내 활동    ─ 개인 캘린더, 참여 중인 활동, 신청 현황, 내가 올린 모집(수락/거절), 내가 쓴 글
+지원하기 · 운영진 화면
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 기능
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| 항목 | 구현 |
+| --- | --- |
+| 메인 | 소개, 모집 상태(D-day), 이번 주 시간표(동아리 일정 + 정기 모임), 모집 중인 프로젝트, 공지, 커뮤니티 인기 글 |
+| 멤버 | 카드형, 기수·역할 필터, 기술 검색, 참여 중인 프로젝트 표시 |
+| 프로젝트 목록 | 진행 중/모집 중 탭, 유형(공모전·스터디 등)·개설(동아리 개설/개인 신청) 필터, 마감 임박순 정렬 |
+| 프로젝트 상세 | 모집 조건(인원 막대, 마감, 기간, 진행 방식, 조건), 참여 신청·취소, 문의 스레드, 작성자의 모집 마감·완료 처리 |
+| 프로젝트 신청 | 유형, 정원, 마감일, 기간, 정기 모임 요일·시각, 장소, 조건 입력과 검사, 목록 카드 미리보기 |
+| 완료 프로젝트 | 연도·유형 필터, 연결된 커뮤니티 후기 수 |
+| 내 활동 | 개인 캘린더(동아리 일정 + 참여 프로젝트 정기 모임 자동 반영), 참여 중, 신청 현황, 신청자 수락/거절, 내 글 |
+| 커뮤니티 | 분류, 최신/인기 정렬, 검색, 글쓰기(프로젝트 연결), 댓글, 공감, 본인·운영진 삭제 |
+| 지원·문의 | 입력값 검사, 개인정보 동의(목적·항목·기간·거부권), 제출 완료 화면 |
+| 공통 | 반응형(390px), 다크 모드, 통합 검색, 운영진 화면(지원서·공지·일정·멤버·프로젝트·게시글·모집 설정) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 바로 실행 (예시 데이터)
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+`http://localhost:5173`을 엽니다. Supabase 없이도 모든 화면이 동작하고, 바꾼 내용은 그 브라우저에만 저장됩니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 헤더의 **로그인**에서 예시 멤버 한 명을 고르면 그 사람으로 들어갑니다.
+- **이현성(부원)**: 참여 신청, 모집글 쓰기, 내가 올린 모집의 신청자 수락/거절을 볼 수 있습니다.
+- **문선우(회장)**: 운영진 화면과 '동아리 개설로 올리기'까지 쓸 수 있습니다.
+- 푸터의 **예시 데이터로 되돌리기**로 처음 상태로 돌아갑니다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Supabase 연결 (실제 운영)
 
-## Deploy on Vercel
+1. [supabase.com](https://supabase.com)에서 동아리 **공용 계정**으로 새 프로젝트를 만듭니다.
+2. SQL Editor에서 `supabase/schema.sql`을 실행합니다. 멤버·공지·일정 예시가 필요하면 `supabase/seed.sql`도 실행합니다.
+3. 운영진 이메일을 등록합니다: `insert into admins (email) values ('운영진이메일@example.com');`
+4. Authentication > URL Configuration의 Site URL과 Redirect URLs에 배포 주소를 넣습니다.
+5. Project Settings > API의 URL과 anon key를 `.env`에 넣습니다.
+   ```
+   VITE_SUPABASE_URL=https://xxxx.supabase.co
+   VITE_SUPABASE_ANON_KEY=eyJ...
+   ```
+6. 부원이 이메일로 처음 로그인하면 `profiles`에 승인 전 상태로 등록됩니다. 운영진이 확인한 뒤 승인합니다.
+   ```sql
+   update profiles set approved = true, name = '이현성', part = '웹' where email = '부원이메일@example.com';
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+접근 규칙(RLS) 요약
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 공지·일정·멤버·모집 설정: 누구나 읽기, 운영진만 쓰기
+- 프로젝트·문의·게시글·댓글: 누구나 읽기, **승인된 부원**이 자기 이름으로만 쓰기, 본인·운영진이 수정·삭제
+- 참여 신청: 본인·프로젝트 작성자·운영진만 보기, 수락/거절은 작성자·운영진
+- 개인 프로필(이메일): 본인과 운영진만 보기
+- 지원·문의: 누구나 제출만, 열람·삭제는 운영진
+- anon key는 공개돼도 되는 키입니다. **service_role 키는 절대 코드나 저장소에 넣지 마세요.**
+
+## 배포
+
+**Vercel**: 저장소 Import → Vite 자동 인식 → Environment Variables에 위 두 값 → Deploy. 무료 요금제는 비상업·개인 용도로 제한되니, 동아리 계정으로 쓰기 애매하면 GitHub Pages를 쓰세요.
+
+**GitHub Pages**: `npm run build` 후 `dist` 폴더를 올립니다. 해시 주소(`#/projects`)를 써서 하위 경로에서도 새로고침 404가 나지 않습니다.
+
+## 운영·인수인계 체크리스트
+
+- [ ] GitHub 저장소, Supabase, Vercel을 개인 계정이 아니라 동아리 공용 계정에 둔다
+- [ ] 기수가 바뀌면 `admins`에서 이전 운영진을 지우고 새 운영진을 넣는다
+- [ ] 새 학기에 들어온 부원의 `profiles.approved`를 켜 준다
+- [ ] 모집이 끝나면 30일 안에 운영진 화면에서 **지원·문의 전부 파기**를 누른다
+- [ ] Supabase 무료 프로젝트는 1주일 동안 요청이 없으면 일시정지된다. 방학 전에 담당자를 정한다
+- [ ] 끝난 프로젝트는 작성자가 **완료 처리**하도록 안내한다 (완료 프로젝트 화면으로 옮겨짐)
+
+## 폴더 구조
+
+```
+src/
+  lib/api.js        데이터 계층 (Supabase ↔ 예시 데이터 전환, 개인 로그인)
+  lib/projects.js   프로젝트 상태·마감·정기 모임 계산
+  lib/validate.js   지원·문의 입력값 검사
+  data/seed.js      예시 데이터
+  components/       헤더(프로젝트 메뉴), 이번 주 시간표, 카드·캘린더 등 공통 UI
+  pages/            메인, 멤버, 프로젝트, 공지, 일정, 커뮤니티, 내 활동, 지원, 검색, 운영진
+supabase/
+  schema.sql        표와 접근 규칙
+  seed.sql          멤버·공지·일정 예시 (npm run seed-sql로 다시 만들 수 있음)
+```
+
+멤버 이름, 개인 프로젝트, 게시글은 화면 확인용 예시입니다. 실제 운영 전에 바꿔 주세요.
