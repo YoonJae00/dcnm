@@ -189,7 +189,7 @@ export async function toggleLike(postId, userId) {
 
 /* ---------- 개인 로그인 ---------- */
 // 로컬 모드: 예시 멤버 중 한 명으로 로그인 (시연용)
-// Supabase 모드: 이메일 로그인 링크 + profiles 표
+// Supabase 모드: 처음엔 이메일 로그인 링크, 비밀번호를 정한 뒤로는 이메일 + 비밀번호. profiles 표
 const SESSION_KEY = 'dcm-user';
 let localUserId = null;
 const STAFF = new Set(['회장', '부회장', '운영진']);
@@ -198,24 +198,73 @@ export async function demoAccounts() {
   return list('members');
 }
 
+// 매직 링크(PKCE)로 돌아오면 supabase-js가 클라이언트를 만들 때 주소의 ?code=를 세션으로 바꾸고 code를 지웁니다.
+// 다른 브라우저에서 링크를 열었거나 링크가 만료되면 교환이 안 되고 ?code=가 남으므로, 여기서 지우고 그 사실을 기억합니다.
+let linkFailed = false;
+export function loginLinkFailed() {
+  return linkFailed;
+}
+function clearCodeFromUrl() {
+  const url = new URL(location.href);
+  if (!url.searchParams.has('code')) return false;
+  url.searchParams.delete('code');
+  url.searchParams.delete('sb_flow_id');
+  history.replaceState(history.state, '', url.toString()); // 해시(#/me 등)는 그대로 둡니다
+  return true;
+}
+
+// 초대 받기는 로그인한 사람마다 페이지를 연 뒤 한 번만 시도합니다.
+const claimTried = new Set();
+let userInFlight = null;
+
+async function loadSupabaseUser() {
+  const c = await sb();
+  const { data } = await c.auth.getSession(); // 위의 URL 교환이 끝난 뒤에 돌아옵니다
+  if (clearCodeFromUrl() && !data.session) linkFailed = true;
+  const u = data.session?.user;
+  if (!u) return null;
+  linkFailed = false;
+  const readProfile = async () => check(await c.from('profiles').select('*').eq('id', u.id).maybeSingle());
+  let profile = await readProfile();
+  if ((!profile || !profile.approved) && !claimTried.has(u.id)) {
+    claimTried.add(u.id);
+    // 운영진이 이 이메일로 초대해 두었으면 승인·이름·직책이 초대 값으로 맞춰집니다. 초대가 없으면 아무 일도 없습니다.
+    const { data: claimed, error } = await c.rpc('claim_invite');
+    if (error) console.warn('초대 확인 실패:', error.message);
+    if (claimed) profile = await readProfile();
+  }
+  if (!profile) {
+    profile = check(await c.from('profiles').insert({ id: u.id, email: u.email, name: u.email.split('@')[0] }).select().single());
+  }
+  const admin = check(await c.from('admins').select('email').eq('email', u.email).maybeSingle());
+  return {
+    ...profile,
+    isAdmin: !!admin,
+    approved: !!profile.approved || !!admin,
+    // 비밀번호 설정 화면을 보여 줄지에만 씁니다. 사용자가 바꿀 수 있는 값이라 권한 판단에는 쓰지 않습니다.
+    needsPassword: !u.user_metadata?.password_set,
+  };
+}
+
 export async function currentUser() {
   if (mode === 'local') {
     try { localUserId = localUserId || sessionStorage.getItem(SESSION_KEY); } catch { /* 무시 */ }
     if (!localUserId) return null;
     const m = (readDb().members || []).find((x) => x.id === localUserId);
     if (!m) return null;
-    return { id: m.id, name: m.name, generation: m.generation, part: m.part, role: m.role, isAdmin: STAFF.has(m.role), approved: true };
+    return { id: m.id, name: m.name, generation: m.generation, part: m.part, role: m.role, isAdmin: STAFF.has(m.role), approved: true, needsPassword: false };
   }
+  // 여러 화면이 동시에 불러도 profile 만들기·초대 받기가 한 번만 일어나게 묶습니다.
+  if (!userInFlight) userInFlight = loadSupabaseUser().finally(() => { userInFlight = null; });
+  return userInFlight;
+}
+
+// 비밀번호 설정·변경 (Supabase 모드). password_set 표시는 '처음 비밀번호 설정 화면'을 다시 띄우지 않으려는 용도입니다.
+export async function setPassword(password) {
+  if (mode === 'local') return;
   const c = await sb();
-  const { data } = await c.auth.getSession();
-  const u = data.session?.user;
-  if (!u) return null;
-  let profile = check(await c.from('profiles').select('*').eq('id', u.id).maybeSingle());
-  if (!profile) {
-    profile = check(await c.from('profiles').insert({ id: u.id, email: u.email, name: u.email.split('@')[0] }).select().single());
-  }
-  const admin = check(await c.from('admins').select('email').eq('email', u.email).maybeSingle());
-  return { ...profile, isAdmin: !!admin, approved: !!profile.approved || !!admin };
+  check(await c.auth.updateUser({ password, data: { password_set: true } }));
+  emit();
 }
 
 export async function signIn(input) {
@@ -231,7 +280,7 @@ export async function signIn(input) {
   return { sent: true };
 }
 
-// 비밀번호 로그인 (운영진 테스트 계정처럼 비밀번호가 있는 계정용). Supabase 모드에서만 씁니다.
+// 비밀번호 로그인 (첫 로그인 때 비밀번호를 정한 계정). Supabase 모드에서만 씁니다.
 export async function signInWithPassword(email, password) {
   const c = await sb();
   check(await c.auth.signInWithPassword({ email: email.trim(), password }));
@@ -255,4 +304,31 @@ export async function watchAuth(fn) {
   const c = await sb();
   const { data } = c.auth.onAuthStateChange(() => fn());
   return () => data.subscription.unsubscribe();
+}
+
+/* ---------- 멤버 초대 (운영진, Supabase 모드) ---------- */
+// 로그인 이메일은 공개 표 members가 아니라 운영진만 보는 member_invites에 둡니다.
+// 예시 모드에서는 이메일 로그인이 없으므로 빈 목록·아무 일 없음으로 동작합니다.
+export const normalizeEmail = (s) => String(s || '').trim().toLowerCase();
+
+export async function listInvites() {
+  if (mode === 'local') return [];
+  const c = await sb();
+  return check(await c.from('member_invites').select('*'));
+}
+
+export async function saveInvite(invite) {
+  if (mode === 'local') return null;
+  const c = await sb();
+  const row = { ...invite, email: normalizeEmail(invite.email) };
+  const saved = check(await c.from('member_invites').upsert(row, { onConflict: 'email' }).select().single());
+  emit();
+  return saved;
+}
+
+export async function removeInvite(email) {
+  if (mode === 'local') return;
+  const c = await sb();
+  check(await c.from('member_invites').delete().eq('email', normalizeEmail(email)));
+  emit();
 }
