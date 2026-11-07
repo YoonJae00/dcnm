@@ -31,6 +31,8 @@ export function validate(kind, v) {
   else if (msg.length < min) e.message = `${min}자 이상 적어 주세요. 지금 ${msg.length}자입니다.`;
   else if (msg.length > 1000) e.message = `1000자 이하로 줄여 주세요. 지금 ${msg.length}자입니다.`;
 
-  if (!v.consent) e.consent = '개인정보 수집·이용에 동의해야 제출할 수 있습니다.';
+  if (!v.consent) e.consent = '개인정보 수집·이용(필수)에 동의해야 제출할 수 있습니다.';
+  if (!v.consent_overseas) e.consent_overseas = '개인정보 국외 이전(필수)에 동의해야 제출할 수 있습니다.';
+  if (kind === 'apply' && (v.phone || '').trim() && !v.consent_phone) e.consent_phone = '전화번호를 적었다면 전화번호 수집·이용(선택) 동의도 체크하세요. 전화번호를 지우면 동의 없이 제출할 수 있습니다.';
   return e;
 }

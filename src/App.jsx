@@ -7,6 +7,7 @@ import { ProjectDetail, ProjectList, ProjectNew, ProjectsDone } from './pages/Pr
 import { NoticeDetail, Notices } from './pages/Notices';
 import Calendar from './pages/Calendar';
 import Apply from './pages/Apply';
+import Privacy from './pages/Privacy';
 import Search from './pages/Search';
 import Admin from './pages/Admin';
 import Me, { Login } from './pages/Me';
@@ -94,6 +95,7 @@ function OtherRoutes() {
       <Route path="/me" element={<Me />} />
       <Route path="/login" element={<Login />} />
       <Route path="/apply" element={<Apply />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="/search" element={<Search />} />
       <Route path="/admin" element={<Admin />} />
       <Route path="*" element={<NotFound />} />

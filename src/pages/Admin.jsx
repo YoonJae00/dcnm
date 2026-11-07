@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import * as api from '../lib/api';
 import { Link } from 'react-router-dom';
-import { useTable, useUser } from '../lib/hooks';
+import { useSettings, useTable, useUser } from '../lib/hooks';
 import { fullDate, shortDate } from '../lib/format';
 import RecruitSettings from './RecruitSettings';
+import { PRIVACY } from '../data/privacy';
+import { isRetentionOver } from '../lib/privacy';
 
 /* 표마다 편집할 칸 정의 */
 const SCHEMAS = {
@@ -304,17 +306,38 @@ function Submissions({ notify }) {
   const { rows, error } = useTable('submissions');
   const [kind, setKind] = useState('apply');
   const [confirm, setConfirm] = useState(null);
+  const settings = useSettings();
   const shown = (rows || []).filter((r) => r.kind === kind);
+  const overdue = (rows || []).filter((r) => isRetentionOver(r, settings));
 
   async function del(id) {
-    await (id === 'all' ? api.removeAll('submissions') : api.remove('submissions', id));
-    notify(id === 'all' ? '지원·문의를 모두 파기했습니다' : '삭제했습니다');
+    if (id === 'over') {
+      for (const r of overdue) await api.remove('submissions', r.id);
+    } else {
+      await (id === 'all' ? api.removeAll('submissions') : api.remove('submissions', id));
+    }
+    notify(id === 'all' ? '지원·문의를 모두 파기했습니다' : id === 'over' ? `보유 기간이 지난 ${overdue.length}건을 파기했습니다` : '삭제했습니다');
     setConfirm(null);
   }
 
   return (
     <div className="section">
-      <p className="notice-box">지원서에는 개인정보가 들어 있습니다. 모집이 끝나면 30일 안에 모두 파기하세요. 지원 폼에 그렇게 안내되어 있습니다.</p>
+      <p className="notice-box">
+        지원서에는 개인정보가 들어 있습니다. 개인정보 처리방침과 지원 폼에 <b>지원서는 모집 마감일부터 {PRIVACY.applyRetentionDays}일, 문의는 접수일부터 {PRIVACY.inquiryRetentionDays}일 안에 파기</b>한다고 안내되어 있으니 그 안에 파기하세요. (<Link to="/privacy">처리방침 보기</Link>)
+      </p>
+      {overdue.length > 0 && (
+        <p className="error-box" role="alert">
+          보유 기간이 지난 접수가 <b>{overdue.length}건</b> 있습니다. 지금 파기해 주세요.{' '}
+          {confirm === 'over' ? (
+            <span className="actions">
+              <button type="button" className="btn small danger solid" onClick={() => del('over')}>{overdue.length}건 파기 확인</button>
+              <button type="button" className="btn small" onClick={() => setConfirm(null)}>취소</button>
+            </span>
+          ) : (
+            <button type="button" className="btn small danger" onClick={() => setConfirm('over')}>기간 지난 {overdue.length}건 파기</button>
+          )}
+        </p>
+      )}
       <div className="admin-bar">
         <div className="tabs" role="tablist" style={{ marginBottom: 0 }}>
           <button type="button" role="tab" aria-selected={kind === 'apply'} onClick={() => setKind('apply')}>지원서 {(rows || []).filter((r) => r.kind === 'apply').length}</button>

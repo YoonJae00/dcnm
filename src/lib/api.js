@@ -1,6 +1,7 @@
 // 데이터 계층: Supabase 환경변수가 있으면 Supabase를, 없으면 브라우저 저장소의 예시 데이터를 씁니다.
 // 화면 코드는 이 파일의 함수만 부르므로, 저장소를 바꿔도 페이지는 고칠 필요가 없습니다.
 import { seed } from '../data/seed';
+import { PRIVACY } from '../data/privacy';
 
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
 const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -157,10 +158,18 @@ export async function saveSettings(s) {
 }
 
 /* ---------- 지원·문의 접수 (비회원도 가능) ---------- */
+// 동의 기록(처리방침 버전·국외 이전·전화번호 선택 동의)을 접수 데이터에 함께 저장합니다. 동의 시각은 DB가 서버 시각으로 넣습니다.
 export async function submit(payload) {
-  const row = { ...payload, consent: true };
+  const row = {
+    ...payload,
+    consent: true,
+    consent_overseas: true,
+    consent_phone: !!payload.phone,
+    consent_version: PRIVACY.version,
+  };
   if (mode === 'local') {
-    readDb().submissions.push({ ...row, id: uid(), created_at: new Date().toISOString() });
+    const now = new Date().toISOString();
+    readDb().submissions.push({ ...row, id: uid(), created_at: now, consented_at: now });
     writeDb();
     emit();
     return;
@@ -246,6 +255,8 @@ async function loadSupabaseUser() {
     approved: !!profile.approved || !!admin,
     // 비밀번호 설정 화면을 보여 줄지에만 씁니다. 사용자가 바꿀 수 있는 값이라 권한 판단에는 쓰지 않습니다.
     needsPassword: !u.user_metadata?.password_set,
+    // 처리방침 동의가 없거나 예전 버전에 동의했으면 다시 받습니다.
+    needsPrivacy: profile.privacy_version !== PRIVACY.version,
   };
 }
 
@@ -255,7 +266,7 @@ export async function currentUser() {
     if (!localUserId) return null;
     const m = (readDb().members || []).find((x) => x.id === localUserId);
     if (!m) return null;
-    return { id: m.id, name: m.name, generation: m.generation, part: m.part, role: m.role, isAdmin: STAFF.has(m.role), approved: true, needsPassword: false };
+    return { id: m.id, name: m.name, generation: m.generation, part: m.part, role: m.role, isAdmin: STAFF.has(m.role), approved: true, needsPassword: false, needsPrivacy: false };
   }
   // 여러 화면이 동시에 불러도 profile 만들기·초대 받기가 한 번만 일어나게 묶습니다.
   if (!userInFlight) userInFlight = loadSupabaseUser().finally(() => { userInFlight = null; });
@@ -333,5 +344,58 @@ export async function removeInvite(email) {
   if (mode === 'local') return;
   const c = await sb();
   check(await c.from('member_invites').delete().eq('email', normalizeEmail(email)));
+  emit();
+}
+
+/* ---------- 개인정보 처리방침 동의 · 연락처 · 계정 삭제 ---------- */
+// 부원 계정의 동의 기록. profiles는 본인이 직접 못 고치므로 security definer 함수가 두 칸만 씁니다. 예시 모드에서는 아무 일도 없습니다.
+export async function agreePrivacy() {
+  if (mode === 'local') return;
+  const c = await sb();
+  check(await c.rpc('agree_privacy', { version: PRIVACY.version }));
+  emit();
+}
+
+// 처리방침에 보여 줄 개인정보 문의 연락처: 운영진이 설정에 적은 값, 없으면 회장 계정 이메일(DB 함수). 없으면 null.
+export async function getPrivacyContact() {
+  if (mode === 'local') return (readDb().settings?.privacy_contact || '').trim() || null;
+  try {
+    const c = await sb();
+    const { data, error } = await c.rpc('privacy_contact');
+    return error ? null : data || null;
+  } catch { return null; }
+}
+
+// 계정 삭제(탈퇴). deleteContent가 true면 내가 쓴 글·댓글·문의도 지우고, 아니면 이름만 '탈퇴한 회원'으로 바꿔 남깁니다.
+export async function deleteMyAccount(deleteContent) {
+  if (mode === 'local') {
+    const db = readDb();
+    const id = localUserId;
+    const me = (db.members || []).find((m) => m.id === id);
+    if (!me) return;
+    const gone = '탈퇴한 회원';
+    if (deleteContent) {
+      db.posts = (db.posts || []).filter((p) => p.author_id !== id);
+      db.comments = (db.comments || []).filter((x) => x.user_id !== id);
+      db.inquiries = (db.inquiries || []).filter((x) => x.user_id !== id);
+    }
+    for (const [t, idKey, nameKey] of [['posts', 'author_id', 'author_name'], ['comments', 'user_id', 'user_name'], ['inquiries', 'user_id', 'user_name'], ['projects', 'author_id', 'author_name']]) {
+      for (const r of db[t] || []) if (r[idKey] === id) { r[nameKey] = gone; r[idKey] = null; }
+    }
+    db.applications = (db.applications || []).filter((a) => a.user_id !== id);
+    db.post_likes = (db.post_likes || []).filter((l) => l.user_id !== id);
+    for (const p of db.projects || []) {
+      const ids = p.member_ids || [];
+      const i = ids.indexOf(id);
+      if (i >= 0) { p.member_ids = ids.filter((x) => x !== id); p.member_names = (p.member_names || []).filter((_, k) => k !== i); }
+    }
+    db.members = (db.members || []).filter((m) => m.id !== id);
+    writeDb();
+    await signOut();
+    return;
+  }
+  const c = await sb();
+  check(await c.rpc('delete_my_account', { delete_content: !!deleteContent }));
+  await c.auth.signOut();
   emit();
 }
