@@ -1,0 +1,7 @@
+/* 전역 CSS 진입점.
+   레이어 순서를 먼저 선언하고, dcm-site 기존 CSS(styles.css)를 가장 낮은 레이어(site)에 넣어요.
+   레이어 없는 CSS는 레이어 안의 Tailwind 유틸리티를 이기기 때문에, 이렇게 해야 모집 랜딩(src/landing)의
+   유틸리티 클래스가 `a{color}`·`h1{...}` 같은 전역 요소 규칙에 눌리지 않아요.
+   랜딩이 쓰는 theme·base·utilities 레이어는 랜딩 화면을 열 때 따로 불러와요. */
+@layer site, theme, base, components, utilities;
+@import "./styles.css" layer(site);
