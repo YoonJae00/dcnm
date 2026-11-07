@@ -244,3 +244,13 @@
   --shadow-l: 0 24px 64px -12px rgb(0 0 0 / 0.6);
 }
 :root[data-theme="dark"] .landing ::selection { color: #1b1b33; }
+
+/* 커피 이스터에그: 마스코트 말풍선 */
+.dcm-mascot-tease { animation: dcm-mascot-pop 1.6s ease-out both; translate: -50% 0; }
+@keyframes dcm-mascot-pop {
+  0% { opacity: 0; transform: scale(.4); }
+  15% { opacity: 1; transform: scale(1.15); }
+  25% { transform: scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-8px); }
+}

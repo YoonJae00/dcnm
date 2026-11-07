@@ -4,6 +4,7 @@ import { motion, useInView, useReducedMotion } from "motion/react";
 import { LogoGlyph } from "@/components/brand/Logo";
 import { Check } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
+import { CoffeeMascot } from "./CoffeeMascot";
 
 /* ───────────── 1. 스터디: 깃허브 잔디 ───────────── */
 
@@ -145,6 +146,7 @@ export function HackathonTimer() {
           ☕ × {coffees}
         </button>
       </div>
+      {coffees === 0 && <CoffeeMascot />}
       <span className="sr-only" role="status">
         {coffees < INITIAL_COFFEES ? `30분을 추가했어요. 남은 커피 ${coffees}잔.` : ''}
       </span>
