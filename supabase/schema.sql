@@ -53,6 +53,8 @@ create table if not exists settings (
 alter table settings add column if not exists recruit_start date;
 alter table settings add column if not exists landing_enabled boolean not null default false;
 alter table settings add column if not exists recruit_details jsonb;
+-- 랜딩 Activities에 보일 프로젝트 id (배열 순서 = 표시 순서)
+alter table settings add column if not exists landing_projects uuid[] not null default '{}';
 
 -- 개인 로그인 -------------------------------------------------------------
 -- 로그인한 사람마다 한 줄. approved가 true여야 모집글·참여 신청·글쓰기가 됩니다.
