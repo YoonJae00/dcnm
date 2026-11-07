@@ -7,6 +7,7 @@ import { Hero } from "@/components/sections/hero/Hero";
 import { Manifesto } from "@/components/sections/Manifesto";
 import { Values } from "@/components/sections/values/Values";
 import { Stats } from "@/components/sections/Stats";
+import { Members } from "@/components/sections/Members";
 import { Activities } from "@/components/sections/Activities";
 import { Recruit } from "@/components/sections/recruit/Recruit";
 import { Faq } from "@/components/sections/Faq";
@@ -33,6 +34,7 @@ export default function LandingApp({ settings }: { settings: RecruitSettings }) 
               <Manifesto />
               <Values />
               <Stats />
+              <Members />
               <Activities />
               <Recruit />
               <Faq />

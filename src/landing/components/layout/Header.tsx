@@ -26,6 +26,13 @@ export function Header() {
 
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 12));
 
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const closeOnDesktop = () => { if (desktop.matches) setOpen(false); };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
+
   // 모바일 메뉴가 열려 있으면 뒤 페이지 스크롤을 멈춰요.
   useEffect(() => {
     if (open) lenis?.stop();
@@ -33,7 +40,11 @@ export function Header() {
     document.documentElement.style.overflow = open ? "hidden" : "";
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.documentElement.style.overflow = "";
+      lenis?.start();
+    };
   }, [open, lenis]);
 
   const solid = scrolled || open;
@@ -49,18 +60,18 @@ export function Header() {
             : "border-transparent bg-transparent",
         )}
       />
-      <nav className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
+      <nav className="relative mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto] items-center px-5 md:px-8 lg:grid-cols-[1fr_auto_1fr]">
         <SmartLink
           href="/#top"
           aria-label="DC&M 홈"
-          className="text-[22px]"
+          className="justify-self-start text-[22px]"
           onClick={() => setOpen(false)}
         >
           <Logo />
         </SmartLink>
 
         <ul
-          className="hidden items-center gap-1 md:flex"
+          className="hidden items-center gap-1 lg:flex"
           onMouseLeave={() => setHovered(null)}
         >
           {navLinks.map((link) => (
@@ -68,7 +79,7 @@ export function Header() {
               <SmartLink
                 href={link.href}
                 onMouseEnter={() => setHovered(link.href)}
-                className="relative z-10 block rounded-full px-4 py-2 text-14 font-semibold text-gray-4 transition-colors hover:text-ink"
+                className="relative z-10 flex h-10 min-w-20 items-center justify-center whitespace-nowrap rounded-full px-4 text-14 font-semibold text-gray-4 transition-colors hover:text-ink"
               >
                 {link.label}
               </SmartLink>
@@ -83,17 +94,17 @@ export function Header() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-self-end gap-2">
           <ThemeToggle />
           <SmartLink
             href="/login"
-            className="hidden h-9 items-center rounded-full px-4 text-14 font-semibold text-gray-4 transition-colors hover:bg-gray-1 hover:text-ink md:inline-flex"
+            className="hidden h-9 items-center rounded-full px-4 text-14 font-semibold text-gray-4 transition-colors hover:bg-gray-1 hover:text-ink lg:inline-flex"
           >
             부원 로그인
           </SmartLink>
           <SmartLink
             href="/apply"
-            className="hidden h-9 items-center rounded-full bg-night px-4 text-14 font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-primary active:scale-95 md:inline-flex"
+            className="hidden h-9 items-center rounded-full bg-night px-4 text-14 font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-primary active:scale-95 lg:inline-flex"
           >
             지원하기
           </SmartLink>
@@ -103,7 +114,7 @@ export function Header() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             onClick={() => setOpen((v) => !v)}
-            className="relative grid size-10 place-items-center rounded-full transition-colors hover:bg-gray-1 md:hidden"
+            className="relative grid size-10 place-items-center rounded-full transition-colors hover:bg-gray-1 lg:hidden"
           >
             <span className="sr-only">메뉴</span>
             <motion.span
@@ -134,7 +145,7 @@ export function Header() {
         {open && (
           <motion.div
             id="mobile-menu"
-            className="fixed inset-x-0 top-16 bottom-0 bg-surface/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-x-0 top-16 bottom-0 bg-surface/95 backdrop-blur-xl lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.2 } }}
