@@ -6,6 +6,8 @@ import { WEEKDAYS, addDays, dayKey, parseDay, shortDate } from '../lib/format';
 import { isMember, nextMeeting, occurrences } from '../lib/projects';
 import { Avatar, MonthCalendar, ProjectBadges, Progress } from '../components/UI';
 import { PasswordForm } from '../components/Password';
+import { PRIVACY } from '../data/privacy';
+import { usePrivacyOfficer } from '../lib/privacy';
 
 const STATUS = { pending: ['neutral', '수락 대기'], accepted: ['ok', '수락됨'], rejected: ['neutral', '거절됨'] };
 
@@ -143,9 +145,70 @@ export default function Me() {
           </section>
 
           {api.mode === 'supabase' && <ChangePassword />}
+
+          <MyInfo user={user} counts={{ posts: myPosts.length, apps: myApps.length, recruits: myRecruits.length, projects: joined.length }} />
         </div>
       </div>
     </>
+  );
+}
+
+// 정보주체 권리: 내 정보 열람, 정정 요청, 동의 철회(계정 삭제). 삭제는 DB 함수 delete_my_account()가 본인 계정만 지웁니다.
+function MyInfo({ user, counts }) {
+  const officer = usePrivacyOfficer();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [sure, setSure] = useState(false);
+  const [withContent, setWithContent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const when = user.privacy_agreed_at ? new Date(user.privacy_agreed_at).toLocaleString('ko-KR') : null;
+  const rows = [
+    ['이름', user.name],
+    ['이메일', user.email || (api.mode === 'local' ? '(예시 모드에서는 없음)' : '')],
+    ['기수', user.generation ? `${user.generation}기` : '미정'],
+    ['활동 분야', user.part || '없음'],
+    ['직책', user.role],
+    ['부원 승인', user.approved ? '승인됨' : '승인 대기'],
+    ['처리방침 동의', when ? `${when} · 버전 ${user.privacy_version}` : api.mode === 'local' ? '(예시 모드에서는 받지 않음)' : '기록 없음'],
+  ];
+
+  async function remove() {
+    setBusy(true); setErr('');
+    try { await api.deleteMyAccount(withContent); navigate('/', { replace: true }); }
+    catch (x) { setErr(`계정을 삭제하지 못했습니다. (${x.message})`); setBusy(false); }
+  }
+
+  return (
+    <section className="section" aria-labelledby="info-h">
+      <div className="section-head"><h2 id="info-h">내 정보</h2><Link to="/privacy">개인정보 처리방침</Link></div>
+      <p className="muted small">동아리가 저장하고 있는 내 개인정보입니다. 이 밖에 내가 쓴 글 {counts.posts}개, 참여 신청 {counts.apps}건, 올린 모집 {counts.recruits}건이 계정에 연결되어 있습니다.</p>
+      <dl className="info-list">
+        {rows.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <p className="small">
+        <b>정정 요청</b>: 이름·기수·분야·직책이 틀렸다면 운영진에게 알려 주세요. <Link to={PRIVACY.inquiryPath}>문의하기</Link>{officer.contact ? <> 또는 {officer.contact}</> : null}로 요청하면 {PRIVACY.replyDays}일 안에 처리합니다.
+      </p>
+
+      <div className="danger-zone">
+        <button type="button" className="btn small danger" aria-expanded={open} onClick={() => { setOpen((v) => !v); setSure(false); }}>{open ? '닫기' : '계정 삭제(탈퇴)'}</button>
+        {open && (
+          <div className="stack" style={{ gap: 10 }}>
+            <p className="small">계정을 삭제하면 <b>되돌릴 수 없습니다.</b> 아래가 함께 삭제됩니다.</p>
+            <ul className="small">
+              <li>로그인 계정과 프로필, 프로젝트 참여 신청·좋아요</li>
+              <li>내 멤버 카드와 초대(로그인 이메일) 기록, 같은 이메일로 접수된 지원·문의</li>
+              <li>프로젝트 참여자 목록에서 내 이름</li>
+              <li>내가 쓴 글·댓글·문의·프로젝트는 아래 선택에 따라 <b>이름만 "탈퇴한 회원"으로 바뀌어 남거나</b>, 글·댓글·문의는 함께 삭제됩니다(내가 만든 프로젝트 글은 이름만 지워지고 남습니다).</li>
+            </ul>
+            <label className="check-line"><input type="checkbox" checked={withContent} onChange={(e) => setWithContent(e.target.checked)} />내가 쓴 글·댓글·문의도 함께 삭제합니다.</label>
+            <label className="check-line"><input type="checkbox" checked={sure} onChange={(e) => setSure(e.target.checked)} />위 내용을 확인했고 계정을 삭제합니다.</label>
+            {err && <p className="error-box" role="alert">{err}</p>}
+            <div className="actions"><button type="button" className="btn small danger solid" disabled={!sure || busy} onClick={remove}>{busy ? '삭제하는 중…' : '계정 삭제'}</button></div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
