@@ -231,6 +231,13 @@ export async function signIn(input) {
   return { sent: true };
 }
 
+// 비밀번호 로그인 (운영진 테스트 계정처럼 비밀번호가 있는 계정용). Supabase 모드에서만 씁니다.
+export async function signInWithPassword(email, password) {
+  const c = await sb();
+  check(await c.auth.signInWithPassword({ email: email.trim(), password }));
+  emit();
+}
+
 export async function signOut() {
   if (mode === 'local') {
     localUserId = null;

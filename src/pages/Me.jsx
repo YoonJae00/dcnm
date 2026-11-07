@@ -152,6 +152,7 @@ export function Login() {
   const next = params.get('next') || '/me';
   const members = useTable('members').rows || [];
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
   const local = api.mode === 'local';
@@ -169,7 +170,7 @@ export function Login() {
         <h1>로그인</h1>
         <p>{local
           ? '지금은 예시 데이터로 동작하는 시연 모드입니다. 아래에서 멤버 한 명을 골라 그 사람으로 들어가 보세요. 회장·부회장·운영진으로 들어가면 운영진 화면도 쓸 수 있습니다.'
-          : '부원 이메일을 입력하면 로그인 링크를 보내 드립니다. 비밀번호는 쓰지 않습니다.'}</p>
+          : '부원 이메일을 입력하면 로그인 링크를 보내 드립니다. 비밀번호가 있는 계정은 비밀번호를 함께 입력하면 바로 들어갑니다.'}</p>
       </div>
       {local ? (
         <div className="account-grid">
@@ -183,13 +184,23 @@ export function Login() {
         <form className="card-form" onSubmit={async (e) => {
           e.preventDefault(); setErr(''); setMsg('');
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setErr('name@example.com 형식으로 입력하세요.'); return; }
+          if (password) {
+            try { await api.signInWithPassword(email, password); navigate(next); }
+            catch (x) { setErr(`로그인하지 못했습니다. 이메일과 비밀번호를 확인하세요. (${x.message})`); }
+            return;
+          }
           try { await api.signIn(email); setMsg(`${email}로 로그인 링크를 보냈습니다. 메일함에서 링크를 누르면 내 활동 화면으로 돌아옵니다.`); }
           catch (x) { setErr(`로그인 링크를 보내지 못했습니다. (${x.message})`); }
         }}>
           <div className="field"><label htmlFor="login-email">이메일</label><input id="login-email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+          <div className="field">
+            <label htmlFor="login-password">비밀번호 (선택)</label>
+            <input id="login-password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <span className="hint">비워 두면 이메일로 로그인 링크를 보냅니다.</span>
+          </div>
           {err && <p className="error-box" role="alert">{err}</p>}
           {msg && <p className="notice-box" role="status">{msg}</p>}
-          <div className="actions"><button type="submit" className="btn primary">로그인 링크 받기</button></div>
+          <div className="actions"><button type="submit" className="btn primary">{password ? '로그인' : '로그인 링크 받기'}</button></div>
           <p className="small muted">처음 로그인하면 운영진이 승인한 뒤에 글과 모집글을 쓸 수 있습니다.</p>
         </form>
       )}
