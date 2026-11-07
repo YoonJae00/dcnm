@@ -7,7 +7,8 @@ const TARGETS = [
   '.filters', '.panel', '.article', '.rows > *',
 ].join(',');
 
-const reduced = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+// OS 동작 줄이기 설정은 따르지 않습니다 (Windows '애니메이션 효과' 꺼짐 대응 핫픽스).
+const reduced = () => false;
 
 export function useReveal(rootRef, key) {
   useEffect(() => {

@@ -41,7 +41,7 @@
           var h = location.hash;
           if (h && h !== "#" && h !== "#/") return;
           var force = new URLSearchParams(location.search).has("intro");
-          if (force || (!matchMedia("(prefers-reduced-motion: reduce)").matches && !localStorage.getItem("dcm-intro-seen")))
+          if (force || (!localStorage.getItem("dcm-intro-seen")))
             document.documentElement.classList.add("dcm-intro-pending");
         } catch (e) {}
       })();

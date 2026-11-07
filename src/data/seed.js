@@ -313,5 +313,16 @@ export const seed = {
     { id: 'wt5', project_id: 'p1', title: '모바일 화면 점검', status: 'todo', assignee_id: null, assignee_name: '', due: '', note: '390px 기준', sort: 0, minutes_id: null, created_by: 'm9', created_by_name: '이현성', created_at: '2026-11-06T21:00:00+09:00' },
   ],
 
+  // 시간 맞추기 (When2meet식 격자). dates·start_min·end_min은 한국 시간 벽시계 기준.
+  // slots = 날짜 순번 × 하루 칸 수 + 그날 안의 칸 순번. 아래는 18:00~23:00, 30분 칸이라 하루 10칸.
+  ws_avail_polls: [
+    { id: 'wa1', project_id: 'p1', title: '2차 배포 회의 시간', dates: ['2026-11-10', '2026-11-11', '2026-11-12', '2026-11-13'], start_min: 1080, end_min: 1380, slot_min: 30, duration_min: 60, closed: false, meeting_id: null, created_by: 'm1', created_by_name: '문선우', created_at: '2026-11-07T22:00:00+09:00' },
+  ],
+  ws_avail_responses: [
+    { id: 'war1', project_id: 'p1', poll_id: 'wa1', user_id: 'm1', user_name: '문선우', slots: [2, 3, 4, 5, 12, 13, 14, 15, 16, 17, 24, 25], updated_at: '2026-11-07T22:05:00+09:00' },
+    { id: 'war2', project_id: 'p1', poll_id: 'wa1', user_id: 'm5', user_name: '강경민', slots: [13, 14, 15, 16, 22, 23, 24, 25, 26, 27, 28, 29], updated_at: '2026-11-07T22:20:00+09:00' },
+    { id: 'war3', project_id: 'p1', poll_id: 'wa1', user_id: 'm9', user_name: '이현성', slots: [0, 1, 2, 3, 12, 13, 14, 15, 24, 25, 26, 27], updated_at: '2026-11-07T22:30:00+09:00' },
+  ],
+
   submissions: [],
 };

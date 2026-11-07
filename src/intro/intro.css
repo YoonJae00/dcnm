@@ -226,7 +226,7 @@ html.dcm-intro-open { overflow: hidden; }
 .dcm-intro.is-copy .dcm-intro__copy { opacity: 1; transform: none; transition: opacity .5s, transform .6s var(--intro-ease-out); }
 .dcm-intro.is-cta .dcm-intro__cta { opacity: 1; transform: none; transition: opacity .5s, transform .6s var(--intro-ease-out), background .25s, border-color .25s; }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce) and (max-width: 0px) {
   .dcm-intro__glow,
   .dcm-intro__dots span,
   .dcm-intro__chip > span { animation: none; }

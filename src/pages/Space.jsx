@@ -30,6 +30,8 @@ export default function Space() {
     votes: useRows('ws_meeting_votes', match),
     minutes: useRows('ws_minutes', match),
     tasks: useRows('ws_tasks', match),
+    polls: useRows('ws_avail_polls', match),
+    responses: useRows('ws_avail_responses', match),
   };
 
   if (error) return <p className="error-box">프로젝트를 불러오지 못했습니다: {error}</p>;
@@ -110,6 +112,7 @@ function Home({ ctx }) {
   const myTasks = (data.tasks.rows || []).filter((t) => t.assignee_id === user.id && t.status !== 'done');
   const recent = (data.posts.rows || []).filter((x) => x.kind !== 'notice').sort((a, b) => String(b.created_at).localeCompare(String(a.created_at))).slice(0, 4);
   const polling = (data.meetings.rows || []).filter((m) => m.status === 'polling');
+  const openPolls = (data.polls.rows || []).filter((x) => !x.closed);
 
   return (
     <div className="ws-home">
@@ -132,8 +135,11 @@ function Home({ ctx }) {
             </div>
           ))}
         </div>
-        {polling.length > 0 && (
-          <p className="notice-box">날짜를 정하는 중인 회의가 {polling.length}개 있어요. <button type="button" className="linkish" onClick={() => go('meetings')}>가능한 시간 체크하기</button></p>
+        {(polling.length > 0 || openPolls.length > 0) && (
+          <p className="notice-box">
+            {[polling.length > 0 && `날짜를 정하는 중인 회의 ${polling.length}개`, openPolls.length > 0 && `시간 맞추기 ${openPolls.length}개`].filter(Boolean).join(', ')}가 있어요.{' '}
+            <button type="button" className="linkish" onClick={() => go('meetings')}>가능한 시간 체크하기</button>
+          </p>
         )}
       </section>
 

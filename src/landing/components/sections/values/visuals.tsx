@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { motion, useInView } from "motion/react";
 import { LogoGlyph } from "@/components/brand/Logo";
 import { Check } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
@@ -193,7 +193,7 @@ function Orbit({
   duration: number;
   reverse?: boolean;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = false;
   const spin = reduce ? {} : { rotate: reverse ? -360 : 360 };
   return (
     <motion.div

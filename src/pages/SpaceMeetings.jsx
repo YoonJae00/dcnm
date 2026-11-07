@@ -4,6 +4,7 @@ import * as api from '../lib/api';
 import { addDays, dayKey } from '../lib/format';
 import { MEETING_STATUS, bestSlots, canDelete, lines, meetingEnd, meetingLive, toIso, whenText, hm } from '../lib/workspace';
 import { DelBtn, Empty, ErrLine, F, Meta, useRun } from '../components/SpaceUI';
+import { Availability } from './SpaceAvailability';
 
 // 확정된 회의의 입장 버튼. 시작 15분 전부터 끝날 때까지 강조합니다.
 export function JoinButton({ m }) {
@@ -346,6 +347,7 @@ export function Meetings({ ctx }) {
         {!readOnly && <button type="button" className="btn small primary" aria-expanded={adding} onClick={() => setAdding((x) => !x)}>{adding ? '닫기' : '새 회의'}</button>}
       </div>
       {adding && <div className="ws-card"><MeetingForm ctx={ctx} onDone={() => setAdding(false)} /></div>}
+      <Availability ctx={ctx} />
       {group('투표 중', polling, '날짜를 정하는 중인 회의가 없습니다.')}
       {group('확정', scheduled, '확정된 회의가 없습니다.')}
       {group('끝남', done, '끝난 회의가 없습니다.')}
