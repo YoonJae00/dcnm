@@ -309,7 +309,7 @@ export async function signOut() {
     return;
   }
   const c = await sb();
-  await c.auth.signOut();
+  check(await c.auth.signOut());
   emit();
 }
 

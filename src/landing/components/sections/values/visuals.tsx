@@ -101,16 +101,27 @@ export function PipelineVisual() {
 
 /* ───────────── 3. 해커톤: 24시간 카운트다운 ───────────── */
 
+const HACKATHON_SECONDS = 24 * 3600;
+const INITIAL_COFFEES = 37;
+const COFFEE_SECONDS = 30 * 60;
+
 export function HackathonTimer() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.5 });
-  const [left, setLeft] = useState(24 * 3600);
+  const [{ left, coffees }, setTimer] = useState({ left: HACKATHON_SECONDS, coffees: INITIAL_COFFEES });
 
   useEffect(() => {
     if (!inView) return;
-    const id = window.setInterval(() => setLeft((s) => (s <= 1 ? 24 * 3600 : s - 1)), 1000);
+    const id = window.setInterval(() => {
+      setTimer((timer) => timer.left > 0 ? { ...timer, left: timer.left - 1 } : timer);
+    }, 1000);
     return () => window.clearInterval(id);
   }, [inView]);
+
+  const drinkCoffee = () => setTimer((timer) => timer.coffees > 0
+    ? { left: timer.left + COFFEE_SECONDS, coffees: timer.coffees - 1 }
+    : timer);
+  const totalSeconds = HACKATHON_SECONDS + (INITIAL_COFFEES - coffees) * COFFEE_SECONDS;
 
   const hh = String(Math.floor(left / 3600)).padStart(2, "0");
   const mm = String(Math.floor((left % 3600) / 60)).padStart(2, "0");
@@ -123,8 +134,20 @@ export function HackathonTimer() {
           <span className="size-1.5 animate-pulse rounded-full bg-negative" />
           DC&amp;M Jam · LIVE
         </span>
-        <span>☕ × 37</span>
+        <button
+          type="button"
+          onClick={drinkCoffee}
+          disabled={coffees === 0}
+          aria-label={`커피 ${coffees}잔 남음, 한 잔 마시고 30분 추가`}
+          title={coffees > 0 ? '커피 한 잔으로 30분 더!' : '커피를 모두 마셨어요'}
+          className="-my-2 inline-flex min-h-10 items-center rounded-lg px-2 text-light transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-light disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          ☕ × {coffees}
+        </button>
       </div>
+      <span className="sr-only" role="status">
+        {coffees < INITIAL_COFFEES ? `30분을 추가했어요. 남은 커피 ${coffees}잔.` : ''}
+      </span>
       <p className="mt-3 font-mono text-[40px] leading-none font-bold tracking-tight tabular-nums sm:text-[44px]">
         {hh}
         <span className="animate-pulse text-light">:</span>
@@ -135,7 +158,7 @@ export function HackathonTimer() {
       <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
         <div
           className="bg-brand h-full rounded-full transition-[width] duration-1000 ease-linear"
-          style={{ width: `${(1 - left / (24 * 3600)) * 100}%` }}
+          style={{ width: `${Math.max(0, Math.min(100, (1 - left / totalSeconds) * 100))}%` }}
         />
       </div>
     </div>
