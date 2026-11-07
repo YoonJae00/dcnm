@@ -3,7 +3,6 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { mode, resetDemo } from '../lib/api';
 import { useSettings, useUser } from '../lib/hooks';
 import { Avatar } from './UI';
-import MatrixIntro from './MatrixIntro';
 import Logo from './Logo';
 import { useReveal } from '../lib/motion';
 
@@ -54,18 +53,13 @@ export default function Layout({ children }) {
 
   useEffect(() => { setOpen(false); window.scrollTo(0, 0); }, [location.pathname]);
 
-  // 인트로: 홈으로 들어오거나 새로고침할 때마다 화면 전체에. 사이트 안에서 다른 페이지로 가면 사라짐
-  const [intro, setIntro] = useState(() => location.pathname === '/');
   const mainRef = useRef(null);
-  const finishIntro = () => { setIntro(false); window.scrollTo(0, 0); };
   useReveal(mainRef, location.pathname);
-  useEffect(() => { if (location.pathname !== '/') setIntro(false); }, [location.pathname]);
 
   return (
     <>
       <a className="skip" href="#content">본문으로 건너뛰기</a>
       <div className="ambient" aria-hidden="true"><i /><i /><i /></div>
-      {intro && <MatrixIntro onDone={finishIntro} />}
       {settings?.links?.length > 0 && (
         <div className="topbar">
           <div className="wrap topbar-row">

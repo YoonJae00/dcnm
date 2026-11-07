@@ -11,6 +11,30 @@
     <meta name="theme-color" content="#ffffff" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" />
+    <!-- 첫 방문 인트로: 페이지가 그려지기 전에 화면을 인트로 배경으로 가려서 메인이 잠깐 보였다 사라지지 않게 합니다.
+         개발 모드에서는 CSS가 JS로 늦게 붙기 때문에 파일 CSS가 아니라 여기에 인라인으로 둡니다.
+         조건은 src/intro/Intro.tsx와 같고, 홈 경로('#/' 또는 해시 없음)일 때만 가립니다.
+         Intro가 뜨면 걷고, 끝내 못 뜨면 6초 뒤 스스로 걷힙니다. -->
+    <style>
+      html.dcm-intro-pending { overflow: hidden; }
+      html.dcm-intro-pending body::after {
+        content: ""; position: fixed; inset: 0; z-index: 999;
+        background: radial-gradient(75% 75% at 50% 50%, #24245a 0%, #14142e 52%, #0b0b1a 100%);
+        animation: dcm-intro-pending-out 0.4s ease 6s forwards;
+      }
+      @keyframes dcm-intro-pending-out { to { opacity: 0; visibility: hidden; } }
+    </style>
+    <script>
+      (function () {
+        try {
+          var h = location.hash;
+          if (h && h !== "#" && h !== "#/") return;
+          var force = new URLSearchParams(location.search).has("intro");
+          if (force || (!matchMedia("(prefers-reduced-motion: reduce)").matches && !localStorage.getItem("dcm-intro-seen")))
+            document.documentElement.classList.add("dcm-intro-pending");
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
