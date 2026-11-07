@@ -6,7 +6,6 @@ import { deadlineLeft, isMember, occurrences } from '../lib/projects';
 import { RecruitCard } from '../components/UI';
 import { usePostStats } from './Community';
 import { CountUp } from '../lib/motion';
-import Terminal from '../components/Terminal';
 
 export function RecruitStatus({ settings }) {
   if (!settings) return null;
@@ -57,14 +56,14 @@ export default function Home() {
     <>
       <section className="hero2" aria-labelledby="hero-title">
         <RecruitStatus settings={settings} />
-        <h2 id="hero-title" className="hero-h">매주 모여서 풀고, 읽고,<br />같이 만드는 곳</h2>
+        <h1 id="hero-title" className="hero-h">아이디어가<br /><span className="hero-code">코드</span>가 되는 곳</h1>
+        <p className="hero-description">기획부터 배포까지, 함께 만들고 함께 성장하는<br />개발 동아리 DC&amp;M이에요.</p>
         <div className="actions">
           {settings?.recruit_open
             ? <Link className="btn primary big" to="/apply">지원서 쓰기 ›</Link>
             : <Link className="btn primary big" to="/apply?tab=inquiry">모집 알림 문의하기 ›</Link>}
           <Link className="btn outline big" to="/projects">프로젝트 둘러보기</Link>
         </div>
-        <Terminal settings={settings} members={members} projects={projects} events={events.rows || []} />
       </section>
 
       <section className="statement">

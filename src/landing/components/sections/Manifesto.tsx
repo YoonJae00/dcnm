@@ -44,7 +44,7 @@ export function Manifesto() {
   return (
     <section id="about" aria-label="동아리 소개" className="scroll-mt-16 bg-page">
       <div ref={ref} className="relative h-[140vh] sm:h-[160vh]">
-        <div className="sticky top-0 flex h-dvh items-center">
+        <div className="sticky top-16 flex min-h-[70svh] items-start py-8 sm:py-12">
           <div className="mx-auto w-full max-w-5xl px-5 md:px-8">
             <div className="mb-8 flex items-center gap-4">
               <p className="font-mono text-14 font-semibold tracking-normal text-primary">
