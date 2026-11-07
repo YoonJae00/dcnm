@@ -12,7 +12,7 @@ export function CoffeeMascot() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = false;
     let x = Math.max(16, window.innerWidth - SIZE - 32);
     let y = window.innerHeight * 0.3;
     let vx = -1.6;

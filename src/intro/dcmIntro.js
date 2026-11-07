@@ -41,9 +41,8 @@ export const TIMING = {
 
 const TONES = ['#8494FF', '#C9BEFF', '#FFDBFD'];
 
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' &&
-  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+// Windows에서 '애니메이션 효과'를 끄면 Chrome이 reduce로 보고해 연출이 멈춰서, OS 설정은 따르지 않습니다(핫픽스).
+const prefersReducedMotion = () => false;
 
 /**
  * 인트로를 틀지 정합니다.

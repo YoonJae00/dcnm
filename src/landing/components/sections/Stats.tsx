@@ -5,7 +5,6 @@ import {
   motion,
   useInView,
   useMotionValue,
-  useReducedMotion,
   useTransform,
 } from "motion/react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -14,7 +13,7 @@ import { stats, techStack } from "@/data/site";
 function Counter({ value }: { value: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.8 });
-  const reduce = useReducedMotion();
+  const reduce = false;
   const mv = useMotionValue(0);
   const text = useTransform(mv, (v) => Math.round(v).toLocaleString("ko-KR"));
 

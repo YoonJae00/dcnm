@@ -27,7 +27,7 @@ export default function LandingApp({ settings }: { settings: RecruitSettings }) 
   return (
     <div className="landing">
       <ReactLenis root options={{ lerp: 0.11, anchors: false, wheelMultiplier: 1, allowNestedScroll: true }}>
-        <MotionConfig reducedMotion="user" transition={{ ease: [0.22, 1, 0.36, 1] }}>
+        <MotionConfig reducedMotion="never" transition={{ ease: [0.22, 1, 0.36, 1] }}>
           <RecruitProvider settings={settings}>
             <ActivitiesProvider ids={settings.landing_projects}>
             <Header />

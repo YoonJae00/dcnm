@@ -56,7 +56,7 @@ p { margin: 0; }
 a { color: var(--accent-text); }
 img { max-width: 100%; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@media (prefers-reduced-motion: reduce) and (max-width: 0px) { * { transition: none !important; animation: none !important; } }
 
 .wrap {
   max-width: var(--wrap); margin: 0 auto;
@@ -723,7 +723,7 @@ body { overflow-x: clip; }
 .intro-skip:hover { color: #fff; }
 .intro-veil { position: absolute; inset: 0; background: var(--paper-grad); background-color: var(--paper); pointer-events: none; }
 @keyframes intro-bob { 50% { transform: translateY(5px); } }
-@media (prefers-reduced-motion: reduce) { .intro-hint svg { animation: none; } }
+@media (prefers-reduced-motion: reduce) and (max-width: 0px) { .intro-hint svg { animation: none; } }
 
 /* ---------- 움직임: 짧고 부드럽게, 한 번만 ---------- */
 :root { --ease-out: cubic-bezier(.22, 1, .36, 1); }
@@ -760,7 +760,7 @@ a.pcard:hover, .card-grid > a:hover, .part:hover { transform: translateY(-4px); 
 .fab { transition: transform .25s var(--ease-out), box-shadow .25s; }
 .fab:hover { transform: translateY(-3px); }
 
-@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) and (max-width: 0px) { .rv { opacity: 1; transform: none; } }
 
 /* ---------- 배경 조명: 화면 뒤에서 아주 천천히 움직이는 은은한 빛 ---------- */
 .ambient { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
