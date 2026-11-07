@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import WeekBoard from '../components/WeekBoard';
 import { useSettings, useTable, useUser } from '../lib/hooks';
@@ -40,10 +41,28 @@ export default function Home() {
   const apps = useTable('applications').rows || [];
   const stats = usePostStats();
 
-  const ws = weekStart(new Date());
+  // 캘린더 보기 상태 ('two_weeks' | 'full_month')
+  const [calendarView, setCalendarView] = useState('two_weeks');
+
+  const now = new Date();
+  const ws = weekStart(now);
+
+  // 1. 달력 모드에 따른 시작/끝 날짜 계산
+  let rangeStart = addDays(ws, -35);
+  let rangeEnd = addDays(ws, 14); // 기본 2주(14일)
+
+  if (calendarView === 'full_month') {
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    rangeStart = weekStart(firstDayOfMonth);
+    rangeEnd = addDays(weekStart(lastDayOfMonth), 7);
+  }
+
+  // 2. 프로젝트 모임 일정 추출
   const projectSlots = projects
     .filter((p) => p.status !== 'done' && (p.origin === 'club' || isMember(p, user?.id)))
-    .flatMap((p) => occurrences(p, addDays(ws, -35), addDays(ws, 70)).map((e) => ({ ...e, kind: p.kind === '스터디' ? '스터디' : '프로젝트' })));
+    .flatMap((p) => occurrences(p, rangeStart, rangeEnd).map((e) => ({ ...e, kind: p.kind === '스터디' ? '스터디' : '프로젝트' })));
+
   const weekEvents = events.rows ? [...events.rows, ...projectSlots] : null;
 
   const recruiting = projects.filter((p) => p.status === 'recruiting' && (deadlineLeft(p) ?? 0) >= 0)
@@ -85,12 +104,24 @@ export default function Home() {
         <div className="block-foot"><Link className="btn outline" to="/members">멤버가 궁금하다면 ›</Link></div>
       </section>
 
+      {/* 이번 주 / 전체 달력 일정 섹션 */}
       <section className="hblock" aria-labelledby="week-h">
-        <div className="block-head">
-          <span className="eyebrow">This week</span>
-          <h2 id="week-h">이번 주 일정</h2>
+        <div className="block-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <span className="eyebrow">{calendarView === 'two_weeks' ? 'Upcoming 2 Weeks' : 'This Month'}</span>
+            <h2 id="week-h">{calendarView === 'two_weeks' ? '향후 2주간 일정' : `${now.getMonth() + 1}월 전체 일정`}</h2>
+          </div>
+          <button
+            type="button"
+            className="btn outline small"
+            onClick={() => setCalendarView((prev) => (prev === 'two_weeks' ? 'full_month' : 'two_weeks'))}
+          >
+            {calendarView === 'two_weeks' ? '전체보기 (이번 달)' : '접기 (2주 보기)'}
+          </button>
         </div>
-        <WeekBoard events={weekEvents} />
+        
+        {/* WeekBoard 컴포넌트에 모드 전달 (필요 시) */}
+        <WeekBoard events={weekEvents} viewMode={calendarView} />
         {events.error && <p className="error-box">일정을 불러오지 못했습니다: {events.error}</p>}
       </section>
 

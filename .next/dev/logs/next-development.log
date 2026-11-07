@@ -1,0 +1,11 @@
+{"timestamp":"00:00:01.701","source":"Server","level":"LOG","message":"- Cache Components enabled"}
+{"timestamp":"00:00:01.701","source":"Server","level":"LOG","message":"- Partial Prefetching enabled"}
+{"timestamp":"00:00:01.701","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:47.081","source":"Server","level":"LOG","message":"  Turbopack has seen frequent file updates and is waiting for the filesystem to settle (0.5s elapsed so far; last modified: \"\\\\\\\\?\\\\C:\\\\Users\\\\임주호\\\\dcnm\\\\node_modules\\\\next\\\\dist\\\\esm\\\\client\\\\components\\\\segment-cache\")."}
+{"timestamp":"00:00:48.662","source":"Server","level":"LOG","message":"  Turbopack has seen frequent file updates and is waiting for the filesystem to settle (0.5s elapsed so far; last modified: \"\\\\\\\\?\\\\C:\\\\Users\\\\임주호\\\\dcnm\\\\node_modules\\\\motion-dom\\\\dist\\\\es\\\\value\\\\will-change\")."}
+{"timestamp":"00:00:49.570","source":"Server","level":"LOG","message":"○ Compiling / ..."}
+{"timestamp":"00:00:52.960","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:01:07.154","source":"Server","level":"WARN","message":"⚠ Blocked cross-origin request to Next.js dev resource /_next/hmr from \"10.30.5.115\".\nCross-origin access to Next.js dev resources is blocked by default for safety.\n\nTo allow this host in development, add it to \"allowedDevOrigins\" in next.config.js and restart the dev server:\n\n// next.config.js\nmodule.exports = {\n  allowedDevOrigins: ['10.30.5.115'],\n}\n\nRead more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins"}
+{"timestamp":"00:03:46.706","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:04:57.420","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:05:07.273","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
