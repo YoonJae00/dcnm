@@ -10,6 +10,7 @@ import {
 } from "motion/react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { stats, techStack } from "@/data/site";
+import { useRecruit } from "@/lib/RecruitContext";
 
 function Counter({ value }: { value: number }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -57,11 +58,12 @@ function Marquee({ items, reverse }: { items: string[]; reverse?: boolean }) {
 }
 
 export function Stats() {
+  const { generation } = useRecruit();
   const half = Math.ceil(techStack.length / 2);
   return (
     <section
       aria-labelledby="stats-title"
-      className="relative isolate overflow-hidden bg-ink py-24 text-white sm:py-32"
+      className="relative isolate overflow-hidden bg-night py-24 text-white sm:py-32"
     >
       <div
         aria-hidden
@@ -93,7 +95,7 @@ export function Stats() {
               <dt className="text-14 font-semibold text-gray-3 sm:text-16">{s.label}</dt>
               <dd className="mt-3">
                 <span className="bg-[linear-gradient(120deg,#fff_20%,#c9beff_60%,#ffdbfd)] bg-clip-text text-[clamp(3rem,2rem+4vw,5rem)] leading-none font-extrabold text-transparent">
-                  <Counter value={s.value} />
+                  <Counter value={s.label === "기수" ? generation : s.value} />
                 </span>
                 <span className="ml-1 text-24 font-bold text-light">{s.unit}</span>
               </dd>

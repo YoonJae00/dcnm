@@ -42,7 +42,7 @@ export function Manifesto() {
   const barScale = useTransform(scrollYProgress, [0, 0.85], [0, 1]);
 
   return (
-    <section id="about" aria-label="동아리 소개" className="scroll-mt-16 bg-white">
+    <section id="about" aria-label="동아리 소개" className="scroll-mt-16 bg-page">
       <div ref={ref} className="relative h-[140vh] sm:h-[160vh]">
         <div className="sticky top-16 flex min-h-[70svh] items-start py-8 sm:py-12">
           <div className="mx-auto w-full max-w-5xl px-5 md:px-8">

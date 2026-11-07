@@ -11,9 +11,12 @@ import { useLenis } from "lenis/react";
 import { Logo } from "@/components/brand/Logo";
 import { SmartLink } from "@/components/ui/SmartLink";
 import { navLinks } from "@/data/site";
+import { useRecruit } from "@/lib/RecruitContext";
 import { cn } from "@/lib/cn";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function Header() {
+  const recruit = useRecruit();
   const { scrollY, scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 30, restDelta: 0.001 });
   const [scrolled, setScrolled] = useState(false);
@@ -42,7 +45,7 @@ export function Header() {
         className={cn(
           "absolute inset-0 border-b transition-[background-color,border-color,backdrop-filter] duration-300",
           solid
-            ? "border-gray-2/70 bg-white/75 backdrop-blur-xl backdrop-saturate-150"
+            ? "border-gray-2/70 bg-surface/75 backdrop-blur-xl backdrop-saturate-150"
             : "border-transparent bg-transparent",
         )}
       />
@@ -81,6 +84,7 @@ export function Header() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <SmartLink
             href="/login"
             className="hidden h-9 items-center rounded-full px-4 text-14 font-semibold text-gray-4 transition-colors hover:bg-gray-1 hover:text-ink md:inline-flex"
@@ -89,7 +93,7 @@ export function Header() {
           </SmartLink>
           <SmartLink
             href="/apply"
-            className="hidden h-9 items-center rounded-full bg-ink px-4 text-14 font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-primary active:scale-95 md:inline-flex"
+            className="hidden h-9 items-center rounded-full bg-night px-4 text-14 font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-primary active:scale-95 md:inline-flex"
           >
             지원하기
           </SmartLink>
@@ -130,7 +134,7 @@ export function Header() {
         {open && (
           <motion.div
             id="mobile-menu"
-            className="fixed inset-x-0 top-16 bottom-0 bg-white/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-x-0 top-16 bottom-0 bg-surface/95 backdrop-blur-xl md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.2 } }}
@@ -174,7 +178,7 @@ export function Header() {
                   onClick={() => setOpen(false)}
                   className="flex h-14 items-center justify-center rounded-2xl bg-primary text-16 font-bold text-white active:scale-[0.98]"
                 >
-                  8기 지원하기
+                  {recruit.generation}기 지원하기
                 </SmartLink>
               </motion.li>
             </motion.ul>

@@ -22,7 +22,7 @@ const LandingApp = lazy(() => import('./landing/LandingApp'));
 function Landing({ settings }) {
   return (
     <Suspense fallback={null}>
-      <LandingApp period={{ start: settings.recruit_start, deadline: settings.recruit_deadline }} />
+      <LandingApp settings={settings} />
     </Suspense>
   );
 }

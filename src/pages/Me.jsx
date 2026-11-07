@@ -5,6 +5,7 @@ import { useTable, useUser } from '../lib/hooks';
 import { WEEKDAYS, addDays, dayKey, parseDay, shortDate } from '../lib/format';
 import { isMember, nextMeeting, occurrences } from '../lib/projects';
 import { Avatar, MonthCalendar, ProjectBadges, Progress } from '../components/UI';
+import { PasswordForm } from '../components/Password';
 
 const STATUS = { pending: ['neutral', '수락 대기'], accepted: ['ok', '수락됨'], rejected: ['neutral', '거절됨'] };
 
@@ -38,6 +39,7 @@ export default function Me() {
     <div className="login">
       <h1 style={{ fontSize: 'var(--t-xl)' }}>내 활동</h1>
       <p className="muted">로그인하면 참여 중인 프로젝트, 신청 현황, 개인 캘린더를 한곳에서 볼 수 있습니다.</p>
+      {api.loginLinkFailed() && <LinkFailed />}
       <Link className="btn primary" to="/login?next=%2Fme">로그인하기</Link>
     </div>
   );
@@ -139,9 +141,35 @@ export default function Me() {
               {myPosts.map((p) => <Link key={p.id} to={`/community/${p.id}`} className="row"><span className="date">{shortDate(p.created_at)}</span><span className="row-title">{p.title}</span><span className="meta">{p.category}</span></Link>)}
             </div>
           </section>
+
+          {api.mode === 'supabase' && <ChangePassword />}
         </div>
       </div>
     </>
+  );
+}
+
+// 비밀번호를 잊었을 때도 로그인 링크로 들어와 여기서 바꾸면 됩니다.
+function ChangePassword() {
+  const [open, setOpen] = useState(false);
+  return (
+    <section className="section" aria-labelledby="pw-h">
+      <div className="section-head">
+        <h2 id="pw-h">비밀번호</h2>
+        <button type="button" className="btn ghost small" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? '닫기' : '비밀번호 바꾸기'}</button>
+      </div>
+      {open
+        ? <PasswordForm idPrefix="me-pw" submitLabel="비밀번호 바꾸기" />
+        : <p className="muted small">로그인할 때 쓰는 비밀번호를 바꿀 수 있습니다.</p>}
+    </section>
+  );
+}
+
+function LinkFailed() {
+  return (
+    <p className="error-box" role="alert">
+      로그인 링크로 들어오지 못했습니다. 링크는 요청한 브라우저에서 열어야 하고, 한 번만·잠깐 동안만 쓸 수 있습니다. 로그인 화면에서 링크를 다시 받아 보세요.
+    </p>
   );
 }
 
@@ -170,8 +198,16 @@ export function Login() {
         <h1>로그인</h1>
         <p>{local
           ? '지금은 예시 데이터로 동작하는 시연 모드입니다. 아래에서 멤버 한 명을 골라 그 사람으로 들어가 보세요. 회장·부회장·운영진으로 들어가면 운영진 화면도 쓸 수 있습니다.'
-          : '부원 이메일을 입력하면 로그인 링크를 보내 드립니다. 비밀번호가 있는 계정은 비밀번호를 함께 입력하면 바로 들어갑니다.'}</p>
+          : '이메일과 비밀번호로 로그인합니다. 처음이라 비밀번호가 없으면 이메일만 입력해 로그인 링크를 받으세요.'}</p>
       </div>
+      {!local && api.loginLinkFailed() && <LinkFailed />}
+      {!local && (
+        <ol className="notice-box" style={{ margin: 0, paddingLeft: 32, display: 'grid', gap: 4 }}>
+          <li><b>처음 로그인</b>: 이메일만 입력해 로그인 링크 받기 → 메일의 링크 누르기 → 비밀번호 설정</li>
+          <li><b>그다음부터</b>: 이메일 + 비밀번호</li>
+          <li>비밀번호를 잊었으면 로그인 링크로 들어와 <b>내 활동</b>에서 비밀번호를 바꾸세요.</li>
+        </ol>
+      )}
       {local ? (
         <div className="account-grid">
           {members.map((m) => (
@@ -189,19 +225,19 @@ export function Login() {
             catch (x) { setErr(`로그인하지 못했습니다. 이메일과 비밀번호를 확인하세요. (${x.message})`); }
             return;
           }
-          try { await api.signIn(email); setMsg(`${email}로 로그인 링크를 보냈습니다. 메일함에서 링크를 누르면 내 활동 화면으로 돌아옵니다.`); }
+          try { await api.signIn(email); setMsg(`${email}로 로그인 링크를 보냈습니다. 이 브라우저에서 메일의 링크를 누르면 돌아옵니다. 처음이면 비밀번호를 정하는 화면이 나옵니다.`); }
           catch (x) { setErr(`로그인 링크를 보내지 못했습니다. (${x.message})`); }
         }}>
           <div className="field"><label htmlFor="login-email">이메일</label><input id="login-email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
           <div className="field">
             <label htmlFor="login-password">비밀번호 (선택)</label>
             <input id="login-password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <span className="hint">비워 두면 이메일로 로그인 링크를 보냅니다.</span>
+            <span className="hint">비워 두면 이메일로 로그인 링크를 보냅니다 (처음 로그인·비밀번호를 잊었을 때).</span>
           </div>
           {err && <p className="error-box" role="alert">{err}</p>}
           {msg && <p className="notice-box" role="status">{msg}</p>}
           <div className="actions"><button type="submit" className="btn primary">{password ? '로그인' : '로그인 링크 받기'}</button></div>
-          <p className="small muted">처음 로그인하면 운영진이 승인한 뒤에 글과 모집글을 쓸 수 있습니다.</p>
+          <p className="small muted">운영진이 멤버로 등록한 이메일이면 처음 로그인할 때 바로 승인됩니다. 등록되지 않은 이메일은 운영진이 승인한 뒤에 글과 모집글을 쓸 수 있습니다.</p>
         </form>
       )}
     </div>

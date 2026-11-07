@@ -1,5 +1,8 @@
 /* Layout: 흰 바탕 + 보라빛 파랑 포인트. 메인은 가운데 정렬 큰 문구 + '// 소제목 → 큰 제목' 섹션을 쌓고, 나머지 화면은 1080px 좌측 정렬. */
 :root {
+  --hero-base: #f7f6ff;
+  --hero-rose: rgb(255 219 253 / .65);
+  --hero-violet: rgb(201 190 255 / .5);
   --paper: #ffffff;       /* 바탕 (흰색) */
   --paper-grad: radial-gradient(1100px 640px at 50% -260px, rgb(99 103 255 / 0.10) 0%, transparent 70%), radial-gradient(800px 600px at 100% 40%, rgb(150 110 255 / 0.06), transparent 70%), radial-gradient(800px 600px at 0% 80%, rgb(70 150 255 / 0.05), transparent 70%), linear-gradient(180deg, #fbfbfe 0%, #ffffff 40%, #fafaff 100%);
   --surface: rgb(255 255 255 / 0.8); /* 카드 */
@@ -526,13 +529,13 @@ table.subs { border-collapse: collapse; width: 100%; min-width: 640px; font-size
 }
 .hero2::before {
   content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-image: radial-gradient(ellipse at 70% 20%, rgb(255 219 253 / .65), transparent 55%), radial-gradient(ellipse at 30% 20%, rgb(201 190 255 / .5), transparent 60%), var(--grid), linear-gradient(#f7f6ff, #f7f6ff);
+  background-image: radial-gradient(ellipse at 70% 20%, var(--hero-rose), transparent 55%), radial-gradient(ellipse at 30% 20%, var(--hero-violet), transparent 60%), var(--grid), linear-gradient(var(--hero-base), var(--hero-base));
   background-size: auto, auto, 48px 48px, 48px 48px, auto; background-position: center;
   -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 100%); mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
 }
-.hero2 .hero-h { font-family: 'Pretendard Variable', 'Pretendard', var(--font); font-size: clamp(2.75rem, 1.6rem + 5.2vw, 5.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.08; color: #1b1b33; }
+.hero2 .hero-h { font-family: 'Pretendard Variable', 'Pretendard', var(--font); font-size: clamp(2.75rem, 1.6rem + 5.2vw, 5.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.08; color: var(--ink); }
 .hero-code { background: linear-gradient(135deg, #6367ff, #a79aff); background-clip: text; -webkit-background-clip: text; color: transparent; }
-.hero-description { max-width: 34rem; font-size: clamp(1rem, 2vw, 1.25rem); font-weight: 500; line-height: 1.5; color: #5c5c78; }
+.hero-description { max-width: 34rem; font-size: clamp(1rem, 2vw, 1.25rem); font-weight: 500; line-height: 1.5; color: var(--muted); }
 .hero2 .actions { justify-content: center; gap: 12px; margin-top: 12px; }
 .hero2 .actions .btn { min-height: 56px; padding: 14px 28px; border-radius: 16px; font-weight: 700; }
 .statement { text-align: center; padding-block: clamp(32px, 4vw, 48px); }
@@ -630,10 +633,74 @@ a.pcard:hover, .card-grid > a:hover, .part:hover { transform: translateY(-4px); 
 /* ---------- 로고 ---------- */
 .logo { display: inline-flex; }
 .logo-lockup { display: inline-flex; align-items: center; gap: 8px; }
-.logo-word { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.01em; color: #6367ff; }
-.logo-word span { color: #8f91ff; }
+.logo-word { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.01em; color: var(--logo-a, #6367ff); }
+.logo-word span { color: var(--logo-b, #8f91ff); }
 .intro-mark { justify-self: center; filter: drop-shadow(0 0 14px rgb(120 124 255 / .7)); margin-bottom: 6px; }
 
 /* 로고의 _ 가 터미널 커서처럼 깜빡임 */
 .cursor-blink { animation: cursor-blink 1.06s steps(1, end) infinite; }
 @keyframes cursor-blink { 50% { opacity: 0; } }
+
+/* ---------- 다크 모드 ----------
+   html[data-theme="dark"]일 때 색 토큰만 바꿉니다. 화면 코드는 그대로 같은 변수를 씁니다.
+   (스위치: components/ThemeToggle.jsx, 저장·공유: lib/theme.js, 첫 화면 깜빡임 방지: index.html) */
+:root[data-theme="dark"] {
+  --hero-base: #15152a;
+  --hero-rose: rgb(138 92 255 / .18);
+  --hero-violet: rgb(99 103 255 / .22);
+  --paper: #0e0e1c;
+  --paper-grad: radial-gradient(1100px 640px at 50% -260px, rgb(110 114 255 / 0.18) 0%, transparent 70%), radial-gradient(800px 600px at 100% 40%, rgb(150 110 255 / 0.10), transparent 70%), radial-gradient(800px 600px at 0% 80%, rgb(70 150 255 / 0.08), transparent 70%), linear-gradient(180deg, #11112a 0%, #0e0e1c 40%, #0a0a16 100%);
+  --surface: rgb(26 26 50 / 0.78);
+  --tint: #1d1d38;
+  --side: rgb(14 14 28 / 0.78);
+  --side-deep: #06060f;
+  --footer: #0b0b17;
+  --on-side: #f2f1ff;
+  --on-side-muted: rgb(242 241 255 / 0.62);
+  --side-line: rgb(140 144 255 / 0.14);
+  --ink: #f2f1ff;
+  --on-ink: #0e0e1c;
+  --body: #d0cfe6;
+  --muted: #9a99b8;
+  --line: #2a2a46;
+  --stone: #4a4a68;
+  --stone-soft: #24243f;
+  --accent: #7a7eff;
+  --accent-text: #a3a6ff;
+  --accent-soft: rgb(122 126 255 / 0.16);
+  --on-accent: #ffffff;
+  --hot: #ff6b70;
+  --ok: #a3a6ff;
+  --ok-soft: rgb(122 126 255 / 0.16);
+  --focus: #8f92ff;
+  --shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+  --grid: linear-gradient(to right, rgb(140 144 255 / 0.10) 1px, transparent 1px), linear-gradient(to bottom, rgb(140 144 255 / 0.10) 1px, transparent 1px);
+  --logo-a: #8f92ff;
+  --logo-b: #c3c5ff;
+  color-scheme: dark;
+}
+:root[data-theme="dark"] .statement p { background-image: linear-gradient(90deg, #a3a6ff, #c7a8ff 60%, #a3a6ff); }
+:root[data-theme="dark"] .error-box { background: rgb(255 107 112 / .1); }
+:root[data-theme="dark"] .badge.due { background: rgb(255 107 112 / 0.14); }
+body { transition: background-color .3s ease, color .3s ease; }
+
+/* 해/달 버튼 */
+.theme-toggle { position: relative; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; border: 0; background: none; color: var(--on-side-muted); cursor: pointer; overflow: hidden; transition: background-color .2s, color .2s; }
+.theme-toggle:hover { background: var(--side-line); color: var(--on-side); }
+.theme-toggle svg { position: absolute; width: 18px; height: 18px; transition: transform .5s var(--ease-out, ease), opacity .5s; }
+.theme-toggle .moon { transform: translateY(-24px) rotate(-90deg); opacity: 0; }
+.theme-toggle.is-dark .sun { transform: translateY(24px) rotate(90deg); opacity: 0; }
+.theme-toggle.is-dark .moon { transform: none; opacity: 1; }
+
+/* ---------- 운영진 화면: 모집 설정 (섹션·목록 편집) ---------- */
+.settings-form { max-width: 760px; }
+.set-sec { display: grid; gap: 14px; padding-top: 18px; border-top: 1px solid var(--line); }
+.set-sec h3 { font-size: var(--t-md); }
+.list-card { display: grid; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--tint); }
+.list-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.list-line { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.list-line input { flex: 1 1 200px; min-width: 0; }
+.row-tools { display: flex; gap: 4px; }
+.date-pair { display: flex; gap: 8px; flex-wrap: wrap; }
+.date-pair input { flex: 1 1 140px; min-width: 0; }
+.settings-form input[aria-invalid="true"], .settings-form textarea[aria-invalid="true"] { border-color: var(--hot); }

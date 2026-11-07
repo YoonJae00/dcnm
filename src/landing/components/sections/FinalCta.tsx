@@ -3,9 +3,10 @@ import { useRef, type PointerEvent } from "react";
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
 import { LogoMark } from "@/components/brand/Logo";
 import { ButtonLink } from "@/components/ui/Button";
-import { recruit } from "@/data/site";
+import { useRecruit } from "@/lib/RecruitContext";
 
 export function FinalCta() {
+  const recruit = useRecruit();
   const ref = useRef<HTMLDivElement>(null);
   const rx = useMotionValue(0);
   const ry = useMotionValue(0);
@@ -25,7 +26,7 @@ export function FinalCta() {
   };
 
   return (
-    <section aria-labelledby="cta-title" className="bg-white px-4 py-20 sm:px-6 sm:py-28">
+    <section aria-labelledby="cta-title" className="bg-page px-4 py-20 sm:px-6 sm:py-28">
       <motion.div
         ref={ref}
         onPointerMove={onMove}

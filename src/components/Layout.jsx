@@ -4,7 +4,9 @@ import { mode, resetDemo } from '../lib/api';
 import { useSettings, useUser } from '../lib/hooks';
 import { Avatar } from './UI';
 import Logo from './Logo';
+import ThemeToggle from './ThemeToggle';
 import { useReveal } from '../lib/motion';
+import { SetPassword } from './Password';
 
 const PROJECT_MENU = [
   ['/projects', '프로젝트 목록', '진행 중·모집 중인 프로젝트'],
@@ -56,6 +58,10 @@ export default function Layout({ children }) {
   const mainRef = useRef(null);
   useReveal(mainRef, location.pathname);
 
+  // 이메일 링크로 처음 들어와 아직 비밀번호가 없으면, 어느 주소로 왔든 비밀번호 설정을 먼저 보여 줍니다.
+  // 로그인 화면은 막지 않습니다(모집 랜딩은 Layout 밖이라 원래 막히지 않습니다).
+  const gate = user?.needsPassword && location.pathname !== '/login';
+
   return (
     <>
       <a className="skip" href="#content">본문으로 건너뛰기</a>
@@ -94,6 +100,7 @@ export default function Layout({ children }) {
             <input id="site-search" type="search" placeholder="검색" value={q} onChange={(e) => setQ(e.target.value)} />
           </form>
           <div className="header-tools">
+            <ThemeToggle />
             {user ? (
               <NavLink to="/me" className="me-link"><Avatar name={user.name} /><span className="me-name">내 활동</span></NavLink>
             ) : (
@@ -105,7 +112,7 @@ export default function Layout({ children }) {
         </div>
       </header>
 
-      <main id="content" className={`wrap page-in${location.pathname === '/' ? ' home' : ''}`} key={location.pathname} ref={mainRef}>{children}</main>
+      <main id="content" className={`wrap page-in${location.pathname === '/' && !gate ? ' home' : ''}`} key={location.pathname} ref={mainRef}>{gate ? <SetPassword user={user} /> : children}</main>
 
       <footer className="site-footer">
         <div className="wrap">
