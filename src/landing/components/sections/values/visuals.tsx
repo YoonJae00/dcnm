@@ -23,7 +23,7 @@ export function ContributionVisual() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
   return (
-    <div ref={ref} className="rounded-2xl bg-white p-4 shadow-s ring-1 ring-gray-1 sm:p-5">
+    <div ref={ref} className="rounded-2xl bg-surface p-4 shadow-s ring-1 ring-gray-1 sm:p-5">
       <div className="mb-3 flex items-center justify-between text-12 font-semibold text-gray-4">
         <span>7기 스터디 커밋</span>
         <span className="font-mono tracking-normal text-primary">1,284 commits</span>
@@ -69,7 +69,7 @@ export function PipelineVisual() {
       {STAGES.map((stage, i) => (
         <div
           key={stage}
-          className="flex items-center gap-3 rounded-xl bg-white px-3.5 py-2.5 shadow-s ring-1 ring-gray-1"
+          className="flex items-center gap-3 rounded-xl bg-surface px-3.5 py-2.5 shadow-s ring-1 ring-gray-1"
         >
           <motion.span
             className="grid size-6 shrink-0 place-items-center rounded-full bg-gray-1 text-white"
@@ -101,30 +101,53 @@ export function PipelineVisual() {
 
 /* ───────────── 3. 해커톤: 24시간 카운트다운 ───────────── */
 
+const HACKATHON_SECONDS = 24 * 3600;
+const INITIAL_COFFEES = 37;
+const COFFEE_SECONDS = 30 * 60;
+
 export function HackathonTimer() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.5 });
-  const [left, setLeft] = useState(24 * 3600);
+  const [{ left, coffees }, setTimer] = useState({ left: HACKATHON_SECONDS, coffees: INITIAL_COFFEES });
 
   useEffect(() => {
     if (!inView) return;
-    const id = window.setInterval(() => setLeft((s) => (s <= 1 ? 24 * 3600 : s - 1)), 1000);
+    const id = window.setInterval(() => {
+      setTimer((timer) => timer.left > 0 ? { ...timer, left: timer.left - 1 } : timer);
+    }, 1000);
     return () => window.clearInterval(id);
   }, [inView]);
+
+  const drinkCoffee = () => setTimer((timer) => timer.coffees > 0
+    ? { left: timer.left + COFFEE_SECONDS, coffees: timer.coffees - 1 }
+    : timer);
+  const totalSeconds = HACKATHON_SECONDS + (INITIAL_COFFEES - coffees) * COFFEE_SECONDS;
 
   const hh = String(Math.floor(left / 3600)).padStart(2, "0");
   const mm = String(Math.floor((left % 3600) / 60)).padStart(2, "0");
   const ss = String(left % 60).padStart(2, "0");
 
   return (
-    <div ref={ref} className="rounded-2xl bg-ink p-5 text-white shadow-m">
+    <div ref={ref} className="rounded-2xl bg-night p-5 text-white shadow-m">
       <div className="flex items-center justify-between text-12 font-semibold text-gray-3">
         <span className="flex items-center gap-1.5">
           <span className="size-1.5 animate-pulse rounded-full bg-negative" />
           DC&amp;M Jam · LIVE
         </span>
-        <span>☕ × 37</span>
+        <button
+          type="button"
+          onClick={drinkCoffee}
+          disabled={coffees === 0}
+          aria-label={`커피 ${coffees}잔 남음, 한 잔 마시고 30분 추가`}
+          title={coffees > 0 ? '커피 한 잔으로 30분 더!' : '커피를 모두 마셨어요'}
+          className="-my-2 inline-flex min-h-10 items-center rounded-lg px-2 text-light transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-light disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          ☕ × {coffees}
+        </button>
       </div>
+      <span className="sr-only" role="status">
+        {coffees < INITIAL_COFFEES ? `30분을 추가했어요. 남은 커피 ${coffees}잔.` : ''}
+      </span>
       <p className="mt-3 font-mono text-[40px] leading-none font-bold tracking-tight tabular-nums sm:text-[44px]">
         {hh}
         <span className="animate-pulse text-light">:</span>
@@ -135,7 +158,7 @@ export function HackathonTimer() {
       <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
         <div
           className="bg-brand h-full rounded-full transition-[width] duration-1000 ease-linear"
-          style={{ width: `${(1 - left / (24 * 3600)) * 100}%` }}
+          style={{ width: `${Math.max(0, Math.min(100, (1 - left / totalSeconds) * 100))}%` }}
         />
       </div>
     </div>
@@ -188,7 +211,7 @@ function Orbit({
           <motion.span
             key={item.n + i}
             className={cn(
-              "absolute grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-gradient-to-br text-14 font-bold text-white shadow-m ring-[3px] ring-white",
+              "absolute grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-gradient-to-br text-14 font-bold text-white shadow-m ring-[3px] ring-surface",
               item.c,
             )}
             style={{ left: x, top: y }}

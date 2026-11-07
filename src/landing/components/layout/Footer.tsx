@@ -11,7 +11,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="border-t border-gray-1 bg-white">
+    <footer className="border-t border-gray-1 bg-page">
       <div className="mx-auto max-w-6xl px-5 py-14 md:px-8">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div>
@@ -57,7 +57,12 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 flex flex-col gap-2 border-t border-gray-1 pt-6 text-12 text-gray-3 sm:flex-row sm:justify-between">
-          <p>© {club.founded}–2026 {club.name}. All rights reserved.</p>
+          <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span>© {club.founded}–2026 {club.name}. All rights reserved.</span>
+            <SmartLink href="/privacy" className="text-14 font-bold text-primary underline-offset-4 hover:underline">
+              개인정보 처리방침
+            </SmartLink>
+          </p>
           <p className="font-mono tracking-normal">
             built with <span className="text-primary">▷_</span> by {club.name} members
           </p>

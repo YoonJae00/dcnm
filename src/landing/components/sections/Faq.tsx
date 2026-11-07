@@ -1,13 +1,15 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { faqs } from "@/data/site";
+import { useFaqs } from "@/lib/RecruitContext";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Plus } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
 export function Faq() {
+  const faqs = useFaqs();
   const [open, setOpen] = useState<number | null>(0);
+  if (faqs.length === 0) return null;
 
   return (
     <section aria-labelledby="faq-title" className="bg-mist py-24 sm:py-32">
@@ -35,7 +37,7 @@ export function Faq() {
                 viewport={{ once: true, amount: 0.6 }}
                 transition={{ duration: 0.6, delay: i * 0.05 }}
                 className={cn(
-                  "overflow-hidden rounded-3xl bg-white ring-1 transition-[box-shadow,--tw-ring-color] duration-300",
+                  "overflow-hidden rounded-3xl bg-surface ring-1 transition-[box-shadow,--tw-ring-color] duration-300",
                   isOpen ? "shadow-m ring-light" : "ring-gray-1 hover:shadow-s",
                 )}
               >

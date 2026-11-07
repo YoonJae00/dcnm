@@ -44,9 +44,9 @@ export function Timeline() {
                 className={cn(
                   "relative z-10 grid size-8 shrink-0 place-items-center rounded-full text-12 font-bold transition-colors",
                   status === "done" && "bg-primary text-white",
-                  status === "current" && "bg-white text-primary ring-2 ring-primary",
+                  status === "current" && "bg-surface text-primary ring-2 ring-primary",
                   (status === "upcoming" || status === "unknown") &&
-                    "bg-white text-gray-3 ring-1 ring-gray-2",
+                    "bg-surface text-gray-3 ring-1 ring-gray-2",
                 )}
               >
                 {status === "current" && (

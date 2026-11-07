@@ -27,7 +27,7 @@ const values: Value[] = [
     label: "Study",
     title: "매주 함께 공부해요",
     description:
-      "트랙별 스터디로 기초부터 차근차근. 배운 내용은 블로그로 기록하고 서로 코드 리뷰를 해요.",
+      "주제별 스터디로 기초부터 차근차근. 배운 내용은 블로그로 기록하고 서로 코드 리뷰를 해요.",
     icon: <Code className="size-5" />,
     visual: <ContributionVisual />,
     wide: true,
@@ -100,7 +100,7 @@ function SpotlightCard({ value, index }: { value: Value; index: number }) {
       >
         <div className="self-start">
           <div className="flex items-center gap-2.5">
-            <span className="grid size-10 place-items-center rounded-xl bg-white text-primary shadow-s transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
+            <span className="grid size-10 place-items-center rounded-xl bg-surface text-primary shadow-s transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
               {value.icon}
             </span>
             <span className="font-mono text-12 font-semibold tracking-normal text-gray-3 uppercase">
@@ -118,7 +118,7 @@ function SpotlightCard({ value, index }: { value: Value; index: number }) {
 
 export function Values() {
   return (
-    <section aria-labelledby="values-title" className="bg-white py-24 sm:py-32">
+    <section aria-labelledby="values-title" className="bg-page py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <SectionHeading
           eyebrow="What we do"

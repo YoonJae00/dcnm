@@ -1,6 +1,8 @@
 // 예시 데이터: Supabase를 연결하지 않았을 때 사이트가 이 내용으로 동작합니다.
 // 멤버 이름과 개인 프로젝트·게시글은 화면 확인용 예시입니다. 운영 전에 바꿔 주세요.
 
+import { defaultRecruit, defaultFaqs } from './recruitDefaults.js';
+
 const M = (id, name, generation, role, part, intro, tags, sort) => ({ id, name, generation, role, part, intro, tags, github: '', sort });
 
 export const seed = {
@@ -11,6 +13,14 @@ export const seed = {
     recruit_start: '2026-11-03',
     recruit_deadline: '2026-11-23',
     landing_enabled: true,
+    // 모집 랜딩의 기수·일정·지원 자격·FAQ. 운영진 화면 > 사이트 설정에서 바꿀 수 있습니다. (형식은 README 참고)
+    recruit_details: {
+      generation: defaultRecruit.generation,
+      applyEndTime: defaultRecruit.applyEndTime,
+      steps: defaultRecruit.steps,
+      qualifications: defaultRecruit.qualifications,
+      faqs: defaultFaqs,
+    },
     intro:
       'DC&M은 한성대학교 학생들이 모여 코딩테스트 스터디, 독서클럽, 해커톤을 함께 하는 동아리입니다. 함께할 프로젝트를 직접 올리고 사람을 모을 수도 있습니다.',
     room: '인성관 306호',
@@ -241,7 +251,7 @@ export const seed = {
     { id: 'e1', title: '미니 해커톤', date: '2026-11-07', start_time: '10:00', end_time: '20:00', place: '탐구관 301호', kind: '행사', note: '동아리 웹사이트 만들기' },
     { id: 'e2', title: '독서클럽 대면 모임', date: '2026-11-12', start_time: '15:20', end_time: '16:00', place: '인성관 306호', kind: '정기', note: '지도교수님 참여' },
     { id: 'e3', title: '해커톤 결과 공유회', date: '2026-11-20', start_time: '18:30', end_time: '19:30', place: '인성관 306호', kind: '행사', note: '' },
-    { id: 'e4', title: '신입 부원 모집 마감', date: '2026-11-30', start_time: '', end_time: '', place: '', kind: '모집', note: '' },
+    { id: 'e4', title: '신입 부원 모집 마감', date: '2026-11-23', start_time: '', end_time: '', place: '', kind: '모집', note: '' },
     { id: 'e5', title: '종강 총회', date: '2026-12-18', start_time: '18:00', end_time: '20:00', place: '인성관 306호', kind: '행사', note: '' },
   ],
 

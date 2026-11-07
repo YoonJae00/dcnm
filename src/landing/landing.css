@@ -8,6 +8,9 @@
 @import "tailwindcss/utilities.css" layer(utilities) source(none);
 @source ".";
 
+/* dark: 변형 — html에 data-theme="dark"가 붙으면 적용 */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* ───────────────────────── DC&M Design System ─────────────────────────
    Color / Typo / Effect 토큰은 디자인 시스템 시트를 그대로 옮겼어요.
    text-30 ~ text-12 = 시트의 타이포 스케일, display/title = 랜딩용 확장 사이즈
@@ -18,6 +21,11 @@
   --color-light: #c9beff;
   --color-accent: #ffdbfd;
   --color-mist: #f7f6ff;
+
+  /* 다크 모드에서 바뀌는 면 색 — page: 섹션 바탕, surface: 카드, night: 항상 어두운 면(터미널 등) */
+  --color-page: #ffffff;
+  --color-surface: #ffffff;
+  --color-night: #1b1b33;
 
   --color-ink: #1b1b33;
   --color-gray-5: #34344d;
@@ -105,7 +113,7 @@
   }
   :where(.landing) {
     min-height: 100dvh;
-    background: var(--color-white);
+    background: var(--color-page);
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: 1rem;
@@ -215,3 +223,24 @@
     display: none;
   }
 }
+
+/* ───────────────────────── 다크 모드 (랜딩) ─────────────────────────
+   html[data-theme="dark"]일 때 색 토큰만 바꿔요. 메인 사이트와 같은 스위치(src/lib/theme.js)를 써요. */
+:root[data-theme="dark"] {
+  --color-page: #0e0e1c;
+  --color-surface: #18182f;
+  --color-mist: #13132a;
+  --color-night: #1f1f3d;
+  --color-ink: #f2f1ff;
+  --color-gray-5: #d0cfe6;
+  --color-gray-4: #a4a3c0;
+  --color-gray-3: #6f6e8c;
+  --color-gray-2: #2c2c4a;
+  --color-gray-1: #21213b;
+  --color-primary: #7175ff;
+  --color-secondary: #929eff;
+  --shadow-s: 0 2px 8px rgb(0 0 0 / 0.35);
+  --shadow-m: 0 8px 24px rgb(0 0 0 / 0.45);
+  --shadow-l: 0 24px 64px -12px rgb(0 0 0 / 0.6);
+}
+:root[data-theme="dark"] .landing ::selection { color: #1b1b33; }

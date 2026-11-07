@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { mode, resetDemo } from '../lib/api';
+import { mode, resetDemo, signOut } from '../lib/api';
 import { useSettings, useUser } from '../lib/hooks';
 import { Avatar } from './UI';
 import Logo from './Logo';
+import ThemeToggle from './ThemeToggle';
 import { useReveal } from '../lib/motion';
+import { SetPassword } from './Password';
+import { PrivacyConsent } from './PrivacyConsent';
 
 const PROJECT_MENU = [
   ['/projects', '프로젝트 목록', '진행 중·모집 중인 프로젝트'],
@@ -46,6 +49,8 @@ function ProjectDrop() {
 export default function Layout({ children }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
+  const [signingOut, setSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState('');
   const settings = useSettings();
   const user = useUser();
   const location = useLocation();
@@ -56,26 +61,30 @@ export default function Layout({ children }) {
   const mainRef = useRef(null);
   useReveal(mainRef, location.pathname);
 
+  // 이메일 링크로 처음 들어와 아직 비밀번호가 없으면, 어느 주소로 왔든 비밀번호 설정을 먼저 보여 줍니다.
+  // 로그인 화면은 막지 않습니다(모집 랜딩은 Layout 밖이라 원래 막히지 않습니다).
+  // 처리방침 동의가 먼저입니다(처리방침 전문은 동의 전에도 읽을 수 있게 막지 않습니다).
+  const free = location.pathname === '/login' || location.pathname === '/privacy';
+  const gate = !!user && !free && (user.needsPrivacy || user.needsPassword);
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    setSignOutError('');
+    try {
+      await signOut();
+      setOpen(false);
+      navigate('/', { replace: true });
+    } catch {
+      setSignOutError('로그아웃하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setSigningOut(false);
+    }
+  }
+
   return (
     <>
       <a className="skip" href="#content">본문으로 건너뛰기</a>
       <div className="ambient" aria-hidden="true"><i /><i /><i /></div>
-      {settings?.links?.length > 0 && (
-        <div className="topbar">
-          <div className="wrap topbar-row">
-            <nav aria-label="바로가기">
-              {settings.links.map((l) => (
-                <a key={l.url + l.label} href={l.url} target="_blank" rel="noreferrer">
-                  {l.label}
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  <span className="skip">(새 창)</span>
-                </a>
-              ))}
-            </nav>
-            {settings.room && <span className="spot">동아리방 {settings.room}</span>}
-          </div>
-        </div>
-      )}
       <header className={`site-header${open ? ' open' : ''}`}>
         <div className="wrap header-row">
           <Link
@@ -94,8 +103,12 @@ export default function Layout({ children }) {
             <input id="site-search" type="search" placeholder="검색" value={q} onChange={(e) => setQ(e.target.value)} />
           </form>
           <div className="header-tools">
+            <ThemeToggle />
             {user ? (
-              <NavLink to="/me" className="me-link"><Avatar name={user.name} /><span className="me-name">내 활동</span></NavLink>
+              <>
+                <NavLink to="/me" className="me-link" aria-label="내 활동"><Avatar name={user.name} /><span className="me-name">내 활동</span></NavLink>
+                <button type="button" className="btn ghost small" onClick={handleSignOut} disabled={signingOut} aria-busy={signingOut}>로그아웃</button>
+              </>
             ) : (
               <Link to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} className="btn ghost small">로그인</Link>
             )}
@@ -103,16 +116,17 @@ export default function Layout({ children }) {
             <button type="button" className="btn small menu-btn" aria-expanded={open} aria-label="메뉴 열기" onClick={() => setOpen((v) => !v)}>메뉴</button>
           </div>
         </div>
+        {signOutError && <div className="wrap"><p className="error-box" role="alert">{signOutError}</p></div>}
       </header>
 
-      <main id="content" className="wrap page-in" key={location.pathname} ref={mainRef}>{children}</main>
+      <main id="content" className={`wrap page-in${location.pathname === '/' && !gate ? ' home' : ''}`} key={location.pathname} ref={mainRef}>{gate ? (user.needsPrivacy ? <PrivacyConsent user={user} /> : <SetPassword user={user} />) : children}</main>
 
       <footer className="site-footer">
         <div className="wrap">
           <div className="footer-row">
             <span>DC&amp;M · 한성대학교 동아리{settings?.room ? ` · 동아리방 ${settings.room}` : ''}</span>
             <span>
-              <Link to="/apply?tab=inquiry">문의하기</Link>{'  '}·{'  '}<Link to="/admin">운영진 화면</Link>
+              <Link className="privacy-link" to="/privacy">개인정보 처리방침</Link>{'  '}·{'  '}<Link to="/apply?tab=inquiry">문의하기</Link>{'  '}·{'  '}<Link to="/admin">운영진 화면</Link>
             </span>
           </div>
           {mode === 'local' && (

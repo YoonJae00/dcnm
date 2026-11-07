@@ -23,7 +23,7 @@ export function RecruitBadge() {
   return (
     <SmartLink
       href="/#recruit"
-      className="group inline-flex items-center gap-2 rounded-full bg-white/80 py-1.5 pr-3 pl-2 text-14 font-semibold text-gray-5 shadow-s ring-1 ring-gray-2/80 backdrop-blur transition-shadow hover:shadow-m"
+      className="group inline-flex items-center gap-2 rounded-full bg-surface/80 py-1.5 pr-3 pl-2 text-14 font-semibold text-gray-5 shadow-s ring-1 ring-gray-2/80 backdrop-blur transition-shadow hover:shadow-m"
     >
       <span className="relative flex size-2.5 items-center justify-center">
         {phase !== "closed" && (

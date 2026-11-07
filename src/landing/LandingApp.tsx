@@ -1,12 +1,13 @@
 import { ReactLenis } from "lenis/react";
 import { MotionConfig } from "motion/react";
-import { RecruitProvider, type RecruitPeriod } from "@/lib/RecruitContext";
+import { RecruitProvider, type RecruitSettings } from "@/lib/RecruitContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/sections/hero/Hero";
 import { Manifesto } from "@/components/sections/Manifesto";
 import { Values } from "@/components/sections/values/Values";
 import { Stats } from "@/components/sections/Stats";
+import { Members } from "@/components/sections/Members";
 import { Activities } from "@/components/sections/Activities";
 import { Recruit } from "@/components/sections/recruit/Recruit";
 import { Faq } from "@/components/sections/Faq";
@@ -21,18 +22,19 @@ import "./landing.css";
  * - MotionConfig: '동작 줄이기'를 켠 사람에게는 transform 애니메이션을 생략해요.
  * - 인트로는 홈 라우트에서 따로 그려요 (src/intro).
  */
-export default function LandingApp({ period }: { period: RecruitPeriod }) {
+export default function LandingApp({ settings }: { settings: RecruitSettings }) {
   return (
     <div className="landing">
       <ReactLenis root options={{ lerp: 0.11, anchors: false, wheelMultiplier: 1 }}>
         <MotionConfig reducedMotion="user" transition={{ ease: [0.22, 1, 0.36, 1] }}>
-          <RecruitProvider period={period}>
+          <RecruitProvider settings={settings}>
             <Header />
             <main>
               <Hero />
               <Manifesto />
               <Values />
               <Stats />
+              <Members />
               <Activities />
               <Recruit />
               <Faq />

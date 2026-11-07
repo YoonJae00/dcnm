@@ -1,6 +1,14 @@
-import type { recruit as staticRecruit } from "@/data/site";
+import type { RecruitStep } from "@/data/site";
 
-export type Recruit = typeof staticRecruit;
+export type Recruit = {
+  generation: number;
+  /** 서류 접수 마감 시각 "HH:MM" */
+  applyEndTime: string;
+  applyStart: string;
+  applyEnd: string;
+  steps: RecruitStep[];
+  qualifications: string[];
+};
 
 export type RecruitPhase = "upcoming" | "open" | "closed";
 
