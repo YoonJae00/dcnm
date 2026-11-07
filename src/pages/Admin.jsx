@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import * as api from '../lib/api';
 import { Link } from 'react-router-dom';
-import { useSettings, useTable, useUser } from '../lib/hooks';
+import { useTable, useUser } from '../lib/hooks';
 import { fullDate, shortDate } from '../lib/format';
-import { landingState } from '../lib/landing';
+import RecruitSettings from './RecruitSettings';
 
 /* 표마다 편집할 칸 정의 */
 const SCHEMAS = {
@@ -274,69 +274,6 @@ function Submissions({ notify }) {
         </div>
       )}
     </div>
-  );
-}
-
-function RecruitSettings({ notify }) {
-  const settings = useSettings();
-  const [s, setS] = useState(null);
-  const [err, setErr] = useState('');
-  const [linksText, setLinksText] = useState(null);
-  useEffect(() => { if (settings && !s) { setS(settings); setLinksText((settings.links || []).map((l) => `${l.label} ${l.url}`).join('\n')); } }, [settings, s]);
-  if (!s) return <p className="state">불러오는 중입니다.</p>;
-  // 스위치는 지금 폼에 적힌 값으로, 방문자에게 보이는지는 저장된 값으로 판정합니다.
-  const form = landingState(s);
-  const saved = landingState(settings);
-  const set = (k) => (e) => setS({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
-  return (
-    <form
-      className="edit-form"
-      style={{ maxWidth: 640 }}
-      onSubmit={async (e) => {
-        e.preventDefault();
-        const lines = (linksText || '').split('\n').map((l) => l.trim()).filter(Boolean);
-        const links = [];
-        for (const line of lines) {
-          const m = line.match(/^(.+?)\s+(https?:\/\/\S+)$/);
-          if (!m) { setErr(`'${line}' 줄을 '이름 https://주소' 형식으로 고쳐 주세요.`); return; }
-          links.push({ label: m[1].trim(), url: m[2] });
-        }
-        try { await api.saveSettings({ ...s, links, recruit_start: s.recruit_start || null, recruit_deadline: s.recruit_deadline || null }); notify('설정을 저장했습니다'); setErr(''); }
-        catch (x) { setErr(`저장하지 못했습니다: ${x.message}`); }
-      }}
-    >
-      <h3>모집·소개·바로가기</h3>
-      <label className="check-line" htmlFor="st-open">
-        <input id="st-open" type="checkbox" checked={!!s.recruit_open} onChange={set('recruit_open')} /> 지금 지원을 받습니다
-      </label>
-      <div className="field"><label htmlFor="st-title">모집 제목</label><input id="st-title" value={s.recruit_title || ''} onChange={set('recruit_title')} /></div>
-      <div className="field"><label htmlFor="st-start">모집 시작일</label><input id="st-start" type="date" value={s.recruit_start || ''} onChange={set('recruit_start')} /></div>
-      <div className="field"><label htmlFor="st-deadline">마감일</label><input id="st-deadline" type="date" value={s.recruit_deadline || ''} onChange={set('recruit_deadline')} /></div>
-      <div className="field">
-        <label className="check-line" htmlFor="st-landing">
-          <input id="st-landing" type="checkbox" checked={!!s.landing_enabled} disabled={!form.canEnable && !s.landing_enabled} onChange={set('landing_enabled')} /> 모집 랜딩 페이지 켜기
-        </label>
-        <span className="hint">
-          {form.canEnable
-            ? '켜면 로그인하지 않은 방문자에게 메인(/) 대신 모집 랜딩이 보입니다. 로그인한 부원에게는 평소 메인이 보입니다.'
-            : "모집 기간(시작일~마감일) 안이고 '지금 지원을 받습니다'가 켜져 있을 때만 켤 수 있어요."}
-          {!form.canEnable && s.landing_enabled && ' 지금은 조건이 맞지 않아 켜 둬도 보이지 않습니다. 끄려면 체크를 해제하세요.'}
-        </span>
-        <span className="hint" data-testid="landing-status">
-          {saved.live ? '현재 상태: 방문자에게 랜딩이 보이는 중입니다.' : '현재 상태: 방문자에게 평소 메인이 보입니다.'}
-          {' '}<Link to="/recruit">랜딩 미리 보기</Link>
-        </span>
-      </div>
-      <div className="field"><label htmlFor="st-intro">메인 소개 문구</label><textarea id="st-intro" rows={4} style={{ minHeight: 'auto' }} value={s.intro || ''} onChange={set('intro')} /></div>
-      <div className="field"><label htmlFor="st-room">동아리방</label><input id="st-room" value={s.room || ''} onChange={set('room')} /></div>
-      <div className="field">
-        <label htmlFor="st-links">맨 위 바로가기 링크</label>
-        <textarea id="st-links" rows={5} style={{ minHeight: 'auto' }} value={linksText} onChange={(e) => setLinksText(e.target.value)} />
-        <span className="hint">한 줄에 하나씩 '이름 주소' 형식으로 적어 주세요. 예: 인스타그램 https://instagram.com/동아리계정</span>
-      </div>
-      {err && <p className="error-box">{err}</p>}
-      <div className="actions"><button type="submit" className="btn primary">저장</button></div>
-    </form>
   );
 }
 
