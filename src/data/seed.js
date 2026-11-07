@@ -13,6 +13,8 @@ export const seed = {
     recruit_start: '2026-11-03',
     recruit_deadline: '2026-11-23',
     landing_enabled: true,
+    // 랜딩 Activities에 보일 프로젝트 id (순서대로). 운영진 화면 > 사이트 설정에서 바꿀 수 있습니다.
+    landing_projects: ['d1', 'p1', 'p4', 'd2'],
     // 모집 랜딩의 기수·일정·지원 자격·FAQ. 운영진 화면 > 사이트 설정에서 바꿀 수 있습니다. (형식은 README 참고)
     recruit_details: {
       generation: defaultRecruit.generation,

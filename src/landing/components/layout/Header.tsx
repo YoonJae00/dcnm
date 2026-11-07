@@ -10,12 +10,13 @@ import {
 import { useLenis } from "lenis/react";
 import { Logo } from "@/components/brand/Logo";
 import { SmartLink } from "@/components/ui/SmartLink";
-import { navLinks } from "@/data/site";
+import { useNavLinks } from "@/lib/ActivitiesContext";
 import { useRecruit } from "@/lib/RecruitContext";
 import { cn } from "@/lib/cn";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function Header() {
+  const navLinks = useNavLinks();
   const recruit = useRecruit();
   const { scrollY, scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 30, restDelta: 0.001 });

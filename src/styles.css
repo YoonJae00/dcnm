@@ -867,3 +867,9 @@ body { transition: background-color .3s ease, color .3s ease; }
 .danger-zone { display: grid; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); justify-items: start; }
 .policy-table th, .policy-table td { min-width: 6.5em; }
 @media (max-width: 560px) { .policy-table { font-size: var(--t-xs); min-width: 520px; } }
+
+/* 사이트 설정: 랜딩 활동 고르기 */
+.lp-picked { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.lp-picked .lp-title { flex: 1; min-width: 0; font-weight: 600; }
+.lp-picked small { margin-left: 6px; font-weight: 400; }
+.lp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 320px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
