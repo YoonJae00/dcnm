@@ -19,7 +19,8 @@ const emit = () => bus.dispatchEvent(new Event('change'));
 const byDateDesc = (a, b) => String(b.created_at || '').localeCompare(String(a.created_at || ''));
 const byDateAsc = (a, b) => -byDateDesc(a, b);
 const ORDER = {
-  members: (a, b) => ((a.generation ?? 999) - (b.generation ?? 999)) || ((a.sort ?? 0) - (b.sort ?? 0)) || a.name.localeCompare(b.name),
+  // 지도교수는 항상 맨 위, 그다음 기수·순서·이름
+  members: (a, b) => ((b.role === '지도교수') - (a.role === '지도교수')) || ((a.generation ?? 999) - (b.generation ?? 999)) || ((a.sort ?? 0) - (b.sort ?? 0)) || a.name.localeCompare(b.name),
   projects: byDateDesc,
   notices: (a, b) => (Number(!!b.pinned) - Number(!!a.pinned)) || byDateDesc(a, b),
   events: (a, b) => a.date.localeCompare(b.date) || String(a.start_time || '').localeCompare(String(b.start_time || '')),

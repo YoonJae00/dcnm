@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import { useTable } from '../lib/hooks';
 import { initials } from '../lib/format';
 
-const ROLE_ORDER = ['회장', '부회장', '운영진', '부원'];
-const LEADS = new Set(['회장', '부회장', '운영진']);
+const ROLE_ORDER = ['지도교수', '회장', '부회장', '운영진', '부원'];
+const LEADS = new Set(['지도교수', '회장', '부회장', '운영진']);
 
 function Chips({ label, options, value, onChange, format = (v) => v }) {
   return (
@@ -75,7 +75,7 @@ export default function Members() {
           <article key={m.id} className={`member${LEADS.has(m.role) ? ' lead' : ''}`}>
             <span className="avatar" aria-hidden="true">{initials(m.name)}</span>
             <h3>{m.name} <span className="role">{m.role}</span></h3>
-            <span className="meta">{m.generation ? `${m.generation}기` : '기수 미정'}{m.part ? ` · ${m.part}` : ''}</span>
+            <span className="meta">{m.role === '지도교수' ? `한성대학교${m.part ? ` · ${m.part}` : ''}` : <>{m.generation ? `${m.generation}기` : '기수 미정'}{m.part ? ` · ${m.part}` : ''}</>}</span>
             {m.intro && <p className="intro">{m.intro}</p>}
             {m.tags?.length > 0 && (
               <div className="tags">{m.tags.map((t) => <span key={t} className="tag">{t}</span>)}</div>
