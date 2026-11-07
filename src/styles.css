@@ -66,17 +66,6 @@ img { max-width: 100%; }
 .skip { position: absolute; left: -999px; }
 .skip:focus { left: 16px; top: 16px; z-index: 50; background: var(--surface); padding: 8px 12px; }
 
-/* ---------- 맨 위 링크 띠 ---------- */
-.topbar { background: var(--side-deep); color: #fff; font-size: var(--t-xs); }
-.topbar-row { display: flex; align-items: center; gap: 20px; min-height: 34px; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
-.topbar-row::-webkit-scrollbar { display: none; }
-.topbar nav { display: flex; gap: 18px; }
-.topbar a { color: #fff; text-decoration: none; opacity: 0.85; display: inline-flex; align-items: center; gap: 4px; }
-.topbar a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
-.topbar a svg { width: 11px; height: 11px; opacity: 0.7; }
-.topbar .spot { margin-left: auto; opacity: 0.7; }
-@media (max-width: 560px) { .topbar .spot { display: none; } }
-
 /* ---------- 헤더 ---------- */
 body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--side); }
 .site-header {
@@ -130,6 +119,10 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
   .site-header.open .search-mini { display: block; width: 100%; order: 4; padding-bottom: 12px; }
   .site-header.open .search-mini input { width: 100%; }
   .me-link .me-name { display: none; }
+}
+@media (max-width: 560px) {
+  .header-tools { gap: 4px; }
+  .header-tools .me-link { padding: 3px; }
 }
 
 /* ---------- 버튼, 입력 ---------- */
