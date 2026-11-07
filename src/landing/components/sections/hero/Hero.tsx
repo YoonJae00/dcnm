@@ -1,16 +1,14 @@
 
-import { useRef, type PointerEvent, type ReactNode } from "react";
+import { type PointerEvent, type ReactNode } from "react";
 import {
   motion,
   useMotionValue,
-  useScroll,
   useSpring,
   useTransform,
   type MotionValue,
 } from "motion/react";
 import { ButtonLink } from "@/components/ui/Button";
 import { RecruitBadge } from "@/components/sections/hero/RecruitBadge";
-import { Terminal } from "@/components/sections/hero/Terminal";
 import { useIntroRevealed } from "@intro/introState";
 import { club, recruit } from "@/data/site";
 
@@ -74,8 +72,6 @@ function FloatingChip({ children, className }: { children: ReactNode; className?
 }
 
 export function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   // 첫 방문 인트로가 떠 있으면, 걷히기 시작할 때까지 등장 연출을 미뤄요.
   const play = useIntroRevealed();
 
@@ -92,28 +88,11 @@ export function Hero() {
     rawY.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
-  // 애플식 스크롤 연출: 기울어진 터미널이 스크롤하면 똑바로 펴져요
-  const { scrollYProgress: stageProgress } = useScroll({
-    target: stageRef,
-    offset: ["start end", "start 0.2"],
-  });
-  const rotateX = useTransform(stageProgress, [0, 1], [26, 0]);
-  const scale = useTransform(stageProgress, [0, 1], [0.88, 1]);
-
-  // 히어로 카피는 스크롤하면 살짝 흐려지며 멀어져요
-  const { scrollYProgress: heroProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-  const copyOpacity = useTransform(heroProgress, [0, 0.35], [1, 0]);
-  const copyY = useTransform(heroProgress, [0, 0.35], [0, -60]);
-
   return (
     <section
       id="top"
-      ref={sectionRef}
       onPointerMove={onPointerMove}
-      className="relative isolate overflow-hidden bg-[linear-gradient(to_bottom,var(--color-mist)_0%,var(--color-mist)_55%,#fff_100%)] pt-32 sm:pt-40"
+      className="relative isolate overflow-hidden bg-[linear-gradient(to_bottom,var(--color-mist)_0%,var(--color-mist)_55%,#fff_100%)] pt-32 pb-16 sm:pt-40 sm:pb-20"
     >
       {/* 배경: 모눈 + 그라디언트 오브 */}
       <div
@@ -133,7 +112,6 @@ export function Hero() {
       {/* 떠다니는 칩 (데스크톱) */}
       <motion.div
         aria-hidden
-        style={{ opacity: copyOpacity }}
         className="pointer-events-none absolute inset-0 hidden lg:block"
       >
         <Parallax mx={mx} my={my} depth={-36} className="absolute top-[22%] left-[6%]">
@@ -160,7 +138,6 @@ export function Hero() {
 
       {/* 카피 */}
       <motion.div
-        style={{ opacity: copyOpacity, y: copyY }}
         className="relative mx-auto max-w-6xl px-5 text-center md:px-8"
       >
         <motion.div
@@ -200,7 +177,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={play ? { opacity: 1, y: 0 } : undefined}
           transition={{ duration: 0.7, delay: 0.7, ease }}
-          className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
+          className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap"
         >
           <ButtonLink href="/#recruit" arrow className="w-full sm:w-auto">
             모집 안내 보기
@@ -208,29 +185,12 @@ export function Hero() {
           <ButtonLink href="/#about" variant="secondary" className="w-full sm:w-auto">
             동아리 둘러보기
           </ButtonLink>
+          <ButtonLink href="/login?next=%2F" variant="secondary" className="w-full sm:w-auto">
+            기존부원 로그인
+          </ButtonLink>
         </motion.div>
       </motion.div>
 
-      {/* 터미널 스테이지 */}
-      <div
-        ref={stageRef}
-        className="relative mx-auto mt-16 max-w-4xl px-4 pb-24 [perspective:1400px] sm:mt-20 sm:px-8 sm:pb-32"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          animate={play ? { opacity: 1, y: 0 } : undefined}
-          transition={{ duration: 1, delay: 0.85, ease }}
-        >
-          <motion.div style={{ rotateX, scale, transformOrigin: "50% 0%" }}>
-            <Terminal />
-          </motion.div>
-        </motion.div>
-        {/* 바닥 반사광 */}
-        <div
-          aria-hidden
-          className="absolute inset-x-16 bottom-16 -z-10 h-24 rounded-full bg-primary/25 blur-3xl sm:bottom-24"
-        />
-      </div>
     </section>
   );
 }

@@ -105,7 +105,7 @@ export default function Layout({ children }) {
         </div>
       </header>
 
-      <main id="content" className="wrap page-in" key={location.pathname} ref={mainRef}>{children}</main>
+      <main id="content" className={`wrap page-in${location.pathname === '/' ? ' home' : ''}`} key={location.pathname} ref={mainRef}>{children}</main>
 
       <footer className="site-footer">
         <div className="wrap">
