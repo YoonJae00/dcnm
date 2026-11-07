@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import * as api from '../lib/api';
 import { useItem, useTable, useUser } from '../lib/hooks';
-import { WEEKDAYS, dayKey, fullDate, paragraphs, parseDay, shortDate } from '../lib/format';
+import { WEEKDAYS, ago, dayKey, fullDate, paragraphs, parseDay, shortDate } from '../lib/format';
 import { KINDS, ORIGIN_LABEL, STATUS_LABEL, deadlineLeft, deadlineText, isMember, meetingText, memberCount } from '../lib/projects';
 import { ArchiveCard, Avatar, Chips, Fab, Progress, ProjectBadges, ProjectCard, RecruitCard } from '../components/UI';
 import { canEnter, isTeamMember, spacePath } from '../lib/workspace';
@@ -177,6 +177,53 @@ function ApplyPanel({ p, user, apps, members }) {
   );
 }
 
+// 진행률·한 줄 상황 (작성자·운영진만 고칠 수 있음). 메인의 "지금 다른 팀은" 카드에 공개됩니다.
+function ProgressBox({ p, user }) {
+  const canEdit = !!user && (p.author_id === user.id || !!user.isAdmin);
+  const [pct, setPct] = useState(p.progress ?? 0);
+  const [note, setNote] = useState(p.status_note || '');
+  const [state, setState] = useState({ busy: false, err: '', ok: false });
+  if (!canEdit && p.progress == null && !p.status_note) return null;
+  async function onSubmit(e) {
+    e.preventDefault();
+    setState({ busy: true, err: '', ok: false });
+    try {
+      // Supabase에서는 트리거가 갱신 시각을 서버 시각으로 덮어씁니다.
+      await api.save('projects', { id: p.id, progress: Number(pct), status_note: note.trim(), progress_updated_at: new Date().toISOString() });
+      setState({ busy: false, err: '', ok: true });
+    } catch (x) {
+      setState({ busy: false, err: x.message, ok: false });
+    }
+  }
+  return (
+    <>
+      <div className="prog-box">
+        <h3 className="prog-h">진행 상황</h3>
+        {p.progress != null && (
+          <span className="progress">
+            <b>{p.progress}%</b>
+            <span className="bar grow" role="img" aria-label={`진행률 ${p.progress}%`}><i style={{ width: `${p.progress}%` }} /></span>
+          </span>
+        )}
+        {p.status_note && <p className="small">{p.status_note}</p>}
+        {p.progress_updated_at && <p className="note">{ago(p.progress_updated_at)} 업데이트</p>}
+        {canEdit && p.status === 'ongoing' && (
+          <form className="prog-form" onSubmit={onSubmit}>
+            <label htmlFor="prog-range">진행률 <b>{pct}%</b></label>
+            <input id="prog-range" type="range" min="0" max="100" step="5" value={pct} onChange={(e) => setPct(e.target.value)} />
+            <label htmlFor="prog-note">한 줄 상황 <span className="muted">({note.length}/120)</span></label>
+            <input id="prog-note" type="text" maxLength={120} placeholder="예: 로그인 화면까지 끝냈어요" value={note} onChange={(e) => setNote(e.target.value)} />
+            <button type="submit" className="btn dark small" disabled={state.busy}>{state.busy ? '저장 중…' : '진행 상황 저장'}</button>
+            {state.ok && <p className="note" role="status">저장했어요. 메인 화면에 바로 반영됩니다.</p>}
+            {state.err && <p className="small" role="alert" style={{ color: 'var(--hot)' }}>{state.err}</p>}
+          </form>
+        )}
+      </div>
+      <hr />
+    </>
+  );
+}
+
 function InfoPanel({ p, user, members }) {
   const names = (p.member_ids || []).map((id, i) => members?.find((m) => m.id === id)?.name || p.member_names?.[i]).filter(Boolean);
   return (
@@ -191,6 +238,7 @@ function InfoPanel({ p, user, members }) {
         {p.tags?.length > 0 && <><dt>기술</dt><dd><span className="tags">{p.tags.map((t) => <span key={t} className="tag">{t}</span>)}</span></dd></>}
       </dl>
       <hr />
+      <ProgressBox p={p} user={user} />
       <div className="actions"><span className="avatars">{names.map((n, i) => <Avatar key={i} name={n} />)}</span><span className="small">{names.join(', ')}</span></div>
       <SpaceButton p={p} user={user} />
       {p.link && <a className="btn wide" href={p.link} target="_blank" rel="noreferrer">결과물 보기</a>}

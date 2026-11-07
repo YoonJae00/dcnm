@@ -101,6 +101,32 @@ create table if not exists projects (
   created_at timestamptz not null default now()
 );
 
+-- 프로젝트 진행 상황 공개 칸 (migrations/20261107_project_progress.sql과 같은 내용)
+
+alter table projects add column if not exists progress int;
+alter table projects add column if not exists status_note text;
+alter table projects add column if not exists progress_updated_at timestamptz;
+
+alter table projects drop constraint if exists projects_progress_range;
+alter table projects add constraint projects_progress_range check (progress is null or progress between 0 and 100);
+alter table projects drop constraint if exists projects_status_note_len;
+alter table projects add constraint projects_status_note_len check (status_note is null or char_length(status_note) <= 120);
+
+-- 진행률이나 한 줄 상황이 바뀔 때만 갱신 시각을 서버 시각으로 맞춥니다 (클라이언트가 보낸 값은 무시).
+create or replace function projects_touch_progress() returns trigger
+language plpgsql as $$
+begin
+  if new.progress is distinct from old.progress or new.status_note is distinct from old.status_note then
+    new.progress_updated_at := now();
+  else
+    new.progress_updated_at := old.progress_updated_at;
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists projects_touch_progress on projects;
+create trigger projects_touch_progress before update on projects for each row execute function projects_touch_progress();
+
 create table if not exists applications (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references projects (id) on delete cascade,
