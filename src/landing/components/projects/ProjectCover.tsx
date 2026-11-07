@@ -1,5 +1,5 @@
 import { useId } from "react";
-import type { CoverMotif, Project } from "@/data/projects";
+import type { CoverMotif, Cover } from "@/lib/cover";
 
 const W = 400;
 const H = 260;
@@ -103,26 +103,14 @@ function Motif({ motif }: { motif: CoverMotif }) {
           {Array.from({ length: 7 }, (_, i) => (
             <circle key={i} cx={W / 2} cy={H / 2} r={38 + i * 24} strokeOpacity={0.9 - i * 0.12} />
           ))}
-          <text
-            x={W / 2}
-            y={H / 2 + 9}
-            textAnchor="middle"
-            fill="#fff"
-            stroke="none"
-            fontSize={26}
-            fontWeight={800}
-            fontFamily="ui-monospace, monospace"
-          >
-            24h
-          </text>
         </g>
       );
   }
 }
 
-export function ProjectCover({ project, className }: { project: Project; className?: string }) {
+export function ProjectCover({ cover, className }: { cover: Cover; className?: string }) {
   const id = useId();
-  const { from, to, motif } = project.cover;
+  const { from, to, motif } = cover;
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}

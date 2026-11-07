@@ -9,6 +9,8 @@ export type RecruitSettings = {
   recruit_start?: string | null;
   recruit_deadline?: string | null;
   recruit_details?: unknown;
+  /** 랜딩 Activities에 보일 프로젝트 id (표시 순서) */
+  landing_projects?: string[] | null;
 };
 
 type Content = { recruit: Recruit; faqs: Faq[] };

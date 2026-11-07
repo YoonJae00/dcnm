@@ -1,5 +1,6 @@
 import { ReactLenis } from "lenis/react";
 import { MotionConfig } from "motion/react";
+import { ActivitiesProvider } from "@/lib/ActivitiesContext";
 import { RecruitProvider, type RecruitSettings } from "@/lib/RecruitContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -28,6 +29,7 @@ export default function LandingApp({ settings }: { settings: RecruitSettings }) 
       <ReactLenis root options={{ lerp: 0.11, anchors: false, wheelMultiplier: 1 }}>
         <MotionConfig reducedMotion="user" transition={{ ease: [0.22, 1, 0.36, 1] }}>
           <RecruitProvider settings={settings}>
+            <ActivitiesProvider ids={settings.landing_projects}>
             <Header />
             <main>
               <Hero />
@@ -41,6 +43,7 @@ export default function LandingApp({ settings }: { settings: RecruitSettings }) 
               <FinalCta />
             </main>
             <Footer />
+            </ActivitiesProvider>
           </RecruitProvider>
         </MotionConfig>
       </ReactLenis>

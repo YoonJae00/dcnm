@@ -1,9 +1,11 @@
 import { Logo } from "@/components/brand/Logo";
 import { SmartLink } from "@/components/ui/SmartLink";
 import { Github, Instagram, Mail } from "@/components/ui/icons";
-import { club, navLinks } from "@/data/site";
+import { club } from "@/data/site";
+import { useNavLinks } from "@/lib/ActivitiesContext";
 
 export function Footer() {
+  const navLinks = useNavLinks();
   const socials = [
     { label: "Instagram", href: club.instagram, icon: Instagram },
     { label: "GitHub", href: club.github, icon: Github },
