@@ -27,7 +27,7 @@ const values: Value[] = [
     label: "Study",
     title: "매주 함께 공부해요",
     description:
-      "트랙별 스터디로 기초부터 차근차근. 배운 내용은 블로그로 기록하고 서로 코드 리뷰를 해요.",
+      "주제별 스터디로 기초부터 차근차근. 배운 내용은 블로그로 기록하고 서로 코드 리뷰를 해요.",
     icon: <Code className="size-5" />,
     visual: <ContributionVisual />,
     wide: true,

@@ -3,7 +3,7 @@
  * (현재는 모두 더미 데이터)
  */
 
-import { defaultRecruit, defaultTracks, defaultFaqs } from "../../data/recruitDefaults.js";
+import { defaultRecruit, defaultFaqs } from "../../data/recruitDefaults.js";
 
 export const club = {
   name: "DC&M",
@@ -40,18 +40,6 @@ export const recruit = {
   applyEnd: defaultRecruit.steps[0].end,
   steps: defaultRecruit.steps as RecruitStep[],
 };
-
-export type Track = {
-  id: string;
-  name: string;
-  summary: string;
-  learn: string[];
-  stack: string[];
-  /** 트랙 카드에 보여줄 짧은 코드 (줄 단위) */
-  snippet: string[];
-};
-
-export const tracks: Track[] = defaultTracks;
 
 /* ─────────────────────────── 소개 ─────────────────────────── */
 

@@ -10,14 +10,12 @@
 //     { "title": "서류 발표", "description": "...", "start": "2026-11-26T18:00:00+09:00" }
 //   ],
 //   "qualifications": ["개발에 관심 있는 재학생이라면 ..."],
-//   "tracks": [{ "id": "frontend", "name": "프론트엔드", "summary": "...", "learn": ["..."], "stack": ["React"] }],
 //   "faqs": [{ "q": "...", "a": "..." }]
 // }
-import { defaultRecruit, defaultTracks, defaultFaqs } from '../data/recruitDefaults.js';
+import { defaultRecruit, defaultFaqs } from '../data/recruitDefaults.js';
 
 const isStr = (v) => typeof v === 'string';
 const strList = (v) => (Array.isArray(v) ? v.filter(isStr) : []);
-const SNIPPETS = Object.fromEntries(defaultTracks.map((t) => [t.id, t.snippet]));
 
 // 날짜 'YYYY-MM-DD' + 시각 'HH:MM' → 'YYYY-MM-DDTHH:MM:SS+09:00' (23:59는 59초까지, 기존 형식과 같게)
 export function toIso(date, time) {
@@ -45,34 +43,26 @@ export function resolveRecruitContent(settings) {
     }
     return step;
   });
-  // 코드 스니펫의 {gen} 자리에 기수를 넣어요 (예: '{gen}기 지원하기' → '9기 지원하기')
-  const fill = (t) => ({ ...t, snippet: (t.snippet || []).map((line) => line.replaceAll('{gen}', String(generation))) });
-  const tracks = Array.isArray(d.tracks) && d.tracks.every((t) => t && isStr(t.name))
-    ? d.tracks.map((t, i) => ({ id: isStr(t.id) && t.id ? t.id : `track-${i}`, name: t.name, summary: isStr(t.summary) ? t.summary : '', learn: strList(t.learn), stack: strList(t.stack), snippet: SNIPPETS[t.id] || [] })).map(fill)
-    : defaultTracks.map(fill);
   const faqs = Array.isArray(d.faqs) && d.faqs.every((f) => f && isStr(f.q) && isStr(f.a)) ? d.faqs.map((f) => ({ q: f.q, a: f.a })) : defaultFaqs;
   const qualifications = Array.isArray(d.qualifications) ? strList(d.qualifications) : defaultRecruit.qualifications;
   return {
     recruit: { generation, applyEndTime: endTime, applyStart: steps[0].start, applyEnd: steps[0].end || steps[0].start, steps, qualifications },
-    tracks,
     faqs,
   };
 }
 
 /** 저장된 settings → 편집 폼 상태 */
 export function detailsToForm(settings) {
-  const { recruit, tracks, faqs } = resolveRecruitContent(settings);
+  const { recruit, faqs } = resolveRecruitContent(settings);
   return {
     generation: String(recruit.generation),
     endTime: recruit.applyEndTime,
     steps: recruit.steps.map((x) => ({ title: x.title, description: x.description, sd: isoDate(x.start), st: isoTime(x.start), ed: isoDate(x.end), et: isoTime(x.end) })),
     qualifications: [...recruit.qualifications],
-    tracks: tracks.map((t) => ({ id: t.id, name: t.name, summary: t.summary, learn: [...t.learn], stack: t.stack.join(', ') })),
     faqs: faqs.map((f) => ({ ...f })),
   };
 }
 
-const splitStack = (text) => String(text || '').split(',').map((x) => x.trim()).filter(Boolean);
 const clean = (list) => list.map((x) => String(x).trim()).filter(Boolean);
 
 /** 편집 폼 상태 → recruit_details. 첫 단계 날짜는 start·deadline(설정 칸)에서 가져옵니다. */
@@ -92,7 +82,6 @@ export function formToDetails(form, { start, deadline }) {
       return step;
     }),
     qualifications: clean(form.qualifications),
-    tracks: form.tracks.map((t) => ({ id: t.id, name: t.name.trim(), summary: t.summary.trim(), learn: clean(t.learn), stack: splitStack(t.stack) })),
     faqs: form.faqs.map((f) => ({ q: f.q.trim(), a: f.a.trim() })),
   };
 }
@@ -118,7 +107,6 @@ export function validateRecruitForm(form, { start, deadline }) {
     if (!first && x.ed && s0 && e0 <= s0) e[k('end')] = '끝은 시작보다 뒤여야 합니다.';
     if (s0) prev = s0;
   });
-  form.tracks.forEach((t, i) => { if (!t.name.trim()) e[`tracks.${i}.name`] = '트랙 이름을 적어 주세요.'; });
   form.faqs.forEach((f, i) => {
     if (!f.q.trim()) e[`faqs.${i}.q`] = '질문을 적어 주세요.';
     if (!f.a.trim()) e[`faqs.${i}.a`] = '답을 적어 주세요.';

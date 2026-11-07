@@ -45,84 +45,12 @@ export const defaultRecruit = {
 };
 
 
-export const defaultTracks = [
-  {
-    id: "frontend",
-    name: "프론트엔드",
-    summary: "사용자가 직접 만지는 화면을 설계하고 구현해요.",
-    learn: [
-      "HTML·CSS·JS 기초부터 React 컴포넌트 설계까지",
-      "디자이너와 협업하는 디자인 시스템 구현",
-      "Vercel로 직접 배포하고 성능 개선하기",
-    ],
-    stack: ["React", "Next.js", "TypeScript", "Tailwind"],
-    snippet: [
-      "export default function Apply() {",
-      "  return <Button onClick={join}>",
-      "    {gen}기 지원하기",
-      "  </Button>;",
-      "}",
-    ],
-  },
-  {
-    id: "backend",
-    name: "백엔드",
-    summary: "서비스를 떠받치는 서버와 데이터를 책임져요.",
-    learn: [
-      "REST API 설계와 인증·인가 구현",
-      "데이터베이스 모델링과 쿼리 최적화",
-      "Docker와 클라우드로 서버 운영하기",
-    ],
-    stack: ["Spring Boot", "Node.js", "MySQL", "AWS"],
-    snippet: [
-      '@PostMapping("/apply")',
-      "public Member join(@RequestBody You you) {",
-      "  return dcm.welcome(you, {gen});",
-      "}",
-    ],
-  },
-  {
-    id: "app",
-    name: "앱",
-    summary: "손안에서 매일 쓰는 모바일 앱을 만들어요.",
-    learn: [
-      "크로스플랫폼 앱 구조와 상태 관리",
-      "푸시 알림·카메라 등 네이티브 기능 연동",
-      "스토어 출시까지 경험하기",
-    ],
-    stack: ["Flutter", "Dart", "Firebase", "Swift"],
-    snippet: [
-      "onPressed: () {",
-      "  Navigator.push(",
-      "    context, DcmRoute(gen: {gen}),",
-      "  );",
-      "}",
-    ],
-  },
-  {
-    id: "ai",
-    name: "AI · 데이터",
-    summary: "데이터로 문제를 정의하고 모델로 풀어내요.",
-    learn: [
-      "파이썬 데이터 분석과 시각화",
-      "머신러닝 모델 학습과 평가",
-      "LLM API를 활용한 서비스 프로토타입",
-    ],
-    stack: ["Python", "PyTorch", "FastAPI", "Pandas"],
-    snippet: [
-      "model = DCM(generation={gen})",
-      "model.fit(passion, epochs=16)",
-      "print(model.predict(you))",
-      "# >>> 합격 확률 높음",
-    ],
-  },
-];
 
 
 export const defaultFaqs = [
   {
     q: "비전공자도 지원할 수 있나요?",
-    a: "물론이에요. 매 기수 멤버의 30% 정도가 비전공자예요. 첫 4주는 트랙별 기초 스터디로 시작하니 걱정하지 않아도 돼요.",
+    a: "물론이에요. 매 기수 멤버의 30% 정도가 비전공자예요. 첫 4주는 기초 스터디로 함께 시작하니 걱정하지 않아도 돼요.",
   },
   {
     q: "프로젝트 경험이 없어도 괜찮나요?",

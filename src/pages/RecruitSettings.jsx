@@ -38,7 +38,7 @@ function RowTools({ i, n, onMove, onRemove, label, lockFirst }) {
   );
 }
 
-// 문장 목록 (지원 자격, 트랙에서 배우는 것)
+// 문장 목록 (지원 자격)
 function TextList({ idPrefix, label, items, onChange, errs, addLabel, placeholder }) {
   return (
     <div className="field">
@@ -74,7 +74,6 @@ function withGeneration(form, value) {
   };
 }
 
-const newTrackId = () => `track-${Date.now().toString(36)}${Math.floor(Math.random() * 1e4)}`;
 
 export default function RecruitSettings({ notify }) {
   const settings = useSettings();
@@ -209,22 +208,6 @@ export default function RecruitSettings({ notify }) {
         <TextList idPrefix="qual" label="지원 자격" items={form.qualifications} errs={errs} addLabel="문장 추가" placeholder="예: 개발에 관심 있는 재학생" onChange={(qualifications) => setF({ qualifications })} />
       </section>
 
-      <section className="set-sec" aria-labelledby="set-tracks">
-        <h3 id="set-tracks">모집 트랙</h3>
-        {form.tracks.map((t, i) => (
-          <div className="list-card" key={t.id}>
-            <div className="list-card-head">
-              <b>{t.name.trim() || `트랙 ${i + 1}`}</b>
-              <RowTools i={i} n={form.tracks.length} label={`트랙 ${i + 1}`} onMove={(k, d) => setF({ tracks: move(form.tracks, k, d) })} onRemove={(k) => setF({ tracks: drop(form.tracks, k) })} />
-            </div>
-            <Field id={`track-${i}-name`} label="이름" err={errs[`tracks.${i}.name`]}><input id={`track-${i}-name`} value={t.name} aria-invalid={!!errs[`tracks.${i}.name`]} onChange={(e) => setF({ tracks: patch(form.tracks, i, { name: e.target.value }) })} /></Field>
-            <Field id={`track-${i}-sum`} label="한 줄 소개"><input id={`track-${i}-sum`} value={t.summary} onChange={(e) => setF({ tracks: patch(form.tracks, i, { summary: e.target.value }) })} /></Field>
-            <TextList idPrefix={`track-${i}-learn`} label="배우는 것" items={t.learn} errs={errs} addLabel="항목 추가" onChange={(learn) => setF({ tracks: patch(form.tracks, i, { learn }) })} />
-            <Field id={`track-${i}-stack`} label="기술 스택" hint="쉼표로 구분해 주세요. 예: React, Next.js, TypeScript"><input id={`track-${i}-stack`} value={t.stack} onChange={(e) => setF({ tracks: patch(form.tracks, i, { stack: e.target.value }) })} /></Field>
-          </div>
-        ))}
-        <div><button type="button" className="btn small" onClick={() => setF({ tracks: [...form.tracks, { id: newTrackId(), name: '', summary: '', learn: [''], stack: '' }] })}>+ 트랙 추가</button></div>
-      </section>
 
       <section className="set-sec" aria-labelledby="set-faq">
         <h3 id="set-faq">자주 묻는 질문</h3>

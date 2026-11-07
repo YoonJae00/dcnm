@@ -4,7 +4,6 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Check } from "@/components/ui/icons";
 import { Countdown } from "@/components/sections/recruit/Countdown";
 import { Timeline } from "@/components/sections/recruit/Timeline";
-import { Tracks } from "@/components/sections/recruit/Tracks";
 
 export function Recruit() {
   const recruit = useRecruit();
@@ -51,7 +50,6 @@ export function Recruit() {
           </Reveal>
         </div>
 
-        <Tracks />
       </div>
     </section>
   );

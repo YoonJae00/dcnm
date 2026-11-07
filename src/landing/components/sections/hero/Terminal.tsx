@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { useLenis } from "lenis/react";
-import { club, stats, type Track } from "@/data/site";
-import { useRecruit, useTracks } from "@/lib/RecruitContext";
+import { club, stats } from "@/data/site";
+import { useRecruit } from "@/lib/RecruitContext";
 import { formatRange, getPhase, type Recruit } from "@/lib/recruit";
 import { cn } from "@/lib/cn";
 import { useIntroRevealed } from "@intro/introState";
@@ -15,8 +15,8 @@ type Item = [Kind, string] | [Kind, string, number];
 type Output = Item[] | "clear";
 
 const INTRO = ["whoami", "ls activities/", "dcm recruit --status"];
-const CHIPS = ["help", "whoami", "schedule", "tracks", "apply"];
-const COMMANDS = ["help", "whoami", "ls", "schedule", "tracks", "recruit", "apply", "date", "clear", "echo"];
+const CHIPS = ["help", "whoami", "schedule", "recruit", "apply"];
+const COMMANDS = ["help", "whoami", "ls", "schedule", "recruit", "apply", "date", "clear", "echo"];
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -25,7 +25,7 @@ function ddayLabel(recruit: Recruit, now: number) {
   return days <= 0 ? "D-Day" : `D-${days}`;
 }
 
-function run(input: string, recruit: Recruit, tracks: Track[], onApply: () => void): Output {
+function run(input: string, recruit: Recruit, onApply: () => void): Output {
   const [cmd, ...args] = input.trim().split(/\s+/);
   const now = Date.now();
 
@@ -38,7 +38,6 @@ function run(input: string, recruit: Recruit, tracks: Track[], onApply: () => vo
         ["out", "  whoami      DC&M 한 줄 소개"],
         ["out", "  ls          활동 분야 보기"],
         ["out", `  schedule    ${recruit.generation}기 모집 일정`],
-        ["out", "  tracks      모집 트랙"],
         ["out", "  recruit     모집 현황"],
         ["out", "  apply       모집 안내로 이동"],
         ["out", "  clear       화면 지우기"],
@@ -55,8 +54,6 @@ function run(input: string, recruit: Recruit, tracks: Track[], onApply: () => vo
       return [["dir", "study/   project/   hackathon/   seminar/   network/"]];
     case "schedule":
       return recruit.steps.map((s): Item => ["out", `${formatRange(s.start, s.end)}\t${s.title}`, 13]);
-    case "tracks":
-      return tracks.map((t): Item => ["out", `${t.name}\t${t.stack.join(", ")}`, 7]);
     case "dcm":
     case "dcnm":
     case "recruit": {
@@ -125,7 +122,6 @@ function Prompt() {
 
 export function Terminal() {
   const recruit = useRecruit();
-  const tracks = useTracks();
   const rootRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -163,11 +159,11 @@ export function Terminal() {
   const execute = useCallback(
     (cmd: string) => {
       push([["cmd", cmd]]);
-      const result = run(cmd, recruit, tracks, goToRecruit);
+      const result = run(cmd, recruit, goToRecruit);
       if (result === "clear") setLines([]);
       else push(result);
     },
-    [push, goToRecruit, recruit, tracks],
+    [push, goToRecruit, recruit],
   );
 
   /** 사람이 치는 것처럼 한 글자씩 입력한 뒤 실행 */

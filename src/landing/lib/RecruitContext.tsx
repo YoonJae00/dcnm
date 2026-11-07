@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
-import { recruit as defaultRecruit, tracks as defaultTracks, faqs as defaultFaqs } from "@/data/site";
-import type { Faq, Track } from "@/data/site";
+import { recruit as defaultRecruit, faqs as defaultFaqs } from "@/data/site";
+import type { Faq } from "@/data/site";
 import type { Recruit } from "@/lib/recruit";
 import { resolveRecruitContent } from "../../lib/recruitDetails.js";
 
@@ -11,16 +11,15 @@ export type RecruitSettings = {
   recruit_details?: unknown;
 };
 
-type Content = { recruit: Recruit; tracks: Track[]; faqs: Faq[] };
+type Content = { recruit: Recruit; faqs: Faq[] };
 
 const RecruitContext = createContext<Content>({
   recruit: defaultRecruit as Recruit,
-  tracks: defaultTracks,
   faqs: defaultFaqs,
 });
 
 /**
- * 기수·일정·지원 자격·트랙·FAQ를 설정값으로 바꿔요.
+ * 기수·일정·지원 자격·FAQ를 설정값으로 바꿔요.
  * 서류 접수(첫 단계)는 시작일 00:00 ~ 마감일 마감 시각(KST)이에요.
  */
 export function RecruitProvider({ settings, children }: { settings: RecruitSettings; children: ReactNode }) {
@@ -33,5 +32,4 @@ export function RecruitProvider({ settings, children }: { settings: RecruitSetti
 }
 
 export const useRecruit = () => useContext(RecruitContext).recruit;
-export const useTracks = () => useContext(RecruitContext).tracks;
 export const useFaqs = () => useContext(RecruitContext).faqs;
