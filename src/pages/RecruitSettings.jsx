@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as api from '../lib/api';
-import { useSettings } from '../lib/hooks';
+import { useSettings, useTable } from '../lib/hooks';
+import { STATUS_LABEL } from '../lib/projects';
 import { landingState } from '../lib/landing';
 import { detailsToForm, formToDetails, validateRecruitForm } from '../lib/recruitDetails';
 
@@ -75,8 +76,55 @@ function withGeneration(form, value) {
 }
 
 
+// 랜딩 Activities에 보일 프로젝트 고르기. 체크한 순서가 곧 랜딩 표시 순서예요.
+const LP_FILTERS = [['all', '전체'], ['ongoing', '진행 중'], ['recruiting', '모집 중'], ['done', '완료']];
+function LandingProjects({ projects, value, onChange }) {
+  const [status, setStatus] = useState('all');
+  const [q, setQ] = useState('');
+  const byId = new Map(projects.map((p) => [p.id, p]));
+  const picked = value.filter((id) => byId.has(id)); // 삭제된 프로젝트 id는 조용히 뺍니다
+  const shown = projects.filter((p) => (status === 'all' || p.status === status) && p.title.toLowerCase().includes(q.trim().toLowerCase()));
+  const toggle = (id) => onChange(picked.includes(id) ? picked.filter((x) => x !== id) : [...picked, id]);
+  return (
+    <>
+      <p className="small muted">
+        체크한 프로젝트만 랜딩의 Activities 섹션에 보입니다. 선택됨 목록의 순서가 랜딩 표시 순서예요. <strong>{picked.length}개 선택됨</strong>
+      </p>
+      {picked.length === 0 && <p className="small muted" role="status">랜딩에서 Activities 섹션이 숨겨집니다.</p>}
+      {picked.length > 0 && (
+        <ol className="lp-picked" aria-label="선택된 프로젝트 (표시 순서)">
+          {picked.map((id, i) => (
+            <li key={id} className="list-line">
+              <span className="lp-title">{i + 1}. {byId.get(id).title} <small className="muted">{byId.get(id).kind} · {STATUS_LABEL[byId.get(id).status]}</small></span>
+              <RowTools i={i} n={picked.length} label={byId.get(id).title} onMove={(k, d) => onChange(move(picked, k, d))} onRemove={(k) => onChange(drop(picked, k))} />
+            </li>
+          ))}
+        </ol>
+      )}
+      <div className="filter-line" role="group" aria-label="프로젝트 상태">
+        {LP_FILTERS.map(([k, label]) => (
+          <button type="button" key={k} className="chip" aria-pressed={status === k} onClick={() => setStatus(k)}>{label}</button>
+        ))}
+        <input className="filter-search" type="search" aria-label="프로젝트 제목 검색" placeholder="제목 검색" value={q} onChange={(e) => setQ(e.target.value)} />
+      </div>
+      <ul className="lp-list">
+        {shown.map((p) => (
+          <li key={p.id}>
+            <label className="check-line" htmlFor={`lp-${p.id}`}>
+              <input id={`lp-${p.id}`} type="checkbox" checked={picked.includes(p.id)} onChange={() => toggle(p.id)} />
+              <span>{p.title}<small>{p.kind} · {STATUS_LABEL[p.status]}</small></span>
+            </label>
+          </li>
+        ))}
+        {shown.length === 0 && <li className="small muted">조건에 맞는 프로젝트가 없습니다.</li>}
+      </ul>
+    </>
+  );
+}
+
 export default function RecruitSettings({ notify }) {
   const settings = useSettings();
+  const { rows: projects } = useTable('projects');
   const [s, setS] = useState(null);
   const [form, setForm] = useState(null);
   const [errs, setErrs] = useState({});
@@ -123,6 +171,7 @@ export default function RecruitSettings({ notify }) {
         ...s,
         links,
         privacy_contact: (s.privacy_contact || '').trim() || null,
+        landing_projects: (s.landing_projects || []).filter((id) => !projects || projects.some((p) => p.id === id)),
         recruit_start: s.recruit_start || null,
         recruit_deadline: s.recruit_deadline || null,
         recruit_details: formToDetails(form, { start: s.recruit_start, deadline: s.recruit_deadline }),
@@ -223,6 +272,13 @@ export default function RecruitSettings({ notify }) {
           </div>
         ))}
         <div><button type="button" className="btn small" onClick={() => setF({ faqs: [...form.faqs, { q: '', a: '' }] })}>+ 질문 추가</button></div>
+      </section>
+
+      <section className="set-sec" aria-labelledby="set-activities">
+        <h3 id="set-activities">랜딩 활동(Activities)</h3>
+        {projects ? (
+          <LandingProjects projects={projects} value={s.landing_projects || []} onChange={(landing_projects) => setS({ ...s, landing_projects })} />
+        ) : <p className="state">프로젝트를 불러오는 중입니다.</p>}
       </section>
 
       <section className="set-sec" aria-labelledby="set-site">
