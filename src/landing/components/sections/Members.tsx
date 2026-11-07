@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLenis } from "lenis/react";
 import { useTable } from "../../../lib/hooks";
 import { initials } from "../../../lib/format";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -16,19 +17,36 @@ type Member = {
   github?: string;
 };
 
+const PREVIEW_COUNT = 8;
+
 // 등록된 공개 프로필만 사용해요. 계정 정보나 내부 프로젝트는 조회하지 않아요.
 export function Members() {
   const { rows, error, reload } = useTable("members");
   const members = rows as Member[] | null;
   const [generation, setGeneration] = useState("all");
   const [query, setQuery] = useState("");
+  const [expanded, setExpanded] = useState(false);
+  const lenis = useLenis();
   const generations = [...new Set((members ?? []).map((member) => member.generation).filter((value): value is number => value != null))].sort((a, b) => b - a);
   const search = query.trim().toLowerCase();
   const shown = (members ?? []).filter((member) =>
     (generation === "all" || String(member.generation) === generation) &&
     (!search || [member.name, member.role, member.part, member.intro, ...(member.tags ?? [])].join(" ").toLowerCase().includes(search)),
   );
-  const clearFilters = () => { setGeneration("all"); setQuery(""); };
+  const filtering = generation !== "all" || search !== "";
+  const visibleMembers = expanded || filtering ? shown : shown.slice(0, PREVIEW_COUNT);
+  const canExpand = !filtering && shown.length > PREVIEW_COUNT;
+  const clearFilters = () => { setGeneration("all"); setQuery(""); setExpanded(false); };
+  const toggleExpanded = () => {
+    if (expanded) {
+      const section = document.getElementById("members");
+      if (section && section.getBoundingClientRect().top < 64) {
+        if (lenis) lenis.scrollTo(section, { immediate: true });
+        else section.scrollIntoView({ block: "start", behavior: "instant" });
+      }
+    }
+    setExpanded((value) => !value);
+  };
 
   return (
     <section id="members" aria-labelledby="members-title" className="scroll-mt-16 bg-page py-24 sm:py-32">
@@ -41,14 +59,14 @@ export function Members() {
         <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-end">
           {generations.length > 0 && <label className="flex flex-col gap-2 text-14 font-semibold text-gray-4">
             기수
-            <select value={generation} onChange={(event) => setGeneration(event.target.value)} className="min-h-12 rounded-2xl border border-gray-2 bg-surface px-4 py-3 text-16 text-ink sm:min-w-36">
+            <select value={generation} onChange={(event) => { setGeneration(event.target.value); setExpanded(false); }} className="min-h-12 rounded-2xl border border-gray-2 bg-surface px-4 py-3 text-16 text-ink sm:min-w-36">
               <option value="all">전체 기수</option>
               {generations.map((value) => <option key={value} value={value}>{value}기</option>)}
             </select>
           </label>}
           <label className="flex flex-1 flex-col gap-2 text-14 font-semibold text-gray-4">
             멤버 검색
-            <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="이름, 관심 분야, 기술로 찾아보세요" className="min-h-12 w-full rounded-2xl border border-gray-2 bg-surface px-4 py-3 text-16 text-ink placeholder:text-gray-4" />
+            <input type="search" value={query} onChange={(event) => { setQuery(event.target.value); setExpanded(false); }} placeholder="이름, 관심 분야, 기술로 찾아보세요" className="min-h-12 w-full rounded-2xl border border-gray-2 bg-surface px-4 py-3 text-16 text-ink placeholder:text-gray-4" />
           </label>
         </div>
         {error ? (
@@ -60,17 +78,17 @@ export function Members() {
           <p role="status" className="mt-8 rounded-[28px] bg-mist p-8 text-center text-gray-4">멤버들을 불러오고 있어요.</p>
         ) : (
           <>
-            <p role="status" className="mt-5 text-14 font-medium text-gray-4">총 {shown.length}명</p>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {shown.map((member) => {
+            <p role="status" className="mt-5 text-14 font-medium text-gray-4">총 {shown.length}명{canExpand && !expanded ? ` · ${visibleMembers.length}명 미리보기` : ""}</p>
+            <div id="landing-member-list" className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {visibleMembers.map((member) => {
                 const github = member.github && /^https?:\/\//i.test(member.github) ? member.github : null;
                 return (
-                  <article key={member.id} className="flex flex-col rounded-[28px] bg-mist p-6 ring-1 ring-gray-2/50">
-                    <div className="flex items-center gap-4">
-                      <span aria-hidden="true" className="grid size-14 shrink-0 place-items-center rounded-2xl bg-surface text-20 font-bold text-primary shadow-s">{initials(member.name)}</span>
+                  <article key={member.id} className="flex flex-col rounded-2xl bg-mist p-4 ring-1 ring-gray-2/50">
+                    <div className="flex items-center gap-3">
+                      <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-surface text-16 font-bold text-primary shadow-s">{initials(member.name)}</span>
                       <div className="min-w-0">
-                        <h3 className="text-20 font-bold text-ink">{member.name}</h3>
-                        <p className="mt-1 text-14 text-gray-4">{[member.generation != null ? `${member.generation}기` : null, member.role].filter(Boolean).join(" · ")}</p>
+                        <h3 className="text-16 font-bold text-ink">{member.name}</h3>
+                        <p className="mt-0.5 text-12 text-gray-4">{[member.generation != null ? `${member.generation}기` : null, member.role].filter(Boolean).join(" · ")}</p>
                       </div>
                     </div>
                     {member.part && <p className="mt-5 text-14 font-semibold text-primary">{member.part}</p>}
@@ -85,6 +103,13 @@ export function Members() {
                 );
               })}
             </div>
+            {canExpand && (
+              <div className="mt-6 text-center">
+                <button type="button" onClick={toggleExpanded} aria-expanded={expanded} aria-controls="landing-member-list" className="min-h-12 rounded-full bg-mist px-6 py-3 text-14 font-semibold text-primary ring-1 ring-gray-2 transition-colors hover:bg-gray-1">
+                  {expanded ? "멤버 접기 ↑" : `멤버 전체 펼쳐보기 (${shown.length}명) ↓`}
+                </button>
+              </div>
+            )}
             {shown.length === 0 && (
               <div className="mt-5 rounded-[28px] bg-mist p-8 text-center text-gray-4">
                 <p>{members.length === 0 ? "아직 등록된 멤버가 없어요." : "조건에 맞는 멤버가 없어요."}</p>
