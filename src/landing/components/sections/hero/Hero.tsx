@@ -92,22 +92,24 @@ export function Hero() {
     <section
       id="top"
       onPointerMove={onPointerMove}
-      className="relative isolate overflow-hidden bg-[linear-gradient(to_bottom,var(--color-mist)_0%,var(--color-mist)_55%,#fff_100%)] pt-32 pb-16 sm:pt-40 sm:pb-20"
+      className="relative isolate overflow-hidden bg-white pt-32 pb-16 sm:pt-40 sm:pb-20"
     >
       {/* 배경: 모눈 + 그라디언트 오브 */}
-      <div
-        aria-hidden
-        className="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_70%_55%_at_50%_30%,#000_30%,transparent_100%)]"
-      />
-      <Parallax mx={mx} my={my} depth={-50} className="absolute -top-24 left-[8%] -z-10">
-        <div className="size-[380px] rounded-full bg-light/60 blur-[90px]" />
-      </Parallax>
-      <Parallax mx={mx} my={my} depth={70} className="absolute top-10 right-[4%] -z-10">
-        <div className="size-[420px] rounded-full bg-accent/80 blur-[100px]" />
-      </Parallax>
-      <Parallax mx={mx} my={my} depth={30} className="absolute top-[38%] left-[30%] -z-10">
-        <div className="size-[360px] rounded-full bg-secondary/30 blur-[110px]" />
-      </Parallax>
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 isolate bg-mist [mask-image:linear-gradient(to_bottom,#000_50%,transparent_100%)]">
+        <div
+          aria-hidden
+          className="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_70%_55%_at_50%_30%,#000_30%,transparent_100%)]"
+        />
+        <Parallax mx={mx} my={my} depth={-50} className="absolute -top-24 left-[8%] -z-10">
+          <div className="size-[380px] rounded-full bg-light/60 blur-[90px]" />
+        </Parallax>
+        <Parallax mx={mx} my={my} depth={70} className="absolute top-10 right-[4%] -z-10">
+          <div className="size-[420px] rounded-full bg-accent/80 blur-[100px]" />
+        </Parallax>
+        <Parallax mx={mx} my={my} depth={30} className="absolute top-[38%] left-[30%] -z-10">
+          <div className="size-[360px] rounded-full bg-secondary/30 blur-[110px]" />
+        </Parallax>
+      </div>
 
       {/* 떠다니는 칩 (데스크톱) */}
       <motion.div
