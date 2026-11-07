@@ -42,7 +42,7 @@ export default function LandingApp({ settings }: { settings: RecruitSettings }) 
               <Faq />
               <FinalCta />
             </main>
-            <Footer links={settings.links} />
+            <Footer />
             </ActivitiesProvider>
           </RecruitProvider>
         </MotionConfig>
