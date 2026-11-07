@@ -46,7 +46,7 @@ function Marquee({ items, reverse }: { items: string[]; reverse?: boolean }) {
           <span
             key={i}
             aria-hidden={i >= items.length}
-            className="shrink-0 rounded-full bg-white/[0.06] px-5 py-2.5 text-14 font-semibold text-gray-2 ring-1 ring-white/10 transition-colors hover:bg-primary hover:text-white"
+            className="shrink-0 rounded-full bg-white/[0.08] px-5 py-2.5 text-14 font-semibold text-white/90 ring-1 ring-white/15 transition-colors hover:bg-primary hover:text-white"
           >
             {item}
           </span>
@@ -104,7 +104,7 @@ export function Stats() {
       </div>
 
       <div className="mt-20 space-y-3 sm:mt-28">
-        <p className="mb-5 text-center text-14 font-semibold text-gray-4">
+        <p className="mb-5 text-center text-14 font-semibold text-white/70">
           우리가 다뤄온 기술들
         </p>
         <Marquee items={techStack.slice(0, half)} />
