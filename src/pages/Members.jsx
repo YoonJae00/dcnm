@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import { useTable } from '../lib/hooks';
 import { initials } from '../lib/format';
 
-const ROLE_ORDER = ['회장', '부회장', '운영진', '부원'];
-const LEADS = new Set(['회장', '부회장', '운영진']);
+const ROLE_ORDER = ['지도교수', '회장', '부회장', '부원'];
+const LEADS = new Set(['회장', '부회장', '운영진', '지도교수']);
 
 function Chips({ label, options, value, onChange, format = (v) => v }) {
   return (
