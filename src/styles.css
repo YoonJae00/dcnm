@@ -226,31 +226,49 @@ main { padding-block: 40px 96px; min-height: 60vh; }
 .week-top h2 { font-size: var(--t-lg); }
 .week-top .range { color: var(--muted); font-size: var(--t-sm); margin-left: 8px; font-weight: 500; }
 .week-nav { display: flex; gap: 4px; }
-.week-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-/* 이전달 / 다음달 날짜 셀의 배경을 흐리게 처리 */
-.day.other-month {
-  background: var(--surface-dim, rgba(0, 0, 0, 0.03));
-  opacity: 0.55;
+
+/* 1. 그리드 설정 & 하단 테두리 정리 */
+.week-grid { 
+  display: grid; 
+  grid-template-columns: repeat(7, minmax(0, 1fr)); 
 }
 
-/* 이전달 / 다음달 전체 셀 배경색 변경 */
-.day.other-month {
-  background-color: var(--bg-subtle, #f3f4f6); /* 약간 어두운 회색/서브 배경 */
+/* 2. 각 날짜 셀 기본 스타일 */
+.day { 
+  min-height: 168px; 
+  border-right: 1px solid var(--line); 
+  border-top: 1px solid var(--line); /* 기본 상단 구분선 추가 */
+  display: flex; 
+  flex-direction: column; 
 }
 
-/* 헤더 영역도 동일한 배경색으로 통일 */
+/* 첫 번째 줄(1번째~7번째 셀)은 상단 구분선을 제거하여 상단 테두리 중복 방지 */
+.day:nth-child(-n+7) {
+  border-top: 0;
+}
+
+/* 7번째 열마다 우측 테두리 제거 (줄바꿈 대응) */
+.day:nth-child(7n) { 
+  border-right: 0; 
+}
+.day:last-child { 
+  border-right: 0; 
+}
+
+/* 이전달 / 다음달 스타일 (정리 및 통합) */
+.day.other-month {
+  background-color: var(--bg-subtle, #f3f4f6);
+}
 .day.other-month .day-head {
   background-color: transparent;
 }
-
-/* 텍스트 및 일정 색상 톤 다운 */
 .day.other-month .day-head .wd,
 .day.other-month .day-head .dn {
   color: var(--muted, #9ca3af);
   font-weight: 400;
 }
-.day { min-height: 168px; border-right: 1px solid var(--line); display: flex; flex-direction: column; }
-.day:last-child { border-right: 0; }
+
+/* 헤더 및 요소 스타일 */
 .day-head { display: flex; align-items: baseline; gap: 6px; padding: 10px 12px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 .day-head .wd { font-weight: 700; }
 .day-head .dn { color: var(--muted); font-size: var(--t-sm); }
@@ -259,6 +277,7 @@ main { padding-block: 40px 96px; min-height: 60vh; }
 .day.today .day-head { background: var(--accent); color: var(--on-accent); border-bottom-color: var(--accent); }
 .day.today .day-head .dn, .day.today .day-head .wd { color: var(--on-ink); }
 .day.today .today-label { margin-left: auto; font-size: var(--t-xs); font-weight: 700; }
+
 .day-body { display: grid; gap: 8px; padding: 10px 10px 12px; align-content: start; }
 .slot { display: grid; gap: 2px; text-decoration: none; color: var(--ink); padding: 7px 9px; border-radius: var(--r-sm); background: var(--tint); border-left: 3px solid var(--accent); }
 .slot:hover { background: var(--accent-soft); }
@@ -268,9 +287,20 @@ main { padding-block: 40px 96px; min-height: 60vh; }
 .slot.k-행사 { border-left-color: var(--ink); }
 .slot.k-모집 { border-left-color: var(--stone); }
 .week-empty { padding: 20px 18px; color: var(--muted); }
+
+/* 모바일 반응형 처리 */
 @media (max-width: 760px) {
   .week-grid { grid-template-columns: 1fr; }
-  .day { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); flex-direction: row; }
+  .day { 
+    min-height: 0; 
+    border-right: 0; 
+    border-top: 0;
+    border-bottom: 1px solid var(--line); 
+    flex-direction: row; 
+  }
+  .day:nth-child(-n+7) {
+    border-top: 0;
+  }
   .day:last-child { border-bottom: 0; }
   .day-head { width: 92px; flex: none; flex-direction: column; gap: 0; border-bottom: 0; border-right: 1px solid var(--line); }
   .day.today .today-label { margin-left: 0; }
