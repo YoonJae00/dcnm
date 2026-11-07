@@ -775,3 +775,5 @@ body { transition: background-color .3s ease, color .3s ease; }
 .info-list dt { color: var(--muted); }
 .info-list dd { margin: 0; overflow-wrap: anywhere; }
 .danger-zone { display: grid; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); justify-items: start; }
+.policy-table th, .policy-table td { min-width: 6.5em; }
+@media (max-width: 560px) { .policy-table { font-size: var(--t-xs); min-width: 520px; } }
