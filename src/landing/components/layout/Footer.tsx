@@ -59,12 +59,15 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 flex flex-col gap-2 border-t border-gray-1 pt-6 text-12 text-gray-3 sm:flex-row sm:justify-between">
-          <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span>© {club.founded}–2026 {club.name}. All rights reserved.</span>
-            <SmartLink href="/privacy" className="text-14 font-bold text-primary underline-offset-4 hover:underline">
-              개인정보 처리방침
-            </SmartLink>
-          </p>
+          <div className="space-y-2">
+            <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span>© {club.founded}–2026 {club.name}. All rights reserved.</span>
+              <SmartLink href="/privacy" className="text-14 font-bold text-primary underline-offset-4 hover:underline">
+                개인정보 처리방침
+              </SmartLink>
+            </p>
+            <p className="text-gray-4">개발 · 주호 · 현성 · 석우 · 윤재</p>
+          </div>
           <p className="font-mono tracking-normal">
             built with <span className="text-primary">▷_</span> by {club.name} members
           </p>
