@@ -61,3 +61,21 @@ export function initials(name) {
 export function paragraphs(text) {
   return String(text || '').split(/\n{2,}/).map((p) => p.split('\n'));
 }
+
+// 오늘 날짜를 한국 시간 기준으로: "11월 7일 토요일"
+export function todayKst(now = new Date()) {
+  return new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric', weekday: 'long' }).format(now);
+}
+
+// "방금 전 / 3시간 전 / 2일 전 / 11.02"
+export function ago(value, now = new Date()) {
+  if (!value) return '';
+  const t = new Date(value).getTime();
+  if (Number.isNaN(t)) return '';
+  const min = Math.floor((now.getTime() - t) / 60000);
+  if (min < 1) return '방금 전';
+  if (min < 60) return `${min}분 전`;
+  if (min < 60 * 24) return `${Math.floor(min / 60)}시간 전`;
+  if (min < 60 * 24 * 7) return `${Math.floor(min / 1440)}일 전`;
+  return shortDate(value);
+}

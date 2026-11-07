@@ -47,8 +47,8 @@ export const seed = {
     M('m8', '이석우', null, '부원', '', '', [], 8),
     M('m9', '이현성', null, '부원', '', '', [], 9),
     M('m10', '정민지', null, '부원', '', '', [], 10),
-    M('m11', '김달현', null, '부원', '', '', [], 11),
-    M('m12', '김민서', null, '부원', '', '', [], 12),
+    { ...M('m11', '김달현', null, '부원', '', '', [], 11), created_at: '2026-11-06T10:00:00+09:00' },
+    { ...M('m12', '김민서', null, '부원', '', '', [], 12), created_at: '2026-11-07T09:30:00+09:00' },
     M('m13', '김재우', null, '부원', '', '', [], 13),
     M('m14', '김찬호', null, '부원', '', '', [], 14),
     M('m15', '나윤서', null, '부원', '', '', [], 15),
@@ -81,6 +81,7 @@ export const seed = {
       author_id: 'm1', author_name: '문선우', member_ids: ['m1', 'm3', 'm5', 'm9'], capacity: 4,
       period: '2026.11 – 2027.02', start_date: '2026-11-08', end_date: '2027-02-28', meet_days: [3], meet_time: '19:00', place: '디스코드',
       tags: ['React', 'Supabase'], link: '', created_at: '2026-11-07T20:00:00+09:00',
+      progress: 45, status_note: '프로젝트·커뮤니티 기능은 붙였고, 지금은 팀 공간 화면과 홈 개편을 마무리하는 중이에요.', progress_updated_at: '2026-11-07T21:30:00+09:00',
     },
     {
       id: 'p2', status: 'ongoing', origin: 'club', kind: '스터디',
@@ -89,6 +90,7 @@ export const seed = {
       author_id: 'm2', author_name: '이규원', member_ids: ['m2', 'm7', 'm9', 'm6', 'm8'], capacity: 10,
       period: '2026년 2학기', start_date: '2026-09-06', end_date: '2026-12-20', meet_days: [0], meet_time: '15:00', place: '온라인',
       tags: ['Python', '프로그래머스', '백준'], link: '', created_at: '2026-09-01T12:00:00+09:00',
+      progress: 60, status_note: '그래프 탐색 주차까지 끝냈고, 다음 주부터 DP 심화 문제를 풉니다.', progress_updated_at: '2026-11-02T16:00:00+09:00',
     },
     {
       id: 'p3', status: 'ongoing', origin: 'club', kind: '독서',
@@ -97,6 +99,7 @@ export const seed = {
       author_id: 'm4', author_name: '김도윤', member_ids: ['m4', 'm10', 'm3', 'm9'], capacity: 10,
       period: '2026.09 – 2026.12', start_date: '2026-09-15', end_date: '2026-12-15', meet_days: [], meet_time: '', place: '인성관 306호',
       tags: ['독서', 'AI 윤리'], link: '', created_at: '2026-09-10T12:00:00+09:00',
+      progress: 75, status_note: '책 8장까지 읽었어요. 11월 12일 대면 모임에서 질문을 나눕니다.', progress_updated_at: '2026-11-03T12:30:00+09:00',
     },
     {
       id: 'p4', status: 'ongoing', origin: 'personal', kind: '공모전',
@@ -105,6 +108,7 @@ export const seed = {
       author_id: 'm10', author_name: '정민지', member_ids: ['m10', 'm4', 'm8', 'm9'], capacity: 4,
       period: '2026.11 – 2026.12', start_date: '2026-11-03', end_date: '2026-12-15', meet_days: [2], meet_time: '21:00', place: '디스코드',
       tags: ['Python', 'LLM'], link: '', created_at: '2026-10-28T12:00:00+09:00',
+      progress: 30, status_note: '데이터 전처리를 끝내고 첫 모델 실험을 돌리고 있어요.', progress_updated_at: '2026-11-04T23:10:00+09:00',
     },
     {
       id: 'p5', status: 'ongoing', origin: 'personal', kind: '프로젝트',
@@ -113,6 +117,7 @@ export const seed = {
       author_id: 'm8', author_name: '이석우', member_ids: ['m8', 'm5', 'm6'], capacity: 3,
       period: '2026.10 – 2027.01', start_date: '2026-10-01', end_date: '2027-01-31', meet_days: [5], meet_time: '18:00', place: '동아리방',
       tags: ['Arduino', 'Python'], link: '', created_at: '2026-09-25T12:00:00+09:00',
+      progress: 55, status_note: '센서 값 수집은 되고, 강의실별 빈자리 화면을 만드는 중입니다.', progress_updated_at: '2026-11-06T18:40:00+09:00',
     },
     {
       id: 'p6', status: 'ongoing', origin: 'personal', kind: '프로젝트',
@@ -121,6 +126,7 @@ export const seed = {
       author_id: 'm9', author_name: '이현성', member_ids: ['m9', 'm3'], capacity: 3,
       period: '2026.10 – 2027.02', start_date: '2026-10-10', end_date: '2027-02-20', meet_days: [6], meet_time: '14:00', place: '온라인',
       tags: ['Unity', 'C#'], link: '', created_at: '2026-10-05T12:00:00+09:00',
+      progress: 20, status_note: '퍼즐 규칙을 확정했고 첫 스테이지 그래픽을 그리고 있어요.', progress_updated_at: '2026-10-31T15:20:00+09:00',
     },
 
     {

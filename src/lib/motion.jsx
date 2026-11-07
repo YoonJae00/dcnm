@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 // 화면에 들어올 때 살짝 떠오르는 요소들. 같은 묶음 안에서는 순서대로 조금씩 늦게 나타납니다.
 const TARGETS = [
-  '.hero2 > *', '.statement p', '.page-head', '.hblock .block-head', '.stats4 .stat', '.card-grid > *', '.parts > *',
+  '.greet > *', '.mine-grid > *', '.hero2 > *', '.statement p', '.page-head', '.hblock .block-head', '.stats4 .stat', '.card-grid > *', '.parts > *',
   '.member-grid > *', '.home-cols .section', '.cta-band', '.week', '.post-row',
   '.filters', '.panel', '.article', '.rows > *',
 ].join(',');
