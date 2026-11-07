@@ -241,7 +241,7 @@ export const seed = {
     { id: 'e1', title: '미니 해커톤', date: '2026-11-07', start_time: '10:00', end_time: '20:00', place: '탐구관 301호', kind: '행사', note: '동아리 웹사이트 만들기' },
     { id: 'e2', title: '독서클럽 대면 모임', date: '2026-11-12', start_time: '15:20', end_time: '16:00', place: '인성관 306호', kind: '정기', note: '지도교수님 참여' },
     { id: 'e3', title: '해커톤 결과 공유회', date: '2026-11-20', start_time: '18:30', end_time: '19:30', place: '인성관 306호', kind: '행사', note: '' },
-    { id: 'e4', title: '신입 부원 모집 마감', date: '2026-11-30', start_time: '', end_time: '', place: '', kind: '모집', note: '' },
+    { id: 'e4', title: '신입 부원 모집 마감', date: '2026-11-23', start_time: '', end_time: '', place: '', kind: '모집', note: '' },
     { id: 'e5', title: '종강 총회', date: '2026-12-18', start_time: '18:00', end_time: '20:00', place: '인성관 306호', kind: '행사', note: '' },
   ],
 

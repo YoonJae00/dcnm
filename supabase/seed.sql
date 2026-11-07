@@ -56,6 +56,6 @@ insert into notices (title, body, pinned, created_at) values ('2027학년도 1�
 insert into events (title, date, start_time, end_time, place, kind, note) values ('미니 해커톤', '2026-11-07', '10:00', '20:00', '탐구관 301호', '행사', '동아리 웹사이트 만들기');
 insert into events (title, date, start_time, end_time, place, kind, note) values ('독서클럽 대면 모임', '2026-11-12', '15:20', '16:00', '인성관 306호', '정기', '지도교수님 참여');
 insert into events (title, date, start_time, end_time, place, kind, note) values ('해커톤 결과 공유회', '2026-11-20', '18:30', '19:30', '인성관 306호', '행사', null);
-insert into events (title, date, start_time, end_time, place, kind, note) values ('신입 부원 모집 마감', '2026-11-30', null, null, null, '모집', null);
+insert into events (title, date, start_time, end_time, place, kind, note) values ('신입 부원 모집 마감', '2026-11-23', null, null, null, '모집', null);
 insert into events (title, date, start_time, end_time, place, kind, note) values ('종강 총회', '2026-12-18', '18:00', '20:00', '인성관 306호', '행사', null);
 
