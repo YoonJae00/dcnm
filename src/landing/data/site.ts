@@ -18,8 +18,8 @@ export const club = {
 
 export const navLinks = [
   { label: "소개", href: "/#about" },
-  { label: "멤버", href: "/members" },
-  { label: "활동", href: "/projects/done" },
+  { label: "멤버", href: "/#members" },
+  { label: "활동", href: "/#activities" },
   { label: "모집 안내", href: "/#recruit" },
 ] as const;
 
