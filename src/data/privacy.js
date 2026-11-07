@@ -88,7 +88,7 @@ export const PROCESSORS = [
 export const OVERSEAS = [
   {
     kind: '처리위탁·보관',
-    to: 'Supabase, Inc. (연락처: https://supabase.com/privacy)',
+    to: 'Supabase, Inc. (연락처: privacy@supabase.com)',
     country: '싱가포르',
     items: '지원·문의 항목(이름, 학번, 이메일, 전화번호, 관심 분야, 지원 동기·문의 내용), 부원 계정 항목, 멤버 카드, 글·댓글·참여 신청',
     when: '지원서·문의 제출, 로그인, 글 작성 등 이용할 때마다 즉시. HTTPS로 암호화해 네트워크 전송',
@@ -99,7 +99,7 @@ export const OVERSEAS = [
   },
   {
     kind: '처리위탁(호스팅 접속 기록)',
-    to: 'Vercel Inc. (연락처: https://vercel.com/legal/privacy-policy)',
+    to: 'Vercel Inc. (연락처: privacy@vercel.com)',
     country: '미국 등',
     items: '접속 IP 주소, 브라우저 정보, 접속 시각 같은 접속 기록 (지원서·계정 정보는 Vercel을 거치지 않고 Supabase로 바로 전송)',
     when: '사이트를 열 때마다 자동으로',
