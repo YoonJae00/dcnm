@@ -48,7 +48,7 @@ export const manifesto =
   "우리는 수업에서 배운 코드를 *진짜* *서비스로* 만들어요. 혼자서는 막막한 첫 배포도, 밤새우는 해커톤도 함께라면 *가장* *즐거운* *기억이* 돼요. DC&M은 *만드는* *사람들이* 모이는 곳이에요.";
 
 export const stats = [
-  { label: "기수", value: 8, unit: "기", caption: `${2019}년 창단 이후 매년` },
+  { label: "기수", value: 26, unit: "기", caption: "2003년 창단" },
   { label: "누적 멤버", value: 142, unit: "명", caption: "현재 활동 중 38명" },
   { label: "완성한 프로젝트", value: 57, unit: "개", caption: "실제 배포까지 마친 서비스" },
   { label: "대회 수상", value: 18, unit: "회", caption: "교내외 해커톤·공모전" },

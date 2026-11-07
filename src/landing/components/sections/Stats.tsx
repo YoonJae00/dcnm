@@ -10,7 +10,6 @@ import {
 } from "motion/react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { stats, techStack } from "@/data/site";
-import { useRecruit } from "@/lib/RecruitContext";
 
 function Counter({ value }: { value: number }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -58,7 +57,6 @@ function Marquee({ items, reverse }: { items: string[]; reverse?: boolean }) {
 }
 
 export function Stats() {
-  const { generation } = useRecruit();
   const half = Math.ceil(techStack.length / 2);
   return (
     <section
@@ -79,7 +77,7 @@ export function Stats() {
           tone="dark"
           eyebrow="DC&M in numbers"
           title={<span id="stats-title">숫자로 보는 DC&amp;M</span>}
-          description="2019년 작은 스터디에서 시작해, 지금은 이만큼 자랐어요."
+          description="2003년에 시작해, 지금은 이만큼 자랐어요."
         />
 
         <dl className="mt-14 grid grid-cols-2 gap-x-6 gap-y-12 sm:mt-20 lg:grid-cols-4">
@@ -95,7 +93,7 @@ export function Stats() {
               <dt className="text-14 font-semibold text-gray-3 sm:text-16">{s.label}</dt>
               <dd className="mt-3">
                 <span className="bg-[linear-gradient(120deg,#fff_20%,#c9beff_60%,#ffdbfd)] bg-clip-text text-[clamp(3rem,2rem+4vw,5rem)] leading-none font-extrabold text-transparent">
-                  <Counter value={s.label === "기수" ? generation : s.value} />
+                  <Counter value={s.value} />
                 </span>
                 <span className="ml-1 text-24 font-bold text-light">{s.unit}</span>
               </dd>
