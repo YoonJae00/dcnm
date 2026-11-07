@@ -38,6 +38,8 @@ const ORDER = {
   ws_meeting_votes: byDateAsc,
   ws_minutes: byDateDesc,
   ws_tasks: (a, b) => ((a.sort ?? 0) - (b.sort ?? 0)) || byDateAsc(a, b),
+  ws_avail_polls: byDateDesc,
+  ws_avail_responses: (a, b) => String(a.updated_at || '').localeCompare(String(b.updated_at || '')),
 };
 
 /* ---------- 로컬(예시) 저장소 ---------- */
@@ -135,13 +137,35 @@ export async function save(table, row) {
   return saved;
 }
 
+// 한 사람이 한 번만 갖는 행(예: 시간 맞추기 응답)을 있으면 고치고 없으면 만듭니다. keys는 unique 칸들.
+export async function upsert(table, row, keys) {
+  if (mode === 'local') {
+    const db = readDb();
+    const rows = db[table] || (db[table] = []);
+    const i = rows.findIndex((r) => keys.every((k) => String(r[k]) === String(row[k])));
+    const now = new Date().toISOString();
+    const saved = i >= 0 ? (rows[i] = { ...rows[i], ...row, updated_at: now }) : { ...row, id: uid(), created_at: now, updated_at: now };
+    if (i < 0) rows.push(saved);
+    writeDb();
+    emit();
+    return saved;
+  }
+  const c = await sb();
+  const clean = { ...row };
+  delete clean.id;
+  const saved = check(await c.from(table).upsert(clean, { onConflict: keys.join(',') }).select().single());
+  emit();
+  return saved;
+}
+
 // 로컬 모드에서 DB의 on delete cascade / set null을 흉내 냅니다 (Supabase에서는 DB가 처리).
 const CASCADE = {
-  projects: [['ws_posts', 'project_id'], ['ws_events', 'project_id'], ['ws_meetings', 'project_id'], ['ws_tasks', 'project_id']],
+  projects: [['ws_posts', 'project_id'], ['ws_events', 'project_id'], ['ws_meetings', 'project_id'], ['ws_tasks', 'project_id'], ['ws_avail_polls', 'project_id']],
   ws_meetings: [['ws_meeting_slots', 'meeting_id'], ['ws_minutes', 'meeting_id']],
   ws_meeting_slots: [['ws_meeting_votes', 'slot_id']],
+  ws_avail_polls: [['ws_avail_responses', 'poll_id']],
 };
-const SET_NULL = { ws_minutes: [['ws_tasks', 'minutes_id']] };
+const SET_NULL = { ws_minutes: [['ws_tasks', 'minutes_id']], ws_meetings: [['ws_avail_polls', 'meeting_id']] };
 function removeLocal(db, table, id) {
   db[table] = (db[table] || []).filter((r) => r.id !== id);
   for (const [child, col] of CASCADE[table] || []) {
