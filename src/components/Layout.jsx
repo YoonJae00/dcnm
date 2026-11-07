@@ -112,7 +112,7 @@ export default function Layout({ children }) {
         </div>
       </header>
 
-      <main id="content" className="wrap page-in" key={location.pathname} ref={mainRef}>{gate ? <SetPassword user={user} /> : children}</main>
+      <main id="content" className={`wrap page-in${location.pathname === '/' && !gate ? ' home' : ''}`} key={location.pathname} ref={mainRef}>{gate ? <SetPassword user={user} /> : children}</main>
 
       <footer className="site-footer">
         <div className="wrap">
