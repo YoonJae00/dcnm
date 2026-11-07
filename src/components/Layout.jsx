@@ -4,6 +4,7 @@ import { mode, resetDemo } from '../lib/api';
 import { useSettings, useUser } from '../lib/hooks';
 import { Avatar } from './UI';
 import Logo from './Logo';
+import ThemeToggle from './ThemeToggle';
 import { useReveal } from '../lib/motion';
 
 const PROJECT_MENU = [
@@ -94,6 +95,7 @@ export default function Layout({ children }) {
             <input id="site-search" type="search" placeholder="검색" value={q} onChange={(e) => setQ(e.target.value)} />
           </form>
           <div className="header-tools">
+            <ThemeToggle />
             {user ? (
               <NavLink to="/me" className="me-link"><Avatar name={user.name} /><span className="me-name">내 활동</span></NavLink>
             ) : (

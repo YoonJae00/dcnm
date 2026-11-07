@@ -12,6 +12,7 @@ import { Logo } from "@/components/brand/Logo";
 import { SmartLink } from "@/components/ui/SmartLink";
 import { navLinks } from "@/data/site";
 import { cn } from "@/lib/cn";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function Header() {
   const { scrollY, scrollYProgress } = useScroll();
@@ -42,7 +43,7 @@ export function Header() {
         className={cn(
           "absolute inset-0 border-b transition-[background-color,border-color,backdrop-filter] duration-300",
           solid
-            ? "border-gray-2/70 bg-white/75 backdrop-blur-xl backdrop-saturate-150"
+            ? "border-gray-2/70 bg-surface/75 backdrop-blur-xl backdrop-saturate-150"
             : "border-transparent bg-transparent",
         )}
       />
@@ -81,6 +82,7 @@ export function Header() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <SmartLink
             href="/login"
             className="hidden h-9 items-center rounded-full px-4 text-14 font-semibold text-gray-4 transition-colors hover:bg-gray-1 hover:text-ink md:inline-flex"
@@ -89,7 +91,7 @@ export function Header() {
           </SmartLink>
           <SmartLink
             href="/apply"
-            className="hidden h-9 items-center rounded-full bg-ink px-4 text-14 font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-primary active:scale-95 md:inline-flex"
+            className="hidden h-9 items-center rounded-full bg-night px-4 text-14 font-semibold text-white transition-[background-color,transform] duration-200 hover:bg-primary active:scale-95 md:inline-flex"
           >
             지원하기
           </SmartLink>
@@ -130,7 +132,7 @@ export function Header() {
         {open && (
           <motion.div
             id="mobile-menu"
-            className="fixed inset-x-0 top-16 bottom-0 bg-white/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-x-0 top-16 bottom-0 bg-surface/95 backdrop-blur-xl md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.2 } }}

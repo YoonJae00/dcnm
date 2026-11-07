@@ -42,7 +42,7 @@ function TiltCard({ project }: { project: Project }) {
       onPointerMove={onMove}
       onPointerLeave={reset}
       style={{ rotateX, rotateY, transformPerspective: 1000 }}
-      className="group relative w-[78vw] max-w-[340px] shrink-0 snap-start overflow-hidden rounded-[28px] bg-white shadow-s ring-1 ring-gray-2/60 transition-shadow duration-300 hover:shadow-l sm:w-[360px] sm:max-w-none lg:w-[380px]"
+      className="group relative w-[78vw] max-w-[340px] shrink-0 snap-start overflow-hidden rounded-[28px] bg-surface shadow-s ring-1 ring-gray-2/60 transition-shadow duration-300 hover:shadow-l sm:w-[360px] sm:max-w-none lg:w-[380px]"
     >
       <Link to="/projects/done" className="block focus-visible:outline-offset-[-3px]">
         <div className="relative aspect-[16/10.4] overflow-hidden">
@@ -50,11 +50,11 @@ function TiltCard({ project }: { project: Project }) {
             project={project}
             className="size-full transition-transform duration-700 ease-(--ease-toss) group-hover:scale-[1.06]"
           />
-          <span className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-12 font-bold text-ink backdrop-blur">
+          <span className="absolute top-4 left-4 rounded-full bg-surface/90 px-3 py-1 text-12 font-bold text-ink backdrop-blur">
             {project.category}
           </span>
           {project.award && (
-            <span className="absolute top-4 right-4 inline-flex items-center gap-1 rounded-full bg-ink/80 px-3 py-1 text-12 font-semibold text-white backdrop-blur">
+            <span className="absolute top-4 right-4 inline-flex items-center gap-1 rounded-full bg-night/80 px-3 py-1 text-12 font-semibold text-white backdrop-blur">
               <Trophy className="size-3.5 text-accent" />
               {project.award}
             </span>

@@ -8,7 +8,7 @@ import { Tracks } from "@/components/sections/recruit/Tracks";
 
 export function Recruit() {
   return (
-    <section id="recruit" aria-labelledby="recruit-title" className="scroll-mt-16 bg-white py-24 sm:py-32">
+    <section id="recruit" aria-labelledby="recruit-title" className="scroll-mt-16 bg-page py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <SectionHeading
           eyebrow="Recruiting"
@@ -28,7 +28,7 @@ export function Recruit() {
               <Countdown />
             </Reveal>
             <Reveal delay={0.08}>
-              <div className="rounded-[28px] bg-white p-6 shadow-s ring-1 ring-gray-1 sm:p-8">
+              <div className="rounded-[28px] bg-surface p-6 shadow-s ring-1 ring-gray-1 sm:p-8">
                 <h3 className="text-20 font-bold text-ink">지원 자격</h3>
                 <ul className="mt-4 space-y-3">
                   {recruit.qualifications.map((q) => (
