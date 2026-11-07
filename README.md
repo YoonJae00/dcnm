@@ -59,6 +59,35 @@ DC&M 미니 해커톤 1조 결과물입니다. 동아리 소개와 모집에 더
 ```sql
 alter table settings add column if not exists recruit_start date;
 alter table settings add column if not exists landing_enabled boolean not null default false;
+alter table settings add column if not exists recruit_details jsonb;
+```
+
+### 모집 내용 고치기 (운영진 화면 > 사이트 설정)
+
+사이트 설정은 "모집 기본 / 모집 일정 / 지원 자격 / 모집 트랙 / 자주 묻는 질문 / 사이트 기본"으로 나뉘어 있고, 저장하면 모집 랜딩에 바로 반영됩니다. 저장 전에 입력을 검사합니다 (기수는 1 이상의 정수, 단계 이름 필수, 뒤 단계는 앞 단계보다 늦게, 끝은 시작보다 뒤, 질문·답 필수). 오류는 해당 칸 옆에 표시됩니다.
+
+- **기수**는 랜딩의 모든 "N기" 표기(히어로, 카운트다운, 터미널, 지원 버튼, 숫자로 보는 DC&M의 기수 등)에 쓰입니다. 일정 단계 제목("8기 OT" 같은 것)은 직접 적는 글이라 따로 고쳐야 합니다.
+- **첫 단계(서류 접수)** 의 날짜는 `recruit_start`·`recruit_deadline`이 곧 그 값입니다. 마감 시각(기본 23:59)만 따로 정하고, 랜딩 켜짐 판정은 날짜만 봅니다.
+- 비어 있는 항목(기존 DB 포함)은 `src/data/recruitDefaults.js`의 기본값을 씁니다. 트랙의 코드 스니펫은 편집 대상이 아니고 트랙 `id`로 기본 스니펫을 찾으며, 없으면 스니펫 칸이 숨겨집니다.
+- 메인 `지원하기` 페이지의 "지원 후 진행 순서" 문구는 고정 문구라 이 설정과 연결하지 않았습니다.
+
+`settings.recruit_details`(jsonb) 형식 예시 (날짜·시각은 KST):
+
+```json
+{
+  "generation": 8,
+  "applyEndTime": "23:59",
+  "steps": [
+    { "title": "서류 접수", "description": "온라인 지원서로 ...", "start": "2026-11-03T00:00:00+09:00", "end": "2026-11-23T23:59:59+09:00" },
+    { "title": "서류 발표", "description": "합격 여부와 ...", "start": "2026-11-26T18:00:00+09:00" },
+    { "title": "대면 면접", "description": "20분 내외의 ...", "start": "2026-11-28T10:00:00+09:00", "end": "2026-11-29T18:00:00+09:00" }
+  ],
+  "qualifications": ["개발에 관심 있는 재학생이라면 전공·학년 무관"],
+  "tracks": [
+    { "id": "frontend", "name": "프론트엔드", "summary": "사용자가 직접 만지는 화면을 ...", "learn": ["HTML·CSS·JS 기초부터 ..."], "stack": ["React", "Next.js"] }
+  ],
+  "faqs": [{ "q": "비전공자도 지원할 수 있나요?", "a": "물론이에요. ..." }]
+}
 ```
 
 ### 첫 방문 인트로
@@ -136,6 +165,7 @@ npm run dev
 src/
   lib/api.js        데이터 계층 (Supabase ↔ 예시 데이터 전환, 개인 로그인)
   lib/projects.js   프로젝트 상태·마감·정기 모임 계산
+  lib/recruitDetails.js  모집 내용(recruit_details) 기본값 합치기·폼 변환·입력 검사
   lib/landing.js    모집 랜딩 켜짐 판정 (모집 기간, 지원 받는 중, 랜딩 켜기)
   lib/validate.js   지원·문의 입력값 검사
   data/seed.js      예시 데이터
