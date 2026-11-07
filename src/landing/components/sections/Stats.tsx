@@ -61,7 +61,7 @@ export function Stats() {
   return (
     <section
       aria-labelledby="stats-title"
-      className="relative isolate overflow-hidden bg-ink py-24 text-white sm:py-32"
+      className="relative isolate overflow-hidden bg-night py-24 text-white sm:py-32"
     >
       <div
         aria-hidden

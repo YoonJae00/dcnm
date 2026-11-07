@@ -42,7 +42,7 @@ export function Tracks() {
               {selected && (
                 <motion.span
                   layoutId="track-pill"
-                  className="absolute inset-0 rounded-xl bg-white shadow-s"
+                  className="absolute inset-0 rounded-xl bg-surface shadow-s"
                   transition={{ type: "spring", stiffness: 420, damping: 34 }}
                 />
               )}
@@ -63,7 +63,7 @@ export function Tracks() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="grid gap-5 rounded-[28px] bg-white p-6 shadow-s ring-1 ring-gray-1 sm:p-9 md:grid-cols-[1.1fr_1fr] md:gap-10"
+            className="grid gap-5 rounded-[28px] bg-surface p-6 shadow-s ring-1 ring-gray-1 sm:p-9 md:grid-cols-[1.1fr_1fr] md:gap-10"
           >
             <div>
               <p className="text-24 font-bold text-ink">{active.name}</p>
@@ -96,7 +96,7 @@ export function Tracks() {
               </ul>
             </div>
 
-            <div className="overflow-hidden rounded-2xl bg-ink shadow-m">
+            <div className="overflow-hidden rounded-2xl bg-night shadow-m">
               <div className="flex items-center gap-1.5 border-b border-white/[0.06] px-4 py-3">
                 <span className="size-2.5 rounded-full bg-white/15" />
                 <span className="size-2.5 rounded-full bg-white/15" />

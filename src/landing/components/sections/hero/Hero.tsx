@@ -66,7 +66,7 @@ function Parallax({
 function FloatingChip({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`animate-float rounded-2xl bg-white/75 px-4 py-3 font-mono text-[13px] tracking-normal text-gray-5 shadow-m ring-1 ring-white backdrop-blur-md ${className ?? ""}`}
+      className={`animate-float rounded-2xl bg-surface/75 px-4 py-3 font-mono text-[13px] tracking-normal text-gray-5 shadow-m ring-1 ring-surface backdrop-blur-md ${className ?? ""}`}
     >
       {children}
     </div>
@@ -113,7 +113,7 @@ export function Hero() {
       id="top"
       ref={sectionRef}
       onPointerMove={onPointerMove}
-      className="relative isolate overflow-hidden bg-[linear-gradient(to_bottom,var(--color-mist)_0%,var(--color-mist)_55%,#fff_100%)] pt-32 sm:pt-40"
+      className="relative isolate overflow-hidden bg-[linear-gradient(to_bottom,var(--color-mist)_0%,var(--color-mist)_55%,var(--color-page)_100%)] pt-32 sm:pt-40"
     >
       {/* 배경: 모눈 + 그라디언트 오브 */}
       <div
@@ -121,13 +121,13 @@ export function Hero() {
         className="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_70%_55%_at_50%_30%,#000_30%,transparent_100%)]"
       />
       <Parallax mx={mx} my={my} depth={-50} className="absolute -top-24 left-[8%] -z-10">
-        <div className="size-[380px] rounded-full bg-light/60 blur-[90px]" />
+        <div className="size-[380px] rounded-full bg-light/60 blur-[90px] dark:bg-primary/30" />
       </Parallax>
       <Parallax mx={mx} my={my} depth={70} className="absolute top-10 right-[4%] -z-10">
-        <div className="size-[420px] rounded-full bg-accent/80 blur-[100px]" />
+        <div className="size-[420px] rounded-full bg-accent/80 blur-[100px] dark:bg-[#8a5cff]/25" />
       </Parallax>
       <Parallax mx={mx} my={my} depth={30} className="absolute top-[38%] left-[30%] -z-10">
-        <div className="size-[360px] rounded-full bg-secondary/30 blur-[110px]" />
+        <div className="size-[360px] rounded-full bg-secondary/30 blur-[110px] dark:bg-secondary/20" />
       </Parallax>
 
       {/* 떠다니는 칩 (데스크톱) */}

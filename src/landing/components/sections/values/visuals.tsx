@@ -23,7 +23,7 @@ export function ContributionVisual() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
   return (
-    <div ref={ref} className="rounded-2xl bg-white p-4 shadow-s ring-1 ring-gray-1 sm:p-5">
+    <div ref={ref} className="rounded-2xl bg-surface p-4 shadow-s ring-1 ring-gray-1 sm:p-5">
       <div className="mb-3 flex items-center justify-between text-12 font-semibold text-gray-4">
         <span>7기 스터디 커밋</span>
         <span className="font-mono tracking-normal text-primary">1,284 commits</span>
@@ -69,7 +69,7 @@ export function PipelineVisual() {
       {STAGES.map((stage, i) => (
         <div
           key={stage}
-          className="flex items-center gap-3 rounded-xl bg-white px-3.5 py-2.5 shadow-s ring-1 ring-gray-1"
+          className="flex items-center gap-3 rounded-xl bg-surface px-3.5 py-2.5 shadow-s ring-1 ring-gray-1"
         >
           <motion.span
             className="grid size-6 shrink-0 place-items-center rounded-full bg-gray-1 text-white"
@@ -117,7 +117,7 @@ export function HackathonTimer() {
   const ss = String(left % 60).padStart(2, "0");
 
   return (
-    <div ref={ref} className="rounded-2xl bg-ink p-5 text-white shadow-m">
+    <div ref={ref} className="rounded-2xl bg-night p-5 text-white shadow-m">
       <div className="flex items-center justify-between text-12 font-semibold text-gray-3">
         <span className="flex items-center gap-1.5">
           <span className="size-1.5 animate-pulse rounded-full bg-negative" />
@@ -188,7 +188,7 @@ function Orbit({
           <motion.span
             key={item.n + i}
             className={cn(
-              "absolute grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-gradient-to-br text-14 font-bold text-white shadow-m ring-[3px] ring-white",
+              "absolute grid size-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-gradient-to-br text-14 font-bold text-white shadow-m ring-[3px] ring-surface",
               item.c,
             )}
             style={{ left: x, top: y }}

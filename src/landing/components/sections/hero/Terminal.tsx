@@ -263,7 +263,7 @@ export function Terminal() {
   return (
     <div
       ref={rootRef}
-      className="overflow-hidden rounded-[20px] bg-ink text-left shadow-l ring-1 ring-ink/10"
+      className="overflow-hidden rounded-[20px] bg-night text-left shadow-l ring-1 ring-ink/10"
     >
       {/* 윈도우 상단 바 */}
       <div className="flex h-11 items-center gap-2 border-b border-white/[0.06] bg-white/[0.03] px-4">

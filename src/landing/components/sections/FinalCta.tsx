@@ -25,7 +25,7 @@ export function FinalCta() {
   };
 
   return (
-    <section aria-labelledby="cta-title" className="bg-white px-4 py-20 sm:px-6 sm:py-28">
+    <section aria-labelledby="cta-title" className="bg-page px-4 py-20 sm:px-6 sm:py-28">
       <motion.div
         ref={ref}
         onPointerMove={onMove}
