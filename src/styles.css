@@ -900,3 +900,15 @@ body { transition: background-color .3s ease, color .3s ease; }
 .prog-form input[type='range'] { width: 100%; accent-color: var(--accent); }
 .feed .row-title .badge { flex: none; }
 @media (max-width: 760px) { .mine-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; } .greet .actions { width: 100%; } }
+
+/* 부원 홈의 외부 바로가기 */
+.home-quick-links { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 0 0 28px; padding: 16px 20px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
+.home-quick-links-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.home-quick-links ul { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.home-quick-links a { display: inline-flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--line); color: var(--ink); font-size: 14px; font-weight: 600; }
+.home-quick-links a:hover { color: var(--accent); border-color: var(--accent); }
+@media (max-width: 560px) {
+  .home-quick-links { padding: 16px; gap: 10px; }
+  .home-quick-links ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .home-quick-links a { width: 100%; }
+}

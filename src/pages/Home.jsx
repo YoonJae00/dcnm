@@ -56,6 +56,7 @@ function TeamCard({ p, members }) {
 export default function Home() {
   const settings = useSettings();
   const user = useUser();
+  const quickLinks = (settings?.links || []).filter((link) => /^https?:\/\//i.test(link.url));
   const events = useTable('events');
   const notices = useTable('notices');
   const projects = useTable('projects').rows || [];
@@ -144,6 +145,19 @@ export default function Home() {
           ) : <Link className="btn primary" to="/login">로그인</Link>}
         </div>
       </section>
+
+      {quickLinks.length > 0 && (
+        <nav className="home-quick-links" aria-label="자주 쓰는 링크">
+          <span className="home-quick-links-label">자주 쓰는 링크</span>
+          <ul>
+            {quickLinks.map((link) => (
+              <li key={`${link.label}-${link.url}`}>
+                <a href={link.url} target="_blank" rel="noopener noreferrer" aria-label={`${link.label} (새 탭)`}>{link.label}<span aria-hidden="true">↗</span></a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
 
       {user && (
         <section className="hblock tight" aria-labelledby="mine-h">
