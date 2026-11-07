@@ -38,7 +38,7 @@ const SCHEMAS = {
     fields: [
       { k: 'name', label: '이름', type: 'text', required: true },
       { k: 'generation', label: '기수 (모르면 비워 두기)', type: 'number', half: true },
-      { k: 'role', label: '역할', type: 'select', options: ['회장', '부회장', '운영진', '부원'], half: true },
+      { k: 'role', label: '역할', type: 'select', options: ['회장', '부회장', '운영진', '부원', '지도교수'], half: true },
       { k: 'part', label: '분야', type: 'text' },
       { k: 'intro', label: '한 줄 소개', type: 'textarea', rows: 3 },
       { k: 'tags', label: '기술·관심사 (쉼표로 구분)', type: 'list' },
