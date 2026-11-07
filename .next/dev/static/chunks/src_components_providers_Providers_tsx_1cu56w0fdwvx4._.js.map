@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/%EC%9E%84%EC%A3%BC%ED%98%B8/dcnm/src/components/providers/Providers.tsx"],"sourcesContent":["\"use client\";\r\n\r\nimport { ReactLenis } from \"lenis/react\";\r\nimport { MotionConfig } from \"motion/react\";\r\nimport type { ReactNode } from \"react\";\r\n\r\n/**\r\n * - Lenis: 애플 사이트 같은 관성 스크롤. prefers-reduced-motion이면 자동으로 꺼져요.\r\n * - MotionConfig: 사용자가 '동작 줄이기'를 켰으면 transform 애니메이션을 생략해요.\r\n */\r\nexport function Providers({ children }: { children: ReactNode }) {\r\n  return (\r\n    <ReactLenis root options={{ lerp: 0.11, anchors: true, wheelMultiplier: 1 }}>\r\n      <MotionConfig reducedMotion=\"user\" transition={{ ease: [0.22, 1, 0.36, 1] }}>\r\n        {children}\r\n      </MotionConfig>\r\n    </ReactLenis>\r\n  );\r\n}\r\n"],"names":["Providers","children","root","options","lerp","anchors","wheelMultiplier","reducedMotion","transition","ease"],"mappings":";;;;;AAEA;AACA;AAHA;;;;AAUO,SAASA,UAAU,EAAEC,QAAQ,EAA2B;IAC7D,qBACE,6LAAC,iKAAU;QAACC,IAAI;QAACC,SAAS;YAAEC,MAAM;YAAMC,SAAS;YAAMC,iBAAiB;QAAE;kBACxE,cAAA,6LAAC,yMAAY;YAACC,eAAc;YAAOC,YAAY;gBAAEC,MAAM;oBAAC;oBAAM;oBAAG;oBAAM;iBAAE;YAAC;sBACvER;;;;;;;;;;;AAIT;KARgBD"}}]
+}

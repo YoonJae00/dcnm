@@ -227,6 +227,28 @@ main { padding-block: 40px 96px; min-height: 60vh; }
 .week-top .range { color: var(--muted); font-size: var(--t-sm); margin-left: 8px; font-weight: 500; }
 .week-nav { display: flex; gap: 4px; }
 .week-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+/* 이전달 / 다음달 날짜 셀의 배경을 흐리게 처리 */
+.day.other-month {
+  background: var(--surface-dim, rgba(0, 0, 0, 0.03));
+  opacity: 0.55;
+}
+
+/* 이전달 / 다음달 전체 셀 배경색 변경 */
+.day.other-month {
+  background-color: var(--bg-subtle, #f3f4f6); /* 약간 어두운 회색/서브 배경 */
+}
+
+/* 헤더 영역도 동일한 배경색으로 통일 */
+.day.other-month .day-head {
+  background-color: transparent;
+}
+
+/* 텍스트 및 일정 색상 톤 다운 */
+.day.other-month .day-head .wd,
+.day.other-month .day-head .dn {
+  color: var(--muted, #9ca3af);
+  font-weight: 400;
+}
 .day { min-height: 168px; border-right: 1px solid var(--line); display: flex; flex-direction: column; }
 .day:last-child { border-right: 0; }
 .day-head { display: flex; align-items: baseline; gap: 6px; padding: 10px 12px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
