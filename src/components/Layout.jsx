@@ -7,6 +7,7 @@ import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 import { useReveal } from '../lib/motion';
 import { SetPassword } from './Password';
+import { PrivacyConsent } from './PrivacyConsent';
 
 const PROJECT_MENU = [
   ['/projects', '프로젝트 목록', '진행 중·모집 중인 프로젝트'],
@@ -60,7 +61,9 @@ export default function Layout({ children }) {
 
   // 이메일 링크로 처음 들어와 아직 비밀번호가 없으면, 어느 주소로 왔든 비밀번호 설정을 먼저 보여 줍니다.
   // 로그인 화면은 막지 않습니다(모집 랜딩은 Layout 밖이라 원래 막히지 않습니다).
-  const gate = user?.needsPassword && location.pathname !== '/login';
+  // 처리방침 동의가 먼저입니다(처리방침 전문은 동의 전에도 읽을 수 있게 막지 않습니다).
+  const free = location.pathname === '/login' || location.pathname === '/privacy';
+  const gate = !!user && !free && (user.needsPrivacy || user.needsPassword);
 
   return (
     <>
@@ -112,14 +115,14 @@ export default function Layout({ children }) {
         </div>
       </header>
 
-      <main id="content" className={`wrap page-in${location.pathname === '/' && !gate ? ' home' : ''}`} key={location.pathname} ref={mainRef}>{gate ? <SetPassword user={user} /> : children}</main>
+      <main id="content" className={`wrap page-in${location.pathname === '/' && !gate ? ' home' : ''}`} key={location.pathname} ref={mainRef}>{gate ? (user.needsPrivacy ? <PrivacyConsent user={user} /> : <SetPassword user={user} />) : children}</main>
 
       <footer className="site-footer">
         <div className="wrap">
           <div className="footer-row">
             <span>DC&amp;M · 한성대학교 동아리{settings?.room ? ` · 동아리방 ${settings.room}` : ''}</span>
             <span>
-              <Link to="/apply?tab=inquiry">문의하기</Link>{'  '}·{'  '}<Link to="/admin">운영진 화면</Link>
+              <Link className="privacy-link" to="/privacy">개인정보 처리방침</Link>{'  '}·{'  '}<Link to="/apply?tab=inquiry">문의하기</Link>{'  '}·{'  '}<Link to="/admin">운영진 화면</Link>
             </span>
           </div>
           {mode === 'local' && (
