@@ -54,6 +54,26 @@ function TextList({ idPrefix, label, items, onChange, errs, addLabel, placeholde
   );
 }
 
+// 기수를 바꾸면 일정·자격·FAQ 문구 안의 'N기'도 함께 바꿔요 (예: '8기 OT' → '9기 OT').
+// 운영진은 저장 전에 화면에서 바뀐 문구를 보고 고칠 수 있어요.
+function withGeneration(form, value) {
+  // 지우고 다시 입력하는 중(빈 값)에도 마지막으로 유효했던 기수를 기억해 둬요.
+  const prev = Number(form.textGen ?? form.generation);
+  const next = Number(value);
+  const valid = (n) => Number.isInteger(n) && n > 0;
+  if (!valid(next)) return { generation: value, textGen: valid(prev) ? prev : form.textGen };
+  if (!valid(prev) || prev === next) return { generation: value, textGen: next };
+  const re = new RegExp(`(^|[^0-9])${prev}기`, 'g');
+  const swap = (t) => (typeof t === 'string' ? t.replace(re, `$1${next}기`) : t);
+  return {
+    generation: value,
+    textGen: next,
+    steps: form.steps.map((x) => ({ ...x, title: swap(x.title), description: swap(x.description) })),
+    qualifications: form.qualifications.map(swap),
+    faqs: form.faqs.map((f) => ({ q: swap(f.q), a: swap(f.a) })),
+  };
+}
+
 const newTrackId = () => `track-${Date.now().toString(36)}${Math.floor(Math.random() * 1e4)}`;
 
 export default function RecruitSettings({ notify }) {
@@ -78,6 +98,7 @@ export default function RecruitSettings({ notify }) {
   const saved = landingState(settings);
   const set = (k) => (e) => setS({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
   const setF = (p) => setForm({ ...form, ...p });
+
   const steps = form.steps;
   const setStep = (i, p) => setF({ steps: patch(steps, i, p) });
 
@@ -123,8 +144,8 @@ export default function RecruitSettings({ notify }) {
           <input id="st-open" type="checkbox" checked={!!s.recruit_open} onChange={set('recruit_open')} /> 지금 지원을 받습니다
         </label>
         <Field id="st-title" label="모집 제목"><input id="st-title" value={s.recruit_title || ''} onChange={set('recruit_title')} /></Field>
-        <Field id="st-gen" label="기수" hint="랜딩의 'N기' 표기에 모두 쓰입니다." err={errs.generation}>
-          <input id="st-gen" type="number" inputMode="numeric" min="1" step="1" value={form.generation} aria-invalid={!!errs.generation} aria-describedby={errs.generation ? 'st-gen-err' : undefined} onChange={(e) => setF({ generation: e.target.value })} />
+        <Field id="st-gen" label="기수" hint="랜딩의 'N기' 표기에 모두 쓰입니다. 바꾸면 아래 일정·자격·FAQ 문구의 'N기'도 함께 바뀌니 저장 전에 확인하세요." err={errs.generation}>
+          <input id="st-gen" type="number" inputMode="numeric" min="1" step="1" value={form.generation} aria-invalid={!!errs.generation} aria-describedby={errs.generation ? 'st-gen-err' : undefined} onChange={(e) => setF(withGeneration(form, e.target.value))} />
         </Field>
         <Field id="st-start" label="모집 시작일" err={errs.recruit_start}><input id="st-start" type="date" value={s.recruit_start || ''} aria-invalid={!!errs.recruit_start} onChange={set('recruit_start')} /></Field>
         <Field id="st-deadline" label="마감일" hint="서류 접수 단계의 날짜가 됩니다." err={errs.recruit_deadline}><input id="st-deadline" type="date" value={s.recruit_deadline || ''} aria-invalid={!!errs.recruit_deadline} onChange={set('recruit_deadline')} /></Field>

@@ -45,9 +45,11 @@ export function resolveRecruitContent(settings) {
     }
     return step;
   });
+  // 코드 스니펫의 {gen} 자리에 기수를 넣어요 (예: '{gen}기 지원하기' → '9기 지원하기')
+  const fill = (t) => ({ ...t, snippet: (t.snippet || []).map((line) => line.replaceAll('{gen}', String(generation))) });
   const tracks = Array.isArray(d.tracks) && d.tracks.every((t) => t && isStr(t.name))
-    ? d.tracks.map((t, i) => ({ id: isStr(t.id) && t.id ? t.id : `track-${i}`, name: t.name, summary: isStr(t.summary) ? t.summary : '', learn: strList(t.learn), stack: strList(t.stack), snippet: SNIPPETS[t.id] || [] }))
-    : defaultTracks;
+    ? d.tracks.map((t, i) => ({ id: isStr(t.id) && t.id ? t.id : `track-${i}`, name: t.name, summary: isStr(t.summary) ? t.summary : '', learn: strList(t.learn), stack: strList(t.stack), snippet: SNIPPETS[t.id] || [] })).map(fill)
+    : defaultTracks.map(fill);
   const faqs = Array.isArray(d.faqs) && d.faqs.every((f) => f && isStr(f.q) && isStr(f.a)) ? d.faqs.map((f) => ({ q: f.q, a: f.a })) : defaultFaqs;
   const qualifications = Array.isArray(d.qualifications) ? strList(d.qualifications) : defaultRecruit.qualifications;
   return {

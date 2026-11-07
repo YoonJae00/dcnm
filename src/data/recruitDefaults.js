@@ -59,7 +59,7 @@ export const defaultTracks = [
     snippet: [
       "export default function Apply() {",
       "  return <Button onClick={join}>",
-      "    8기 지원하기",
+      "    {gen}기 지원하기",
       "  </Button>;",
       "}",
     ],
@@ -77,7 +77,7 @@ export const defaultTracks = [
     snippet: [
       '@PostMapping("/apply")',
       "public Member join(@RequestBody You you) {",
-      "  return dcm.welcome(you, 8);",
+      "  return dcm.welcome(you, {gen});",
       "}",
     ],
   },
@@ -94,7 +94,7 @@ export const defaultTracks = [
     snippet: [
       "onPressed: () {",
       "  Navigator.push(",
-      "    context, DcmRoute(gen: 8),",
+      "    context, DcmRoute(gen: {gen}),",
       "  );",
       "}",
     ],
@@ -110,7 +110,7 @@ export const defaultTracks = [
     ],
     stack: ["Python", "PyTorch", "FastAPI", "Pandas"],
     snippet: [
-      "model = DCM(generation=8)",
+      "model = DCM(generation={gen})",
       "model.fit(passion, epochs=16)",
       "print(model.predict(you))",
       "# >>> 합격 확률 높음",
