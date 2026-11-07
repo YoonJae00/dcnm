@@ -187,7 +187,12 @@ const EMPTY_EVENT = { title: '', kind: 'event', date: '', start_time: '', end_ti
 
 function EventForm({ ctx, initial, onDone }) {
   const { p, user } = ctx;
-  const [v, setV] = useState(() => ({ ...EMPTY_EVENT, date: dayKey(new Date()), ...(initial || {}) }));
+  // DB의 빈 칸은 null로 오므로 입력칸용으로 ''로 바꿉니다
+  const [v, setV] = useState(() => {
+    const base = { ...EMPTY_EVENT, date: dayKey(new Date()) };
+    for (const k of Object.keys(EMPTY_EVENT)) if (initial?.[k] != null) base[k] = String(initial[k]);
+    return base;
+  });
   const [tried, setTried] = useState(false);
   const { busy, err, run } = useRun();
   const e = {};

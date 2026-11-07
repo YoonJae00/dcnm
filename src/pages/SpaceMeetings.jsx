@@ -106,6 +106,8 @@ function VoteTable({ ctx, m }) {
   const amMember = team.some((t) => t.id === user.id);
   const has = (slotId, uid) => votes.find((v) => v.slot_id === slotId && v.user_id === uid);
   const voters = new Set(votes.map((v) => v.user_id));
+  // 좁은 화면에서도 바로 누를 수 있게 내 열을 후보 바로 옆에 둡니다
+  const cols = [...team].sort((x, y) => Number(y.id === user.id) - Number(x.id === user.id));
 
   const toggle = (s) => run(async () => {
     const mine = has(s.id, user.id);
@@ -130,7 +132,7 @@ function VoteTable({ ctx, m }) {
           <thead>
             <tr>
               <th scope="col">후보</th>
-              {team.map((t) => <th key={t.id} scope="col" className={t.id === user.id ? 'me' : ''}>{t.id === user.id ? '나' : t.name}</th>)}
+              {cols.map((t) => <th key={t.id} scope="col" className={t.id === user.id ? 'me' : ''}>{t.id === user.id ? '나' : t.name}</th>)}
               <th scope="col">가능</th>
               {!readOnly && <th scope="col"><span className="skip">확정</span></th>}
             </tr>
@@ -141,7 +143,7 @@ function VoteTable({ ctx, m }) {
               return (
                 <tr key={s.id} className={best.has(s.id) ? 'best' : ''}>
                   <th scope="row">{whenText(s.starts_at)}{best.has(s.id) && <span className="badge ok">최다</span>}</th>
-                  {team.map((t) => {
+                  {cols.map((t) => {
                     const on = !!has(s.id, t.id);
                     if (t.id === user.id && !readOnly) {
                       return (
