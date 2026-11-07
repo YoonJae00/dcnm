@@ -27,10 +27,21 @@ export function Members() {
     if (listRef.current) listRef.current.scrollTop = 0;
   }, [generation, query]);
   const generations = [...new Set((members ?? []).map((member) => member.generation).filter((value): value is number => value != null))].sort((a, b) => b - a);
+  const hasUnknownGeneration = (members ?? []).some((member) => member.generation == null);
   const search = query.trim().toLowerCase();
   const shown = (members ?? []).filter((member) =>
-    (generation === "all" || String(member.generation) === generation) &&
+    (generation === "all" || (generation === "unknown" ? member.generation == null : String(member.generation) === generation)) &&
     (!search || [member.name, member.role, member.part, member.intro, ...(member.tags ?? [])].join(" ").toLowerCase().includes(search)),
+  );
+  const grouped = new Map<number | null, Member[]>();
+  for (const member of shown) {
+    const key = member.generation ?? null;
+    const group = grouped.get(key) ?? [];
+    group.push(member);
+    grouped.set(key, group);
+  }
+  const groups = [...grouped.entries()].sort(([a], [b]) =>
+    a === b ? 0 : a === null ? 1 : b === null ? -1 : b - a,
   );
   const clearFilters = () => { setGeneration("all"); setQuery(""); };
 
@@ -48,6 +59,7 @@ export function Members() {
             <select value={generation} onChange={(event) => setGeneration(event.target.value)} className="min-h-12 rounded-2xl border border-gray-2 bg-surface px-4 py-3 text-16 text-ink sm:min-w-36">
               <option value="all">전체 기수</option>
               {generations.map((value) => <option key={value} value={value}>{value}기</option>)}
+              {hasUnknownGeneration && <option value="unknown">기수 미정</option>}
             </select>
           </label>}
           <label className="flex flex-1 flex-col gap-2 text-14 font-semibold text-gray-4">
@@ -74,30 +86,41 @@ export function Members() {
               className="mt-5 max-h-[min(24rem,60svh)] overflow-y-auto overscroll-auto rounded-2xl p-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
               style={{ scrollbarGutter: "stable", scrollbarColor: "var(--color-gray-3) transparent" }}
             >
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {shown.map((member) => {
-                  const github = member.github && /^https?:\/\//i.test(member.github) ? member.github : null;
-                  return (
-                    <article key={member.id} className="flex flex-col rounded-2xl bg-mist p-4 ring-1 ring-gray-2/50">
-                      <div className="flex items-center gap-3">
-                        <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-surface text-16 font-bold text-primary shadow-s">{initials(member.name)}</span>
-                        <div className="min-w-0">
-                          <h3 className="text-16 font-bold text-ink">{member.name}</h3>
-                          <p className="mt-0.5 text-12 text-gray-4">{[member.generation != null ? `${member.generation}기` : null, member.role].filter(Boolean).join(" · ")}</p>
-                        </div>
-                      </div>
-                      {member.part && <p className="mt-5 text-14 font-semibold text-primary">{member.part}</p>}
-                      {member.intro && <p className="mt-3 whitespace-pre-line text-16 text-gray-4">{member.intro}</p>}
-                      {!!member.tags?.length && (
-                        <ul className="mt-5 flex flex-wrap gap-2">
-                          {member.tags.map((tag, index) => <li key={`${tag}-${index}`} className="rounded-full bg-surface px-3 py-1 text-12 font-semibold text-gray-4">{tag}</li>)}
-                        </ul>
-                      )}
-                      {github && <a href={github} target="_blank" rel="noopener noreferrer" aria-label={`${member.name} GitHub (새 탭)`} className="mt-5 inline-flex min-h-11 items-center gap-2 self-start rounded-full px-3 text-14 font-semibold text-gray-4 transition-colors hover:bg-surface hover:text-primary"><Github className="size-4" />GitHub ↗</a>}
-                    </article>
-                  );
-                })}
-              </div>
+              {groups.map(([groupGeneration, groupMembers]) => (
+                <section key={groupGeneration ?? "unknown"} aria-labelledby={`member-generation-${groupGeneration ?? "unknown"}`} className="mb-7 last:mb-0">
+                  <div className="mb-4 flex items-center gap-3">
+                    <h3 id={`member-generation-${groupGeneration ?? "unknown"}`} className="shrink-0 text-16 font-bold text-ink">
+                      {groupGeneration === null ? "기수 미정" : `${groupGeneration}기`}
+                      <span className="ml-2 text-12 font-medium text-gray-4">{groupMembers.length}명</span>
+                    </h3>
+                    <hr className="min-w-4 flex-1 border-t border-gray-2" />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {groupMembers.map((member) => {
+                      const github = member.github && /^https?:\/\//i.test(member.github) ? member.github : null;
+                      return (
+                        <article key={member.id} className="flex flex-col rounded-2xl bg-mist p-4 ring-1 ring-gray-2/50">
+                          <div className="flex items-center gap-3">
+                            <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-surface text-16 font-bold text-primary shadow-s">{initials(member.name)}</span>
+                            <div className="min-w-0">
+                              <h4 className="text-16 font-bold text-ink">{member.name}</h4>
+                              <p className="mt-0.5 text-12 text-gray-4">{[member.generation != null ? `${member.generation}기` : null, member.role].filter(Boolean).join(" · ")}</p>
+                            </div>
+                          </div>
+                          {member.part && <p className="mt-5 text-14 font-semibold text-primary">{member.part}</p>}
+                          {member.intro && <p className="mt-3 whitespace-pre-line text-16 text-gray-4">{member.intro}</p>}
+                          {!!member.tags?.length && (
+                            <ul className="mt-5 flex flex-wrap gap-2">
+                              {member.tags.map((tag, index) => <li key={`${tag}-${index}`} className="rounded-full bg-surface px-3 py-1 text-12 font-semibold text-gray-4">{tag}</li>)}
+                            </ul>
+                          )}
+                          {github && <a href={github} target="_blank" rel="noopener noreferrer" aria-label={`${member.name} GitHub (새 탭)`} className="mt-5 inline-flex min-h-11 items-center gap-2 self-start rounded-full px-3 text-14 font-semibold text-gray-4 transition-colors hover:bg-surface hover:text-primary"><Github className="size-4" />GitHub ↗</a>}
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))}
             </div>
             {shown.length === 0 && (
               <div className="mt-5 rounded-[28px] bg-mist p-8 text-center text-gray-4">
