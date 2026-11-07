@@ -8,7 +8,9 @@ export const seed = {
     id: 1,
     recruit_open: true,
     recruit_title: '2027학년도 1학기 신입 부원 모집',
+    recruit_start: '2026-11-01',
     recruit_deadline: '2026-11-30',
+    landing_enabled: true,
     intro:
       'DC&M은 한성대학교 학생들이 모여 코딩테스트 스터디, 독서클럽, 해커톤을 함께 하는 동아리입니다. 함께할 프로젝트를 직접 올리고 사람을 모을 수도 있습니다.',
     room: '인성관 306호',

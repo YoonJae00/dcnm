@@ -41,11 +41,16 @@ create table if not exists settings (
   id int primary key default 1 check (id = 1),
   recruit_open boolean not null default false,
   recruit_title text,
+  recruit_start date,
   recruit_deadline date,
   intro text,
   room text,
-  links jsonb not null default '[]'
+  links jsonb not null default '[]',
+  landing_enabled boolean not null default false
 );
+-- 이미 만든 DB에는 아래 두 줄만 따로 실행하세요 (모집 랜딩용 칸).
+alter table settings add column if not exists recruit_start date;
+alter table settings add column if not exists landing_enabled boolean not null default false;
 
 -- 개인 로그인 -------------------------------------------------------------
 -- 로그인한 사람마다 한 줄. approved가 true여야 모집글·참여 신청·글쓰기가 됩니다.

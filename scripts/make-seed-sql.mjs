@@ -12,7 +12,7 @@ const q = (v) => {
 const out = ['-- 예시 데이터 (schema.sql 실행 후 실행)', ''];
 const s = seed.settings;
 out.push(
-  `insert into settings (id, recruit_open, recruit_title, recruit_deadline, intro, room, links) values (1, ${q(s.recruit_open)}, ${q(s.recruit_title)}, ${q(s.recruit_deadline)}, ${q(s.intro)}, ${q(s.room)}, '${JSON.stringify(s.links).replace(/'/g, "''")}'::jsonb) on conflict (id) do update set recruit_open = excluded.recruit_open, recruit_title = excluded.recruit_title, recruit_deadline = excluded.recruit_deadline, intro = excluded.intro, room = excluded.room, links = excluded.links;`,
+  `insert into settings (id, recruit_open, recruit_title, recruit_start, recruit_deadline, landing_enabled, intro, room, links) values (1, ${q(s.recruit_open)}, ${q(s.recruit_title)}, ${q(s.recruit_start)}, ${q(s.recruit_deadline)}, ${q(s.landing_enabled)}, ${q(s.intro)}, ${q(s.room)}, '${JSON.stringify(s.links).replace(/'/g, "''")}'::jsonb) on conflict (id) do update set recruit_open = excluded.recruit_open, recruit_title = excluded.recruit_title, recruit_start = excluded.recruit_start, recruit_deadline = excluded.recruit_deadline, landing_enabled = excluded.landing_enabled, intro = excluded.intro, room = excluded.room, links = excluded.links;`,
   ''
 );
 

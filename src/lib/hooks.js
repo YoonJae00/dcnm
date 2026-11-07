@@ -15,8 +15,9 @@ export function useTable(table) {
   return { rows, error, reload: load };
 }
 
+// 불러오는 중이면 undefined, 불러오지 못했으면 null
 export function useSettings() {
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState(undefined);
   useEffect(() => {
     const load = () => api.getSettings().then(setSettings).catch(() => setSettings(null));
     load();
