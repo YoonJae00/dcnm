@@ -4,7 +4,8 @@ import { Github, Instagram, Mail } from "@/components/ui/icons";
 import { club } from "@/data/site";
 import { useNavLinks } from "@/lib/ActivitiesContext";
 
-export function Footer() {
+export function Footer({ links }: { links?: { label: string; url: string }[] | null }) {
+  const quickLinks = (links ?? []).filter((link) => /^https?:\/\//i.test(link.url));
   const navLinks = useNavLinks();
   const socials = [
     { label: "Instagram", href: club.instagram, icon: Instagram },
@@ -58,6 +59,20 @@ export function Footer() {
             </ul>
           </div>
         </div>
+        {quickLinks.length > 0 && (
+          <nav aria-label="자주 쓰는 링크" className="mt-10 rounded-2xl bg-mist p-5 sm:p-6">
+            <h2 className="text-14 font-bold text-ink">자주 쓰는 링크</h2>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {quickLinks.map((link) => (
+                <li key={`${link.label}-${link.url}`}>
+                  <a href={link.url} target="_blank" rel="noopener noreferrer" aria-label={`${link.label} (새 탭)`} className="inline-flex min-h-11 items-center gap-3 rounded-xl bg-surface px-4 py-2 text-14 font-semibold text-gray-4 ring-1 ring-gray-2 transition-colors hover:text-primary">
+                    {link.label}<span aria-hidden="true">↗</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
         <div className="mt-12 flex flex-col gap-2 border-t border-gray-1 pt-6 text-12 text-gray-3 sm:flex-row sm:justify-between">
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <span>© {club.founded}–2026 {club.name}. All rights reserved.</span>

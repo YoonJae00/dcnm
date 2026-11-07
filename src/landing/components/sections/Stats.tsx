@@ -46,7 +46,7 @@ function Marquee({ items, reverse }: { items: string[]; reverse?: boolean }) {
           <span
             key={i}
             aria-hidden={i >= items.length}
-            className="shrink-0 rounded-full bg-white/[0.08] px-5 py-2.5 text-14 font-semibold text-white/90 ring-1 ring-white/15 transition-colors hover:bg-primary hover:text-white"
+            className="shrink-0 rounded-full bg-surface px-5 py-2.5 text-14 font-semibold text-gray-5 ring-1 ring-gray-2 transition-colors hover:bg-primary hover:text-white dark:bg-white/[0.08] dark:text-white/90 dark:ring-white/15 dark:hover:bg-primary"
           >
             {item}
           </span>
@@ -61,11 +61,11 @@ export function Stats() {
   return (
     <section
       aria-labelledby="stats-title"
-      className="relative isolate overflow-hidden bg-night py-24 text-white sm:py-32"
+      className="relative isolate overflow-hidden bg-mist py-24 text-ink transition-colors sm:py-32 dark:bg-night"
     >
       <div
         aria-hidden
-        className="absolute -top-40 left-1/2 -z-10 h-[480px] w-[900px] -translate-x-1/2 rounded-full bg-primary/35 blur-[140px]"
+        className="absolute -top-40 left-1/2 -z-10 h-[480px] w-[900px] -translate-x-1/2 rounded-full bg-primary/10 blur-[140px] dark:bg-primary/35"
       />
       <div
         aria-hidden
@@ -74,7 +74,6 @@ export function Stats() {
 
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <SectionHeading
-          tone="dark"
           eyebrow="DC&M in numbers"
           title={<span id="stats-title">숫자로 보는 DC&amp;M</span>}
           description="2003년에 시작해, 지금은 이만큼 자랐어요."
@@ -88,23 +87,23 @@ export function Stats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.8, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className="border-t border-white/10 pt-6"
+              className="border-t border-gray-2 pt-6 dark:border-white/15"
             >
-              <dt className="text-14 font-semibold text-gray-3 sm:text-16">{s.label}</dt>
+              <dt className="text-14 font-semibold text-gray-4 sm:text-16">{s.label}</dt>
               <dd className="mt-3">
-                <span className="bg-[linear-gradient(120deg,#fff_20%,#c9beff_60%,#ffdbfd)] bg-clip-text text-[clamp(3rem,2rem+4vw,5rem)] leading-none font-extrabold text-transparent">
+                <span className="bg-[linear-gradient(120deg,#4338ca_20%,#6367ff_60%,#7c3aed)] dark:bg-[linear-gradient(120deg,#fff_20%,#c9beff_60%,#ffdbfd)] bg-clip-text text-[clamp(3rem,2rem+4vw,5rem)] leading-none font-extrabold text-transparent">
                   <Counter value={s.value} />
                 </span>
-                <span className="ml-1 text-24 font-bold text-light">{s.unit}</span>
+                <span className="ml-1 text-24 font-bold text-primary dark:text-light">{s.unit}</span>
               </dd>
-              <dd className="mt-3 text-14 text-gray-3">{s.caption}</dd>
+              <dd className="mt-3 text-14 text-gray-4">{s.caption}</dd>
             </motion.div>
           ))}
         </dl>
       </div>
 
       <div className="mt-20 space-y-3 sm:mt-28">
-        <p className="mb-5 text-center text-14 font-semibold text-white/70">
+        <p className="mb-5 text-center text-14 font-semibold text-gray-4 dark:text-white/70">
           우리가 다뤄온 기술들
         </p>
         <Marquee items={techStack.slice(0, half)} />

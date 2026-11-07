@@ -288,7 +288,7 @@ export default function RecruitSettings({ notify }) {
         <Field id="st-privacy" label="개인정보 문의 연락처" hint="개인정보 처리방침의 보호책임자 연락처로 쓰입니다. 비워 두면 회장 계정의 이메일이 자동으로 쓰입니다. 공개되니 동아리 공용 이메일이면 더 좋아요.">
           <input id="st-privacy" maxLength={200} placeholder="예: dcm.privacy@example.com" value={s.privacy_contact || ''} onChange={set('privacy_contact')} />
         </Field>
-        <Field id="st-links" label="맨 위 바로가기 링크" err={errs.links} hint="한 줄에 하나씩 '이름 주소' 형식으로 적어 주세요. 예: 인스타그램 https://instagram.com/동아리계정">
+        <Field id="st-links" label="자주 쓰는 바로가기 링크" err={errs.links} hint="한 줄에 하나씩 '이름 주소' 형식으로 적어 주세요. 예: 인스타그램 https://instagram.com/동아리계정">
           <textarea id="st-links" rows={5} style={{ minHeight: 'auto' }} value={linksText} aria-invalid={!!errs.links} onChange={(e) => setLinksText(e.target.value)} />
         </Field>
       </section>
