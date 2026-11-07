@@ -5,6 +5,13 @@ import { useItem, useTable, useUser } from '../lib/hooks';
 import { WEEKDAYS, dayKey, fullDate, paragraphs, parseDay, shortDate } from '../lib/format';
 import { KINDS, ORIGIN_LABEL, STATUS_LABEL, deadlineLeft, deadlineText, isMember, meetingText, memberCount } from '../lib/projects';
 import { ArchiveCard, Avatar, Chips, Fab, Progress, ProjectBadges, ProjectCard, RecruitCard } from '../components/UI';
+import { canEnter, isTeamMember, spacePath } from '../lib/workspace';
+
+// 팀원(작성자·참여 확정)과 운영진에게만 보이는 팀 공간 바로가기
+function SpaceButton({ p, user }) {
+  if (!canEnter(p, user)) return null;
+  return <Link className="btn dark wide" to={spacePath(p.id)}>팀 공간 열기{isTeamMember(p, user) ? '' : ' (운영진)'}</Link>;
+}
 
 const loginLink = (path) => `/login?next=${encodeURIComponent(path)}`;
 
@@ -163,6 +170,7 @@ function ApplyPanel({ p, user, apps, members }) {
       <hr />
       <div className="actions"><span className="avatars">{(p.member_ids || []).map((id, i) => <Avatar key={id} name={members?.find((m) => m.id === id)?.name || p.member_names?.[i]} />)}</span><span className="small">참여 확정 {memberCount(p)}명</span></div>
       {action}
+      <SpaceButton p={p} user={user} />
       {user && p.author_id !== user.id && <a className="btn wide" href="#inquiry" onClick={(e) => { e.preventDefault(); document.getElementById('inquiry-input')?.focus(); }}>문의하기</a>}
       {(!user || p.author_id !== user.id) && <p className="note">작성자가 수락하면 내 활동과 개인 캘린더에 모임 일정이 들어갑니다.</p>}
     </aside>
@@ -184,6 +192,7 @@ function InfoPanel({ p, user, members }) {
       </dl>
       <hr />
       <div className="actions"><span className="avatars">{names.map((n, i) => <Avatar key={i} name={n} />)}</span><span className="small">{names.join(', ')}</span></div>
+      <SpaceButton p={p} user={user} />
       {p.link && <a className="btn wide" href={p.link} target="_blank" rel="noreferrer">결과물 보기</a>}
       {user && p.author_id === user.id && p.status === 'ongoing' && (
         <button type="button" className="btn wide" onClick={() => api.save('projects', { id: p.id, status: 'done' })}>프로젝트 완료 처리</button>

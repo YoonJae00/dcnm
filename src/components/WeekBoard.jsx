@@ -124,7 +124,7 @@ export default function WeekBoard({ events, viewMode = 'two_weeks' }) {
                 {list.map((e) => (
                   <Link
                     key={e.id}
-                    to={e.project_id ? `/projects/${e.project_id}` : `/calendar?d=${e.date}`}
+                    to={e.to || (e.project_id ? `/projects/${e.project_id}` : `/calendar?d=${e.date}`)}
                     className={`slot k-${e.kind}`}
                     title={`${e.title} (${timeRange(e)})`}
                   >

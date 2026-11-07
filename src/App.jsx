@@ -11,6 +11,7 @@ import Privacy from './pages/Privacy';
 import Search from './pages/Search';
 import Admin from './pages/Admin';
 import Me, { Login } from './pages/Me';
+import Space from './pages/Space';
 import { Community, PostDetail, PostNew } from './pages/Community';
 import { Intro } from './intro/Intro';
 import { setIntroPhase } from './intro/introState';
@@ -86,6 +87,7 @@ function OtherRoutes() {
       <Route path="/projects/done" element={<ProjectsDone />} />
       <Route path="/projects/new" element={<ProjectNew />} />
       <Route path="/projects/:id" element={<ProjectDetail />} />
+      <Route path="/projects/:id/space" element={<Space />} />
       <Route path="/notices" element={<Notices />} />
       <Route path="/notices/:id" element={<NoticeDetail />} />
       <Route path="/calendar" element={<Calendar />} />

@@ -166,7 +166,7 @@ export function MonthCalendar({ events, selected, onSelect, initial, compact }) 
         {list.map((e) => (
           <div key={e.id} className="ev-item">
             <span className="t">{timeRange(e)}</span>
-            <strong>{e.project_id ? <Link to={`/projects/${e.project_id}`}>{e.title}</Link> : e.title} <span className="kind">{e.kind}</span></strong>
+            <strong>{e.to || e.project_id ? <Link to={e.to || `/projects/${e.project_id}`}>{e.title}</Link> : e.title} <span className="kind">{e.kind}</span></strong>
             {(e.place || e.note) && <span className="p">{[e.place, e.note].filter(Boolean).join(' · ')}</span>}
           </div>
         ))}

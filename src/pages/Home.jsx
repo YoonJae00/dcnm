@@ -4,6 +4,7 @@ import WeekBoard from '../components/WeekBoard';
 import { useSettings, useTable, useUser } from '../lib/hooks';
 import { addDays, daysLeft, parseDay, shortDate, weekStart } from '../lib/format';
 import { deadlineLeft, isMember, occurrences } from '../lib/projects';
+import { myTeamItems } from '../lib/workspace';
 import { RecruitCard } from '../components/UI';
 import { usePostStats } from './Community';
 import { CountUp } from '../lib/motion';
@@ -38,6 +39,8 @@ export default function Home() {
   const members = useTable('members').rows || [];
   const posts = useTable('posts').rows || [];
   const apps = useTable('applications').rows || [];
+  const wsEvents = useTable('ws_events').rows;
+  const wsMeetings = useTable('ws_meetings').rows;
   const stats = usePostStats();
 
   // 캘린더 보기 상태 ('two_weeks' | 'full_month')
@@ -61,8 +64,9 @@ export default function Home() {
   const projectSlots = projects
     .filter((p) => p.status !== 'done' && (p.origin === 'club' || isMember(p, user?.id)))
     .flatMap((p) => occurrences(p, rangeStart, rangeEnd).map((e) => ({ ...e, kind: p.kind === '스터디' ? '스터디' : '프로젝트' })));
-
-  const weekEvents = events.rows ? [...events.rows, ...projectSlots] : null;
+  // 로그인했으면 내 팀들의 팀 일정·확정 회의도 함께 (누르면 팀 공간)
+  const teamSlots = myTeamItems(projects, wsEvents, wsMeetings, user);
+  const weekEvents = events.rows ? [...events.rows, ...projectSlots, ...teamSlots] : null;
 
   const recruiting = projects.filter((p) => p.status === 'recruiting' && (deadlineLeft(p) ?? 0) >= 0)
     .sort((a, b) => (deadlineLeft(a) ?? 999) - (deadlineLeft(b) ?? 999));

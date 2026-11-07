@@ -8,6 +8,7 @@ import { Avatar, MonthCalendar, ProjectBadges, Progress } from '../components/UI
 import { PasswordForm } from '../components/Password';
 import { PRIVACY } from '../data/privacy';
 import { usePrivacyOfficer } from '../lib/privacy';
+import { myTeamItems, spacePath } from '../lib/workspace';
 
 const STATUS = { pending: ['neutral', '수락 대기'], accepted: ['ok', '수락됨'], rejected: ['neutral', '거절됨'] };
 
@@ -24,6 +25,8 @@ export default function Me() {
   const apps = useTable('applications').rows || [];
   const events = useTable('events').rows || [];
   const posts = useTable('posts').rows || [];
+  const wsEvents = useTable('ws_events').rows;
+  const wsMeetings = useTable('ws_meetings').rows;
   const [selected, setSelected] = useState(dayKey(new Date()));
   const [busy, setBusy] = useState('');
 
@@ -33,8 +36,8 @@ export default function Me() {
     const from = addDays(today, -62);
     const to = addDays(today, 120);
     const mine = projects.filter((p) => p.status !== 'done' && isMember(p, user.id)).flatMap((p) => occurrences(p, from, to).map((e) => ({ ...e, mine: true })));
-    return [...events, ...mine];
-  }, [user, projects, events]);
+    return [...events, ...mine, ...myTeamItems(projects, wsEvents, wsMeetings, user)];
+  }, [user, projects, events, wsEvents, wsMeetings]);
 
   if (user === undefined) return <p className="state">확인하는 중입니다.</p>;
   if (!user) return (
@@ -78,7 +81,7 @@ export default function Me() {
         <section className="section" aria-labelledby="cal-h">
           <div className="section-head">
             <h2 id="cal-h">내 캘린더</h2>
-            <span className="legend"><span><i style={{ background: 'var(--accent-soft)', boxShadow: 'inset 0 0 0 1px var(--accent)' }} />내 프로젝트</span><span><i style={{ background: 'var(--stone-soft)', boxShadow: 'inset 0 0 0 1px var(--stone)' }} />동아리 일정</span></span>
+            <span className="legend"><span><i style={{ background: 'var(--accent-soft)', boxShadow: 'inset 0 0 0 1px var(--accent)' }} />내 프로젝트·팀 일정</span><span><i style={{ background: 'var(--stone-soft)', boxShadow: 'inset 0 0 0 1px var(--stone)' }} />동아리 일정</span></span>
           </div>
           <MonthCalendar events={calendarEvents} selected={selected} onSelect={setSelected} compact />
         </section>
@@ -89,11 +92,11 @@ export default function Me() {
             {joined.length === 0 && <p className="muted small">아직 참여 중인 프로젝트가 없습니다. <Link to="/projects?tab=recruiting">모집 중인 프로젝트</Link>를 둘러보세요.</p>}
             <div className="stack">
               {joined.map((p) => (
-                <Link key={p.id} to={`/projects/${p.id}`} className="mini">
+                <div key={p.id} className="mini">
                   <span className="line"><ProjectBadges p={p} withStatus /><span className="mine-flag">{p.author_id === user.id ? '내가 연 프로젝트' : '참여자'}</span></span>
-                  <b>{p.title}</b>
-                  <span className="sub">{nextText(p)}</span>
-                </Link>
+                  <Link to={`/projects/${p.id}`} className="mini-title"><b>{p.title}</b></Link>
+                  <span className="line"><span className="sub">{nextText(p)}</span><Link className="btn small" to={spacePath(p.id)}>팀 공간</Link></span>
+                </div>
               ))}
             </div>
           </section>
