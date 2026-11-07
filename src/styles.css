@@ -148,7 +148,7 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-a
 .btn.danger.solid { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn.small { min-height: 32px; padding: 0 10px; font-size: var(--t-xs); }
-.btn.block { width: 100%; }
+.btn.wide { width: 100%; }
 
 input, select, textarea {
   font: inherit; color: var(--ink); background: var(--tint);

@@ -1,0 +1,217 @@
+/* 모집 랜딩 전용 스타일. 랜딩 화면(LandingApp)을 열 때만 따로 불러와요.
+   - Tailwind는 theme·utilities만 가져와요. preflight를 전역으로 넣으면 dcm-site 화면이 바뀌어서,
+     필요한 리셋은 아래 `.landing` 안으로 범위를 한정해 직접 썼어요.
+   - 클래스 스캔은 이 폴더(src/landing)로만 한정해요. dcm-site의 `hidden`·`grid` 같은 클래스명에
+     유틸리티가 생기지 않게 하려는 거예요.
+   - 레이어 순서(site < theme < base < components < utilities)는 src/index.css에서 먼저 선언해요. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source ".";
+
+/* ───────────────────────── DC&M Design System ─────────────────────────
+   Color / Typo / Effect 토큰은 디자인 시스템 시트를 그대로 옮겼어요.
+   text-30 ~ text-12 = 시트의 타이포 스케일, display/title = 랜딩용 확장 사이즈
+   ──────────────────────────────────────────────────────────────────── */
+@theme {
+  --color-primary: #6367ff;
+  --color-secondary: #8494ff;
+  --color-light: #c9beff;
+  --color-accent: #ffdbfd;
+  --color-mist: #f7f6ff;
+
+  --color-ink: #1b1b33;
+  --color-gray-5: #34344d;
+  --color-gray-4: #5c5c78;
+  --color-gray-3: #b4b3c7;
+  --color-gray-2: #e2e1ee;
+  --color-gray-1: #f2f1f8;
+
+  --color-negative: #e5484d;
+  --color-positive: #30a46c;
+
+  --font-sans:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-mono:
+    ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  --text-12: 0.75rem;
+  --text-12--line-height: 1.5;
+  --text-14: 0.875rem;
+  --text-14--line-height: 1.6;
+  --text-16: 1rem;
+  --text-16--line-height: 1.65;
+  --text-20: 1.25rem;
+  --text-20--line-height: 1.5;
+  --text-24: 1.5rem;
+  --text-24--line-height: 1.4;
+  --text-30: 1.875rem;
+  --text-30--line-height: 1.35;
+  --text-title: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+  --text-title--line-height: 1.22;
+  --text-display: clamp(2.75rem, 1.6rem + 5.2vw, 5.5rem);
+  --text-display--line-height: 1.08;
+
+  --tracking-dcm: -0.04em;
+
+  --shadow-s: 0 2px 8px rgb(99 103 255 / 0.12);
+  --shadow-m: 0 8px 24px rgb(99 103 255 / 0.18);
+  --shadow-l: 0 24px 64px -12px rgb(27 27 51 / 0.18);
+
+  --ease-toss: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-marquee-reverse: marquee var(--marquee-duration, 40s) linear
+    infinite reverse;
+  --animate-blink: blink 1.1s steps(1) infinite;
+  --animate-float: float 7s ease-in-out infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    50.01%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+}
+
+@layer base {
+  /* Tailwind preflight 중 랜딩에 필요한 것만, `.landing` 아래로 범위를 한정했어요. :where()라 특정성은 0이에요. */
+  :where(.landing, .landing *, .landing ::before, .landing ::after) {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  :where(.landing) {
+    min-height: 100dvh;
+    background: var(--color-white);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: var(--tracking-dcm);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    tab-size: 4;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  :where(.landing) :is(h1, h2, h3, h4, h5, h6) {
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    color: inherit;
+    text-wrap: initial;
+  }
+  :where(.landing) a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+  :where(.landing) :is(b, strong) {
+    font-weight: bolder;
+  }
+  :where(.landing) :is(code, kbd, samp, pre) {
+    font-family: var(--font-mono);
+    font-size: 1em;
+  }
+  :where(.landing) :is(ol, ul, menu) {
+    list-style: none;
+  }
+  :where(.landing) :is(img, svg, video, canvas, audio, iframe, embed, object) {
+    display: block;
+    vertical-align: middle;
+  }
+  :where(.landing) :is(img, video) {
+    max-width: 100%;
+    height: auto;
+  }
+  :where(.landing) :is(button, input, select, optgroup, textarea) {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(.landing) button {
+    appearance: button;
+  }
+  :where(.landing) ::placeholder {
+    opacity: 1;
+  }
+  :where(.landing) [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+  :where(.landing) ::selection {
+    background: var(--color-light);
+    color: var(--color-ink);
+  }
+  :where(.landing) :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+/* 브랜드 그라디언트 (#6367FF → #C9BEFF) */
+@utility bg-brand {
+  background-image: linear-gradient(135deg, #6367ff 0%, #c9beff 100%);
+}
+
+/* 흰 글씨를 올리는 면적용 — 끝 색을 진하게 해서 대비를 확보 */
+@utility bg-brand-deep {
+  background-image: linear-gradient(135deg, #6367ff 0%, #7b7dff 55%, #a193ff 100%);
+}
+
+/* 텍스트용 그라디언트 — 흰 배경 위 가독성을 위해 끝 색을 한 톤 진하게 */
+@utility text-brand {
+  background-image: linear-gradient(110deg, #6367ff 0%, #8494ff 50%, #a99bff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 개발 동아리 느낌의 모눈 배경 */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(99 103 255 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(99 103 255 / 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+@utility mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

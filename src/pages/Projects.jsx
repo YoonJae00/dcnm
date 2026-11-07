@@ -118,18 +118,18 @@ function ApplyPanel({ p, user, apps, members }) {
   const path = `/projects/${p.id}`;
 
   let action;
-  if (!user) action = <Link className="btn primary block" to={loginLink(path)}>로그인하고 참여 신청</Link>;
+  if (!user) action = <Link className="btn primary wide" to={loginLink(path)}>로그인하고 참여 신청</Link>;
   else if (p.author_id === user.id) action = (
     <>
-      <Link className="btn dark block" to="/me">신청자 {pending.length}명 확인하기</Link>
-      <button type="button" className="btn block" onClick={() => api.save('projects', { id: p.id, status: 'ongoing' })}>모집 마감하고 시작하기</button>
+      <Link className="btn dark wide" to="/me">신청자 {pending.length}명 확인하기</Link>
+      <button type="button" className="btn wide" onClick={() => api.save('projects', { id: p.id, status: 'ongoing' })}>모집 마감하고 시작하기</button>
     </>
   );
   else if (isMember(p, user.id)) action = <p className="notice-box">참여가 확정됐습니다. 정기 모임이 내 활동 캘린더에 들어갔습니다.</p>;
   else if (mine?.status === 'pending') action = (
     <>
       <p className="notice-box">참여 신청을 보냈습니다. 작성자가 수락하면 알려 드립니다.</p>
-      <button type="button" className="btn block" onClick={() => api.remove('applications', mine.id)}>신청 취소</button>
+      <button type="button" className="btn wide" onClick={() => api.remove('applications', mine.id)}>신청 취소</button>
     </>
   );
   else if (mine?.status === 'rejected') action = <p className="notice-box">이번에는 함께하지 못하게 됐습니다. 다른 모집을 둘러보세요.</p>;
@@ -146,7 +146,7 @@ function ApplyPanel({ p, user, apps, members }) {
       <label htmlFor="apply-msg" className="small" style={{ fontWeight: 600 }}>작성자에게 한마디 <span className="muted" style={{ fontWeight: 400 }}>(선택)</span></label>
       <textarea id="apply-msg" placeholder="예: 목요일 저녁 가능합니다. Java는 수업에서 배웠어요." value={msg} onChange={(e) => setMsg(e.target.value)} />
       {err && <span className="small" style={{ color: 'var(--hot)' }}>{err}</span>}
-      <button type="submit" className="btn primary block" disabled={busy}>참여 신청</button>
+      <button type="submit" className="btn primary wide" disabled={busy}>참여 신청</button>
     </form>
   );
 
@@ -163,7 +163,7 @@ function ApplyPanel({ p, user, apps, members }) {
       <hr />
       <div className="actions"><span className="avatars">{(p.member_ids || []).map((id, i) => <Avatar key={id} name={members?.find((m) => m.id === id)?.name || p.member_names?.[i]} />)}</span><span className="small">참여 확정 {memberCount(p)}명</span></div>
       {action}
-      {user && p.author_id !== user.id && <a className="btn block" href="#inquiry" onClick={(e) => { e.preventDefault(); document.getElementById('inquiry-input')?.focus(); }}>문의하기</a>}
+      {user && p.author_id !== user.id && <a className="btn wide" href="#inquiry" onClick={(e) => { e.preventDefault(); document.getElementById('inquiry-input')?.focus(); }}>문의하기</a>}
       {(!user || p.author_id !== user.id) && <p className="note">작성자가 수락하면 내 활동과 개인 캘린더에 모임 일정이 들어갑니다.</p>}
     </aside>
   );
@@ -184,11 +184,11 @@ function InfoPanel({ p, user, members }) {
       </dl>
       <hr />
       <div className="actions"><span className="avatars">{names.map((n, i) => <Avatar key={i} name={n} />)}</span><span className="small">{names.join(', ')}</span></div>
-      {p.link && <a className="btn block" href={p.link} target="_blank" rel="noreferrer">결과물 보기</a>}
+      {p.link && <a className="btn wide" href={p.link} target="_blank" rel="noreferrer">결과물 보기</a>}
       {user && p.author_id === user.id && p.status === 'ongoing' && (
-        <button type="button" className="btn block" onClick={() => api.save('projects', { id: p.id, status: 'done' })}>프로젝트 완료 처리</button>
+        <button type="button" className="btn wide" onClick={() => api.save('projects', { id: p.id, status: 'done' })}>프로젝트 완료 처리</button>
       )}
-      {user && p.status === 'done' && isMember(p, user.id) && <Link className="btn dark block" to={`/community/new?project=${p.id}`}>후기 쓰기</Link>}
+      {user && p.status === 'done' && isMember(p, user.id) && <Link className="btn dark wide" to={`/community/new?project=${p.id}`}>후기 쓰기</Link>}
     </aside>
   );
 }

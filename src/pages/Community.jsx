@@ -76,7 +76,7 @@ export function Community() {
           {rows && shown.length === 0 && <p className="state">{q ? '검색어와 맞는 글이 없습니다.' : '이 분류에는 아직 글이 없습니다. 첫 글을 남겨 보세요.'}</p>}
         </div>
         <aside className="stack">
-          <Link className="btn primary block" to={user ? '/community/new' : loginLink('/community/new')}>글쓰기</Link>
+          <Link className="btn primary wide" to={user ? '/community/new' : loginLink('/community/new')}>글쓰기</Link>
           <div className="side-box">
             <h2>많이 본 글</h2>
             <ol>{hot.map((p) => <li key={p.id}><Link to={`/community/${p.id}`}>{p.title}</Link></li>)}</ol>
