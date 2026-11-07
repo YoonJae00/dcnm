@@ -10,7 +10,7 @@ import {
   useTransform,
 } from "motion/react";
 import { projects, type Project } from "@/data/projects";
-import { recruit } from "@/data/site";
+import { useRecruit } from "@/lib/RecruitContext";
 import { ProjectCover } from "@/components/projects/ProjectCover";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
@@ -88,6 +88,7 @@ function TiltCard({ project }: { project: Project }) {
 }
 
 function EndCard() {
+  const recruit = useRecruit();
   return (
     <div className="bg-brand relative flex w-[78vw] max-w-[340px] shrink-0 snap-start flex-col justify-between overflow-hidden rounded-[28px] p-7 text-white sm:w-[360px] sm:max-w-none lg:w-[380px]">
       <div aria-hidden className="absolute -right-10 -bottom-10 size-48 rounded-full bg-white/20 blur-2xl" />

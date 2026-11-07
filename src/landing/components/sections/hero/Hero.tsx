@@ -12,7 +12,8 @@ import { ButtonLink } from "@/components/ui/Button";
 import { RecruitBadge } from "@/components/sections/hero/RecruitBadge";
 import { Terminal } from "@/components/sections/hero/Terminal";
 import { useIntroRevealed } from "@intro/introState";
-import { club, recruit } from "@/data/site";
+import { club } from "@/data/site";
+import { useRecruit } from "@/lib/RecruitContext";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -74,6 +75,7 @@ function FloatingChip({ children, className }: { children: ReactNode; className?
 }
 
 export function Hero() {
+  const recruit = useRecruit();
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   // 첫 방문 인트로가 떠 있으면, 걷히기 시작할 때까지 등장 연출을 미뤄요.

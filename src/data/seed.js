@@ -1,6 +1,8 @@
 // 예시 데이터: Supabase를 연결하지 않았을 때 사이트가 이 내용으로 동작합니다.
 // 멤버 이름과 개인 프로젝트·게시글은 화면 확인용 예시입니다. 운영 전에 바꿔 주세요.
 
+import { defaultRecruit, defaultTracks, defaultFaqs } from './recruitDefaults.js';
+
 const M = (id, name, generation, role, part, intro, tags, sort) => ({ id, name, generation, role, part, intro, tags, github: '', sort });
 
 export const seed = {
@@ -11,6 +13,15 @@ export const seed = {
     recruit_start: '2026-11-03',
     recruit_deadline: '2026-11-23',
     landing_enabled: true,
+    // 모집 랜딩의 기수·일정·지원 자격·트랙·FAQ. 운영진 화면 > 사이트 설정에서 바꿀 수 있습니다. (형식은 README 참고)
+    recruit_details: {
+      generation: defaultRecruit.generation,
+      applyEndTime: defaultRecruit.applyEndTime,
+      steps: defaultRecruit.steps,
+      qualifications: defaultRecruit.qualifications,
+      tracks: defaultTracks.map(({ snippet, ...t }) => t),
+      faqs: defaultFaqs,
+    },
     intro:
       'DC&M은 한성대학교 학생들이 모여 코딩테스트 스터디, 독서클럽, 해커톤을 함께 하는 동아리입니다. 함께할 프로젝트를 직접 올리고 사람을 모을 수도 있습니다.',
     room: '인성관 306호',

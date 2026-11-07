@@ -11,10 +11,12 @@ import { useLenis } from "lenis/react";
 import { Logo } from "@/components/brand/Logo";
 import { SmartLink } from "@/components/ui/SmartLink";
 import { navLinks } from "@/data/site";
+import { useRecruit } from "@/lib/RecruitContext";
 import { cn } from "@/lib/cn";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function Header() {
+  const recruit = useRecruit();
   const { scrollY, scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 30, restDelta: 0.001 });
   const [scrolled, setScrolled] = useState(false);
@@ -176,7 +178,7 @@ export function Header() {
                   onClick={() => setOpen(false)}
                   className="flex h-14 items-center justify-center rounded-2xl bg-primary text-16 font-bold text-white active:scale-[0.98]"
                 >
-                  8기 지원하기
+                  {recruit.generation}기 지원하기
                 </SmartLink>
               </motion.li>
             </motion.ul>

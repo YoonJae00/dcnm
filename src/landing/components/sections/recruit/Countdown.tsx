@@ -87,7 +87,7 @@ export function Countdown() {
             <Unit value={parts?.seconds ?? null} label="초" />
           </div>
           <p className="mt-4 text-14 text-white/75">
-            서류 접수 {formatRange(recruit.applyStart, recruit.applyEnd)} 23:59까지
+            서류 접수 {formatRange(recruit.applyStart, recruit.applyEnd)} {recruit.applyEndTime}까지
           </p>
         </>
       )}

@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { useLenis } from "lenis/react";
-import { club, stats, tracks } from "@/data/site";
-import { useRecruit } from "@/lib/RecruitContext";
+import { club, stats, type Track } from "@/data/site";
+import { useRecruit, useTracks } from "@/lib/RecruitContext";
 import { formatRange, getPhase, type Recruit } from "@/lib/recruit";
 import { cn } from "@/lib/cn";
 import { useIntroRevealed } from "@intro/introState";
@@ -25,7 +25,7 @@ function ddayLabel(recruit: Recruit, now: number) {
   return days <= 0 ? "D-Day" : `D-${days}`;
 }
 
-function run(input: string, recruit: Recruit, onApply: () => void): Output {
+function run(input: string, recruit: Recruit, tracks: Track[], onApply: () => void): Output {
   const [cmd, ...args] = input.trim().split(/\s+/);
   const now = Date.now();
 
@@ -37,7 +37,7 @@ function run(input: string, recruit: Recruit, onApply: () => void): Output {
         ["muted", "사용할 수 있는 명령어"],
         ["out", "  whoami      DC&M 한 줄 소개"],
         ["out", "  ls          활동 분야 보기"],
-        ["out", "  schedule    8기 모집 일정"],
+        ["out", `  schedule    ${recruit.generation}기 모집 일정`],
         ["out", "  tracks      모집 트랙"],
         ["out", "  recruit     모집 현황"],
         ["out", "  apply       모집 안내로 이동"],
@@ -92,7 +92,7 @@ function run(input: string, recruit: Recruit, onApply: () => void): Output {
     case "sudo":
       return [
         ["err", "권한이 없어요 🙅"],
-        ["muted", "대신 8기에 지원해서 정식 멤버 권한을 받아보는 건 어때요? → apply"],
+        ["muted", `대신 ${recruit.generation}기에 지원해서 정식 멤버 권한을 받아보는 건 어때요? → apply`],
       ];
     case "exit":
       return [["muted", "아직 보여드릴 게 많아요. 스크롤을 내려보세요 ↓"]];
@@ -125,6 +125,7 @@ function Prompt() {
 
 export function Terminal() {
   const recruit = useRecruit();
+  const tracks = useTracks();
   const rootRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -162,11 +163,11 @@ export function Terminal() {
   const execute = useCallback(
     (cmd: string) => {
       push([["cmd", cmd]]);
-      const result = run(cmd, recruit, goToRecruit);
+      const result = run(cmd, recruit, tracks, goToRecruit);
       if (result === "clear") setLines([]);
       else push(result);
     },
-    [push, goToRecruit, recruit],
+    [push, goToRecruit, recruit, tracks],
   );
 
   /** 사람이 치는 것처럼 한 글자씩 입력한 뒤 실행 */

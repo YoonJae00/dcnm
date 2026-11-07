@@ -1,13 +1,15 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { tracks } from "@/data/site";
+import { useTracks } from "@/lib/RecruitContext";
 import { Check } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
 /** 토스식 세그먼트 컨트롤 + 트랙 상세 */
 export function Tracks() {
-  const [activeId, setActiveId] = useState(tracks[0].id);
+  const tracks = useTracks();
+  const [activeId, setActiveId] = useState<string | null>(null);
+  if (tracks.length === 0) return null;
   const active = tracks.find((t) => t.id === activeId) ?? tracks[0];
 
   return (
@@ -25,7 +27,7 @@ export function Tracks() {
         className="no-scrollbar mt-6 flex w-full gap-1 overflow-x-auto rounded-2xl bg-gray-1 p-1.5 sm:inline-flex sm:w-auto"
       >
         {tracks.map((t) => {
-          const selected = t.id === activeId;
+          const selected = t.id === active.id;
           return (
             <button
               key={t.id}
@@ -63,7 +65,10 @@ export function Tracks() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="grid gap-5 rounded-[28px] bg-surface p-6 shadow-s ring-1 ring-gray-1 sm:p-9 md:grid-cols-[1.1fr_1fr] md:gap-10"
+            className={cn(
+              "grid gap-5 rounded-[28px] bg-surface p-6 shadow-s ring-1 ring-gray-1 sm:p-9 md:gap-10",
+              active.snippet.length > 0 && "md:grid-cols-[1.1fr_1fr]",
+            )}
           >
             <div>
               <p className="text-24 font-bold text-ink">{active.name}</p>
@@ -96,6 +101,7 @@ export function Tracks() {
               </ul>
             </div>
 
+            {active.snippet.length > 0 && (
             <div className="overflow-hidden rounded-2xl bg-night shadow-m">
               <div className="flex items-center gap-1.5 border-b border-white/[0.06] px-4 py-3">
                 <span className="size-2.5 rounded-full bg-white/15" />
@@ -122,6 +128,7 @@ export function Tracks() {
                 ))}
               </pre>
             </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

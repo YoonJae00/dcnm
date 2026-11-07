@@ -1,4 +1,4 @@
-import { recruit } from "@/data/site";
+import { useRecruit } from "@/lib/RecruitContext";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { Check } from "@/components/ui/icons";
@@ -7,6 +7,7 @@ import { Timeline } from "@/components/sections/recruit/Timeline";
 import { Tracks } from "@/components/sections/recruit/Tracks";
 
 export function Recruit() {
+  const recruit = useRecruit();
   return (
     <section id="recruit" aria-labelledby="recruit-title" className="scroll-mt-16 bg-page py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
@@ -27,6 +28,7 @@ export function Recruit() {
             <Reveal>
               <Countdown />
             </Reveal>
+            {recruit.qualifications.length > 0 && (
             <Reveal delay={0.08}>
               <div className="rounded-[28px] bg-surface p-6 shadow-s ring-1 ring-gray-1 sm:p-8">
                 <h3 className="text-20 font-bold text-ink">지원 자격</h3>
@@ -42,6 +44,7 @@ export function Recruit() {
                 </ul>
               </div>
             </Reveal>
+            )}
           </div>
           <Reveal delay={0.12}>
             <Timeline />

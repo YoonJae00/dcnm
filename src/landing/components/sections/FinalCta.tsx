@@ -3,9 +3,10 @@ import { useRef, type PointerEvent } from "react";
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
 import { LogoMark } from "@/components/brand/Logo";
 import { ButtonLink } from "@/components/ui/Button";
-import { recruit } from "@/data/site";
+import { useRecruit } from "@/lib/RecruitContext";
 
 export function FinalCta() {
+  const recruit = useRecruit();
   const ref = useRef<HTMLDivElement>(null);
   const rx = useMotionValue(0);
   const ry = useMotionValue(0);

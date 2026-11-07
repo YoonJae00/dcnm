@@ -1,13 +1,15 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { faqs } from "@/data/site";
+import { useFaqs } from "@/lib/RecruitContext";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Plus } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
 export function Faq() {
+  const faqs = useFaqs();
   const [open, setOpen] = useState<number | null>(0);
+  if (faqs.length === 0) return null;
 
   return (
     <section aria-labelledby="faq-title" className="bg-mist py-24 sm:py-32">
