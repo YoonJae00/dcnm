@@ -873,3 +873,30 @@ body { transition: background-color .3s ease, color .3s ease; }
 .lp-picked .lp-title { flex: 1; min-width: 0; font-weight: 600; }
 .lp-picked small { margin-left: 6px; font-weight: 400; }
 .lp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 320px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+
+/* ---------- 부원용 메인(Home) ---------- */
+.greet { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; padding-block: clamp(28px, 5vw, 56px) 8px; }
+.greet-text { display: grid; gap: 6px; min-width: 0; }
+.greet h1 { font-size: var(--t-xl); line-height: 1.25; overflow-wrap: anywhere; }
+.greet .actions { gap: 8px; }
+.hblock.tight { padding-block: clamp(28px, 4vw, 48px); gap: 20px; }
+.hblock.tight .block-head { justify-items: start; text-align: left; }
+.mine-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; align-items: start; }
+.mine-grid h3 { font-size: var(--t-md); }
+.mine-empty { display: grid; gap: 12px; justify-items: start; padding: 20px; border: 1px dashed var(--line); border-radius: 12px; }
+.space-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.rrow .line .btn { flex: none; }
+.team-card { align-content: start; }
+.team-prog { display: grid; gap: 6px; }
+.team-note { color: var(--body); min-height: 2.8em; overflow-wrap: anywhere; }
+.team-people { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.bar.grow { flex: 1 1 auto; min-width: 0; }
+.card-grid.compact { gap: 12px; }
+.card-grid.compact .pcard { padding: 16px; gap: 10px; }
+.card-grid.compact .pcard .summary { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.prog-box { display: grid; gap: 8px; }
+.prog-box .prog-h { font-size: var(--t-sm); }
+.prog-form { display: grid; gap: 8px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: var(--t-sm); }
+.prog-form input[type='range'] { width: 100%; accent-color: var(--accent); }
+.feed .row-title .badge { flex: none; }
+@media (max-width: 760px) { .mine-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; } .greet .actions { width: 100%; } }
