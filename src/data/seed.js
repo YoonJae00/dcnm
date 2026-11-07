@@ -255,5 +255,55 @@ export const seed = {
     { id: 'e5', title: '종강 총회', date: '2026-12-18', start_time: '18:00', end_time: '20:00', place: '인성관 306호', kind: '행사', note: '' },
   ],
 
+  // 팀 공간 (프로젝트 p1 '동아리 웹사이트 운영' 팀: m1·m3·m5·m9). 시각은 한국 시간 기준 ISO 문자열.
+  // kind: notice(공지) | link(링크) | file(파일, Supabase 연결 시에만 올리기)
+  ws_posts: [
+    { id: 'wp1', project_id: 'p1', kind: 'notice', title: '회의는 매주 수요일 19시, 디스코드 회의 채널에서', body: '정기 회의 외에 급한 일은 디스코드 #웹사이트 채널에 남겨 주세요.\n회의 전날까지 할 일 보드에서 내 카드 상태를 바꿔 두면 회의가 빨라집니다.', pinned: true, created_by: 'm1', created_by_name: '문선우', created_at: '2026-11-07T21:00:00+09:00' },
+    { id: 'wp2', project_id: 'p1', kind: 'notice', title: '배포 전 확인 순서', body: '1. npm run build 통과\n2. 다크 모드·모바일 화면 확인\n3. 운영진 단톡에 배포 알림', pinned: false, created_by: 'm3', created_by_name: '김윤재', created_at: '2026-11-06T22:00:00+09:00' },
+    { id: 'wp3', project_id: 'p1', kind: 'link', title: 'GitHub 저장소', url: 'https://github.com/', body: 'dcm-site 브랜치에서 작업합니다.', pinned: false, created_by: 'm3', created_by_name: '김윤재', created_at: '2026-11-05T20:00:00+09:00' },
+    { id: 'wp4', project_id: 'p1', kind: 'link', title: '화면 시안 (Figma)', url: 'https://www.figma.com/', body: '메인·프로젝트 상세 시안', pinned: false, created_by: 'm5', created_by_name: '강경민', created_at: '2026-11-05T21:00:00+09:00' },
+    { id: 'wp5', project_id: 'p1', kind: 'link', title: '회의 메모 모음 (Notion)', url: 'https://www.notion.so/', body: '', pinned: false, created_by: 'm9', created_by_name: '이현성', created_at: '2026-11-04T21:30:00+09:00' },
+  ],
+
+  // kind: event(일정) | deadline(마감)
+  ws_events: [
+    { id: 'wv1', project_id: 'p1', title: '운영진 시연', date: '2026-11-13', start_time: '18:00', end_time: '18:30', place: '인성관 306호', note: '프로젝트 팀 공간 시연', kind: 'event', created_by: 'm1', created_by_name: '문선우', created_at: '2026-11-07T21:10:00+09:00' },
+    { id: 'wv2', project_id: 'p1', title: '1차 배포 마감', date: '2026-11-18', start_time: '', end_time: '', place: '', note: 'Supabase 연결까지', kind: 'deadline', created_by: 'm3', created_by_name: '김윤재', created_at: '2026-11-07T21:15:00+09:00' },
+  ],
+
+  // status: polling(투표 중) | scheduled(확정) | done(끝남)
+  ws_meetings: [
+    { id: 'wm1', project_id: 'p1', title: '팀 공간 기능 정리 회의', agenda: '할 일 보드 쓰는 규칙 정하기\n다음 배포 범위', link: 'https://meet.google.com/', status: 'polling', starts_at: null, duration_min: 60, created_by: 'm9', created_by_name: '이현성', created_at: '2026-11-07T21:20:00+09:00' },
+    { id: 'wm2', project_id: 'p1', title: '디자인 리뷰', agenda: '메인 화면 시안 검토\n다크 모드 색 확인', link: 'https://discord.com/', status: 'scheduled', starts_at: '2026-11-09T19:00:00+09:00', duration_min: 60, created_by: 'm5', created_by_name: '강경민', created_at: '2026-11-06T12:00:00+09:00' },
+    { id: 'wm3', project_id: 'p1', title: '킥오프', agenda: '역할 나누기, 일정 정하기', link: 'https://discord.com/', status: 'done', starts_at: '2026-11-04T19:00:00+09:00', duration_min: 90, created_by: 'm1', created_by_name: '문선우', created_at: '2026-11-02T12:00:00+09:00' },
+  ],
+
+  ws_meeting_slots: [
+    { id: 'ws1', project_id: 'p1', meeting_id: 'wm1', starts_at: '2026-11-10T19:00:00+09:00', created_by: 'm9', created_by_name: '이현성', created_at: '2026-11-07T21:20:00+09:00' },
+    { id: 'ws2', project_id: 'p1', meeting_id: 'wm1', starts_at: '2026-11-11T20:00:00+09:00', created_by: 'm9', created_by_name: '이현성', created_at: '2026-11-07T21:20:00+09:00' },
+    { id: 'ws3', project_id: 'p1', meeting_id: 'wm1', starts_at: '2026-11-12T21:00:00+09:00', created_by: 'm9', created_by_name: '이현성', created_at: '2026-11-07T21:20:00+09:00' },
+  ],
+
+  ws_meeting_votes: [
+    { id: 'wvt1', project_id: 'p1', slot_id: 'ws1', user_id: 'm9', user_name: '이현성', created_at: '2026-11-07T21:21:00+09:00' },
+    { id: 'wvt2', project_id: 'p1', slot_id: 'ws2', user_id: 'm9', user_name: '이현성', created_at: '2026-11-07T21:21:00+09:00' },
+    { id: 'wvt3', project_id: 'p1', slot_id: 'ws2', user_id: 'm1', user_name: '문선우', created_at: '2026-11-07T21:30:00+09:00' },
+    { id: 'wvt4', project_id: 'p1', slot_id: 'ws3', user_id: 'm5', user_name: '강경민', created_at: '2026-11-07T21:40:00+09:00' },
+  ],
+
+  ws_minutes: [
+    { id: 'wn1', project_id: 'p1', meeting_id: 'wm3', agenda: '역할 나누기\n일정 정하기', decisions: '- 화면은 김윤재, 데이터는 이현성, 디자인은 강경민이 맡는다\n- 매주 수요일 19시에 회의한다\n- 1차 배포는 11월 18일', notes: '운영진 피드백은 문선우가 모아서 회의 때 공유\nSupabase 무료 요금제로 시작', attendee_ids: ['m1', 'm3', 'm5', 'm9'], created_by: 'm1', created_by_name: '문선우', created_at: '2026-11-04T20:30:00+09:00', updated_at: '2026-11-04T20:40:00+09:00' },
+    { id: 'wn2', project_id: 'p1', meeting_id: 'wm2', agenda: '메인 화면 시안 검토\n다크 모드 색 확인', decisions: '', notes: '', attendee_ids: [], created_by: 'm5', created_by_name: '강경민', created_at: '2026-11-07T12:00:00+09:00', updated_at: '2026-11-07T12:00:00+09:00' },
+  ],
+
+  // status: todo(할 일) | doing(진행 중) | done(완료)
+  ws_tasks: [
+    { id: 'wt1', project_id: 'p1', title: '프로젝트 상세 화면 다듬기', status: 'doing', assignee_id: 'm3', assignee_name: '김윤재', due: '2026-11-08', note: '', sort: 0, minutes_id: 'wn1', created_by: 'm1', created_by_name: '문선우', created_at: '2026-11-04T20:45:00+09:00' },
+    { id: 'wt2', project_id: 'p1', title: 'Supabase 표 설계 정리', status: 'todo', assignee_id: 'm9', assignee_name: '이현성', due: '2026-11-12', note: 'RLS 정책까지', sort: 0, minutes_id: 'wn1', created_by: 'm1', created_by_name: '문선우', created_at: '2026-11-04T20:46:00+09:00' },
+    { id: 'wt3', project_id: 'p1', title: '메인 화면 시안', status: 'done', assignee_id: 'm5', assignee_name: '강경민', due: '2026-11-06', note: '', sort: 0, minutes_id: 'wn1', created_by: 'm1', created_by_name: '문선우', created_at: '2026-11-04T20:47:00+09:00' },
+    { id: 'wt4', project_id: 'p1', title: '운영진 피드백 모으기', status: 'todo', assignee_id: 'm1', assignee_name: '문선우', due: '2026-11-05', note: '', sort: 0, minutes_id: null, created_by: 'm1', created_by_name: '문선우', created_at: '2026-11-04T21:00:00+09:00' },
+    { id: 'wt5', project_id: 'p1', title: '모바일 화면 점검', status: 'todo', assignee_id: null, assignee_name: '', due: '', note: '390px 기준', sort: 0, minutes_id: null, created_by: 'm9', created_by_name: '이현성', created_at: '2026-11-06T21:00:00+09:00' },
+  ],
+
   submissions: [],
 };

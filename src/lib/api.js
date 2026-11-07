@@ -29,6 +29,14 @@ const ORDER = {
   posts: byDateDesc,
   comments: byDateAsc,
   post_likes: () => 0,
+  // 팀 공간
+  ws_posts: (a, b) => (Number(!!b.pinned) - Number(!!a.pinned)) || byDateDesc(a, b),
+  ws_events: (a, b) => a.date.localeCompare(b.date) || String(a.start_time || '').localeCompare(String(b.start_time || '')),
+  ws_meetings: byDateDesc,
+  ws_meeting_slots: (a, b) => String(a.starts_at).localeCompare(String(b.starts_at)),
+  ws_meeting_votes: byDateAsc,
+  ws_minutes: byDateDesc,
+  ws_tasks: (a, b) => ((a.sort ?? 0) - (b.sort ?? 0)) || byDateAsc(a, b),
 };
 
 /* ---------- 로컬(예시) 저장소 ---------- */
@@ -80,6 +88,16 @@ export async function list(table) {
   return check(await c.from(table).select('*')).sort(order);
 }
 
+// 조건에 맞는 행만 (예: 한 프로젝트의 팀 공간 자료). match는 { 칸: 값 }
+export async function listBy(table, match) {
+  const order = ORDER[table] || byDateDesc;
+  if (mode === 'local') {
+    return (readDb()[table] || []).filter((r) => Object.entries(match).every(([k, v]) => String(r[k]) === String(v))).sort(order);
+  }
+  const c = await sb();
+  return check(await c.from(table).select('*').match(match)).sort(order);
+}
+
 export async function get(table, id) {
   if (mode === 'local') return (readDb()[table] || []).find((r) => String(r.id) === String(id)) || null;
   const c = await sb();
@@ -108,15 +126,35 @@ export async function save(table, row) {
   // 새로 만들 때 비워 둔 칸(null)은 보내지 않아요. 보내면 DB 기본값(예: members.sort = 0) 대신 null이 들어가
   // not null 제약에 걸립니다.
   if (!clean.id) for (const k of Object.keys(clean)) if (clean[k] === null || clean[k] === undefined) delete clean[k];
-  const saved = check(await c.from(table).upsert(clean).select().single());
+  // 고칠 때는 update를 씁니다. upsert는 일부 칸만 보내면 insert 쪽 not null 제약·insert 정책(RLS)에 먼저 걸립니다.
+  const saved = clean.id
+    ? check(await c.from(table).update(clean).eq('id', clean.id).select().single())
+    : check(await c.from(table).insert(clean).select().single());
   emit();
   return saved;
+}
+
+// 로컬 모드에서 DB의 on delete cascade / set null을 흉내 냅니다 (Supabase에서는 DB가 처리).
+const CASCADE = {
+  projects: [['ws_posts', 'project_id'], ['ws_events', 'project_id'], ['ws_meetings', 'project_id'], ['ws_tasks', 'project_id']],
+  ws_meetings: [['ws_meeting_slots', 'meeting_id'], ['ws_minutes', 'meeting_id']],
+  ws_meeting_slots: [['ws_meeting_votes', 'slot_id']],
+};
+const SET_NULL = { ws_minutes: [['ws_tasks', 'minutes_id']] };
+function removeLocal(db, table, id) {
+  db[table] = (db[table] || []).filter((r) => r.id !== id);
+  for (const [child, col] of CASCADE[table] || []) {
+    for (const r of (db[child] || []).filter((x) => x[col] === id)) removeLocal(db, child, r.id);
+  }
+  for (const [child, col] of SET_NULL[table] || []) {
+    for (const r of db[child] || []) if (r[col] === id) r[col] = null;
+  }
 }
 
 export async function remove(table, id) {
   if (mode === 'local') {
     const db = readDb();
-    db[table] = (db[table] || []).filter((r) => r.id !== id);
+    removeLocal(db, table, id);
     writeDb();
     emit();
     return;
@@ -190,6 +228,43 @@ export async function decideApplication(app, accept) {
       await save('projects', { id: p.id, member_ids: [...ids, app.user_id], member_names: [...names, app.user_name] });
     }
   }
+}
+
+/* ---------- 팀 공간 파일 (Supabase Storage 비공개 버킷 'workspace') ---------- */
+export const WS_BUCKET = 'workspace';
+export const WS_MAX_FILE = 10 * 1024 * 1024;
+export const filesEnabled = () => mode === 'supabase';
+
+// Storage 키에는 한글·공백 등을 쓸 수 없어서 영문·숫자·.-_만 남깁니다. 원래 이름은 ws_posts.file_name에 둡니다.
+export function safeFileName(name) {
+  const s = String(name || 'file').normalize('NFC');
+  const dot = s.lastIndexOf('.');
+  const ext = dot > 0 ? s.slice(dot + 1).replace(/[^A-Za-z0-9]/g, '').slice(0, 10) : '';
+  const base = (dot > 0 ? s.slice(0, dot) : s).replace(/[^A-Za-z0-9._-]+/g, '_').replace(/^[._]+|_+$/g, '').slice(0, 60) || 'file';
+  return ext ? `${base}.${ext}` : base;
+}
+
+export async function uploadWorkspaceFile(projectId, file) {
+  if (mode === 'local') throw new Error('파일 올리기는 Supabase에 연결했을 때 쓸 수 있습니다.');
+  if (file.size > WS_MAX_FILE) throw new Error('10MB 이하 파일만 올릴 수 있습니다.');
+  const c = await sb();
+  const path = `${projectId}/${uid()}-${safeFileName(file.name)}`;
+  check(await c.storage.from(WS_BUCKET).upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false }));
+  return path;
+}
+
+// 1시간짜리 서명 URL. download에 원래 파일명을 넘겨 한글 이름 그대로 내려받게 합니다.
+export async function workspaceFileUrl(path, name) {
+  if (mode === 'local') return null;
+  const c = await sb();
+  const data = check(await c.storage.from(WS_BUCKET).createSignedUrl(path, 3600, { download: name || true }));
+  return data.signedUrl;
+}
+
+export async function removeWorkspaceFile(path) {
+  if (mode === 'local' || !path) return;
+  const c = await sb();
+  check(await c.storage.from(WS_BUCKET).remove([path]));
 }
 
 export async function toggleLike(postId, userId) {

@@ -15,6 +15,22 @@ export function useTable(table) {
   return { rows, error, reload: load };
 }
 
+// 표에서 조건에 맞는 행만 (예: 한 프로젝트의 팀 공간 자료). match가 null이면 불러오지 않습니다.
+export function useRows(table, match) {
+  const [rows, setRows] = useState(null);
+  const [error, setError] = useState('');
+  const key = match ? JSON.stringify(match) : '';
+  const load = useCallback(() => {
+    if (!key) return;
+    api.listBy(table, JSON.parse(key)).then((r) => { setRows(r); setError(''); }).catch((e) => setError(e.message));
+  }, [table, key]);
+  useEffect(() => {
+    load();
+    return api.onChange(load);
+  }, [load]);
+  return { rows, error, reload: load };
+}
+
 // 불러오는 중이면 undefined, 불러오지 못했으면 null
 export function useSettings() {
   const [settings, setSettings] = useState(undefined);
