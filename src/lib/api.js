@@ -104,6 +104,9 @@ export async function save(table, row) {
     return saved;
   }
   const c = await sb();
+  // 새로 만들 때 비워 둔 칸(null)은 보내지 않아요. 보내면 DB 기본값(예: members.sort = 0) 대신 null이 들어가
+  // not null 제약에 걸립니다.
+  if (!clean.id) for (const k of Object.keys(clean)) if (clean[k] === null || clean[k] === undefined) delete clean[k];
   const saved = check(await c.from(table).upsert(clean).select().single());
   emit();
   return saved;
