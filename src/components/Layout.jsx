@@ -53,6 +53,7 @@ export default function Layout({ children }) {
   const [signOutError, setSignOutError] = useState('');
   const settings = useSettings();
   const user = useUser();
+  const quickLinks = (settings?.links || []).filter((link) => /^https?:\/\//i.test(link.url));
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -86,6 +87,19 @@ export default function Layout({ children }) {
       <a className="skip" href="#content">본문으로 건너뛰기</a>
       <div className="ambient" aria-hidden="true"><i /><i /><i /></div>
       <header className={`site-header${open ? ' open' : ''}`}>
+        {user && quickLinks.length > 0 && (
+          <nav className="toolbar-shortcuts" aria-label="자주 쓰는 링크">
+            <div className="wrap">
+              <ul>
+                {quickLinks.map((link) => (
+                  <li key={`${link.label}-${link.url}`}>
+                    <a href={link.url} target="_blank" rel="noopener noreferrer" aria-label={`${link.label} (새 탭)`}>{link.label}<span aria-hidden="true">↗</span></a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </nav>
+        )}
         <div className="wrap header-row">
           <Link
             to="/" className="logo" aria-label="DC&M 홈, 맨 위로"

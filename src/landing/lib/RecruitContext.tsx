@@ -6,7 +6,6 @@ import { resolveRecruitContent } from "../../lib/recruitDetails.js";
 
 /** 운영진 설정(settings) 중 모집 랜딩이 쓰는 칸. 비어 있으면 data/site.ts의 기본값을 써요. */
 export type RecruitSettings = {
-  links?: { label: string; url: string }[] | null;
   recruit_start?: string | null;
   recruit_deadline?: string | null;
   recruit_details?: unknown;
